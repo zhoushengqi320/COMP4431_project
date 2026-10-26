@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowUp, ArrowUpRight, BookOpen, Check, ChevronDown, ChevronRight, CircleHelp, FileText, GraduationCap, LayoutGrid, LoaderCircle, Mic, Square, Menu, MessageSquare, Paperclip, Plus, ShieldCheck, Sparkles, ThumbsDown, ThumbsUp, Trash2, Upload, UserRound, X, AlertCircle } from 'lucide-react';
+import { ArrowUp, ArrowUpRight, BookOpen, Check, ChevronDown, ChevronRight, CircleHelp, FileText, GraduationCap, LayoutGrid, LoaderCircle, Mic, Square, Volume2, Pause, Play, Settings2, Menu, MessageSquare, Paperclip, Plus, ShieldCheck, Sparkles, ThumbsDown, ThumbsUp, Trash2, Upload, UserRound, X, AlertCircle } from 'lucide-react';
 import { DEMO, requestAdvice } from './advisor';
 import { createVoiceSession, speechSupport } from './voice';
+import { createSpeechPlayer, narrationFor } from './speech';
 import './styles.css';
 
 const STORAGE = 'polypath-profile-v1';
@@ -42,15 +43,35 @@ function App() {
   const voiceTimer = useRef(null);
   const voiceActive = voiceState !== 'idle';
   const Recognition = speechSupport(window);
+  const [speechState, setSpeechState] = useState({ messageId: null, status: 'idle' });
+  const [speechError, setSpeechError] = useState('');
+  const [speechSettings, setSpeechSettings] = useState(false);
+  const [speechVoices, setSpeechVoices] = useState([]);
+  const [speechVoice, setSpeechVoice] = useState('');
+  const [speechRate, setSpeechRate] = useState(1);
+  const speechPlayer = useRef(null);
+  const playbackSupported = Boolean(window.speechSynthesis && window.SpeechSynthesisUtterance);
+  const playbackActive = speechState.status !== 'idle';
   const bottom = useRef(null);
   const input = useRef(null);
   const controller = useRef(null);
   const activeRequest = useRef(0);
 
+  useEffect(() => {
+    const synthesis = window.speechSynthesis;
+    const player = createSpeechPlayer({ synthesis, Utterance: window.SpeechSynthesisUtterance, onState: setSpeechState, onError: setSpeechError });
+    speechPlayer.current = player;
+    const refreshVoices = () => setSpeechVoices(synthesis?.getVoices() || []);
+    refreshVoices();
+    synthesis?.addEventListener('voiceschanged', refreshVoices);
+    const leave = () => { player.stop(); voiceSession.current?.cancel(); };
+    window.addEventListener('pagehide', leave);
+    return () => { player.stop(); synthesis?.removeEventListener('voiceschanged', refreshVoices); window.removeEventListener('pagehide', leave); };
+  }, []);
   useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [messages, loading]);
   useEffect(() => () => { controller.current?.abort(); voiceSession.current?.cancel(); clearTimeout(voiceTimer.current); }, []);
   useEffect(() => { if (!saved) return; const timer = setTimeout(() => setSaved(false), 2500); return () => clearTimeout(timer); }, [saved]);
-  useEffect(() => { const onKey = e => { if (e.key === 'Escape') { setHelp(false); setMobileNav(false); } }; window.addEventListener('keydown', onKey); return () => window.removeEventListener('keydown', onKey); }, []);
+  useEffect(() => { const onKey = e => { if (e.key === 'Escape') { setHelp(false); setMobileNav(false); setSpeechSettings(false); speechPlayer.current?.stop(); cancelVoice(); } }; window.addEventListener('keydown', onKey); return () => window.removeEventListener('keydown', onKey); }, []);
 
   function addFiles(files, target, category) {
     const accepted = [];
@@ -64,6 +85,13 @@ function App() {
     const setter = target === 'documents' ? setDocuments : setAttachments;
     setter(previous => [...previous, ...makeFiles(accepted, category)].filter((item, index, all) => all.findIndex(other => other.name === item.name && other.size === item.size && other.category === item.category) === index));
   }
+  function stopPlayback() { speechPlayer.current?.stop(); }
+  function readAnswer(message) {
+    cancelVoice(); setVoiceOpen(false); setSpeechError('');
+    const text = narrationFor(message);
+    const language = /[\u3400-\u9fff]/.test(text) ? (voiceLanguage.startsWith('zh') ? voiceLanguage : 'zh-CN') : 'en-US';
+    speechPlayer.current?.speak({ messageId: message.id, text, language, rate: speechRate, voiceURI: speechVoice });
+  }
   function cancelVoice() {
     clearTimeout(voiceTimer.current);
     voiceSession.current?.cancel(); voiceSession.current = null;
@@ -71,6 +99,7 @@ function App() {
   }
   function startVoice() {
     if (!Recognition || voiceSession.current || loading) return;
+    stopPlayback(); setSpeechError('');
     setVoiceError(''); setVoicePreview('');
     const session = createVoiceSession({ Recognition, language: voiceLanguage,
       onState: state => {
@@ -89,17 +118,18 @@ function App() {
     session.start();
   }
   function navigate(next) {
-    if (next !== 'advisor') { cancelVoice(); setVoiceOpen(false); }
+    if (next !== 'advisor') { cancelVoice(); stopPlayback(); setVoiceOpen(false); setSpeechSettings(false); }
     setPage(next); setMobileNav(false); setFileError('');
   }
   function newChat() {
-    cancelVoice(); setVoiceOpen(false); setVoiceError('');
+    cancelVoice(); stopPlayback(); setSpeechError(''); setVoiceOpen(false); setVoiceError('');
     activeRequest.current += 1; controller.current?.abort(); setLoading(false);
     setMessages([]); setAttachments([]); setDraft(''); setError(''); setFileError(''); navigate('advisor');
   }
   async function send(value = draft) {
     const text = value.trim();
     if (!text || loading || voiceSession.current) return;
+    stopPlayback(); setSpeechError('');
     const requestId = ++activeRequest.current;
     const currentAttachments = attachments;
     const user = { id: uid(), role: 'user', text, attachments: currentAttachments.map(({ name, size }) => ({ name, size })) };
@@ -139,7 +169,8 @@ function App() {
       <header className="topbar"><div className="breadcrumb"><button className="mobile-menu icon-button" aria-label="Open navigation" onClick={() => setMobileNav(true)}><Menu size={21}/></button><span>Workspace</span><ChevronRight size={14}/><strong>{page === 'advisor' ? 'AI Advisor' : 'My Profile & Documents'}</strong></div><div className="topbar-right"><span className="mode-badge"><span/>{DEMO ? 'UI demo' : 'Connected advisor'}</span><span className="university">THE HONG KONG<br/><b>POLYTECHNIC UNIVERSITY</b></span></div></header>
 
       {page === 'advisor' ? <main className={`advisor-page ${messages.length ? 'has-messages' : ''}`}>
-        <div className="advisor-toolbar"><span><span className="small-spark"><Sparkles size={14}/></span> Your academic planning companion</span><button className="text-button" onClick={() => navigate('profile')}><FileText size={14}/>{documents.length} context {documents.length === 1 ? 'file' : 'files'}<ChevronRight size={14}/></button></div>
+        <div className="advisor-toolbar"><span><span className="small-spark"><Sparkles size={14}/></span> Your academic planning companion</span><div className="toolbar-actions"><button className="text-button" onClick={() => setSpeechSettings(!speechSettings)} aria-expanded={speechSettings}><Settings2 size={14}/><span>Voice settings</span></button><button className="text-button context-files" onClick={() => navigate('profile')}><FileText size={14}/>{documents.length} context {documents.length === 1 ? 'file' : 'files'}<ChevronRight size={14}/></button></div></div>
+        {speechSettings && <section className="speech-settings" aria-label="Read-aloud settings"><div><strong><Volume2 size={16}/> Read-aloud settings</strong><p>Choose a voice and speed. Playback starts only when you click Read aloud.</p></div><div className="speech-setting-fields"><label>Voice<select value={speechVoice} disabled={playbackActive} onChange={e => setSpeechVoice(e.target.value)}><option value="">Automatic (match answer language)</option>{speechVoices.map(voice => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}</option>)}</select></label><label>Speed<select value={speechRate} disabled={playbackActive} onChange={e => setSpeechRate(Number(e.target.value))}><option value={0.8}>0.8× · Slower</option><option value={1}>1× · Normal</option><option value={1.2}>1.2× · Faster</option></select></label><button className="icon-button" aria-label="Close read-aloud settings" onClick={() => setSpeechSettings(false)}><X size={17}/></button></div><p className="speech-settings-note">{!playbackSupported ? 'Read aloud is unavailable in this browser. You can still use text chat.' : playbackActive ? 'Stop playback to change voice or speed.' : 'Available voices depend on your browser and device; some voices may use an online service.'}</p></section>}
         <div className="chat-scroll">
           {!messages.length ? <div className="welcome">
             <div className="eyebrow"><span/> A CLEARER PATH THROUGH UNIVERSITY</div>
@@ -149,9 +180,9 @@ function App() {
             <div className="prompt-grid">{prompts.map(({ icon: Icon, title, text, question }) => <button className="prompt-card" key={title} onClick={() => send(question)}><span className="prompt-icon"><Icon size={21}/></span><ArrowUpRight className="prompt-arrow" size={18}/><strong>{title}</strong><span>{text}</span></button>)}</div>
             <div className="context-tip"><span className="tip-symbol"><FileText size={19}/></span><div><strong>Start with your story</strong><p>Add your academic background for a more informed conversation.</p></div><button onClick={() => navigate('profile')}>Add my documents <ArrowUpRight size={15}/></button></div>
             <div className="path-decoration" aria-hidden="true"><span>EXPLORE</span><i/><span>CONNECT</span><i/><span>PLAN</span></div>
-          </div> : <div className="message-list">{messages.map(message => <Message key={message.id} message={message} onFollowUp={send} disabled={loading || voiceActive}/>)}{loading && <div className="loading-message" role="status"><span className="assistant-avatar"><Sparkles size={17}/></span><LoaderCircle className="spin" size={16}/> Preparing a response…</div>}<div ref={bottom}/></div>}
+          </div> : <div className="message-list">{messages.map(message => <Message key={message.id} message={message} onFollowUp={send} disabled={loading || voiceActive} speechState={speechState} playbackSupported={playbackSupported} onRead={() => readAnswer(message)} onPause={() => speechPlayer.current?.pause()} onResume={() => speechPlayer.current?.resume()} onStop={stopPlayback}/>)}{loading && <div className="loading-message" role="status"><span className="assistant-avatar"><Sparkles size={17}/></span><LoaderCircle className="spin" size={16}/> Preparing a response…</div>}<div ref={bottom}/></div>}
         </div>
-        <div className="composer-zone">{error && <div className="error-notice" role="alert"><AlertCircle size={16}/>{error}</div>}{fileError && <div className="error-notice" role="alert">{fileError}</div>}
+        <div className="composer-zone">{speechError && <div className="error-notice" role="alert"><Volume2 size={16}/>{speechError}<button className="icon-button" aria-label="Dismiss read-aloud error" onClick={() => setSpeechError('')}><X size={14}/></button></div>}{error && <div className="error-notice" role="alert"><AlertCircle size={16}/>{error}</div>}{fileError && <div className="error-notice" role="alert">{fileError}</div>}
           <form className={`composer ${voiceActive ? 'voice-active' : ''}`} onSubmit={e => { e.preventDefault(); send(); }}>
             {attachments.length > 0 && <div className="attachment-list">{attachments.map(file => <span className="attachment-chip" key={file.id}><FileText size={14}/><span>{file.name}</span><button type="button" aria-label={`Remove ${file.name}`} onClick={() => setAttachments(previous => previous.filter(item => item.id !== file.id))}><X size={14}/></button></span>)}</div>}
             {voiceOpen && <section className="voice-panel" aria-label="Voice input controls">
@@ -184,18 +215,24 @@ function App() {
         </section><div className="profile-bottom-note"><Sparkles size={20}/><p>{DEMO ? 'Add documents to prepare for the next step. The team’s AI integration will enable document analysis and source-based recommendations.' : 'Selected documents will be sent to the connected advisor when you send a message.'}</p><button className="text-button" onClick={() => navigate('advisor')}>Go to AI Advisor <ArrowUpRight size={16}/></button></div>
       </main>}
     </div>
-    {help && <div className="modal-backdrop" onClick={() => setHelp(false)}><section className="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title" onClick={e => e.stopPropagation()}><button autoFocus className="modal-close icon-button" aria-label="Close help" onClick={() => setHelp(false)}><X size={20}/></button><span className="modal-symbol"><GraduationCap size={30}/></span><h2 id="help-title">Your next steps, made clearer.</h2><ol><li><strong>Add your background</strong><p>Fill in your profile and select your reference documents.</p></li><li><strong>Start a conversation</strong><p>Ask about interests, courses, prerequisites or semester planning. Add extra files directly to a message, or use the microphone to dictate and review your question.</p></li><li><strong>Explore your pathway</strong><p>Review course recommendations, semester plans and supporting sources in the conversation.</p></li></ol><div className="help-note">{DEMO ? 'This is a frontend demo. Responses are fixed examples, not AI-generated advice. Documents remain in memory and are cleared on refresh; saved profile fields stay in this browser. Feedback stays in the current chat. Voice input uses your browser’s speech service, which may process audio online; it is separate from the demo AI.' : 'Messages, profile fields and selected files are sent to the team’s configured advisor service. Check official course information before enrolling.'}</div><button className="primary-button" onClick={() => setHelp(false)}>Got it <Check size={16}/></button></section></div>}
+    {help && <div className="modal-backdrop" onClick={() => setHelp(false)}><section className="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title" onClick={e => e.stopPropagation()}><button autoFocus className="modal-close icon-button" aria-label="Close help" onClick={() => setHelp(false)}><X size={20}/></button><span className="modal-symbol"><GraduationCap size={30}/></span><h2 id="help-title">Your next steps, made clearer.</h2><ol><li><strong>Add your background</strong><p>Fill in your profile and select your reference documents.</p></li><li><strong>Start a conversation</strong><p>Ask about interests, courses, prerequisites or semester planning. Add extra files directly to a message, or use the microphone to dictate and review your question.</p></li><li><strong>Explore your pathway</strong><p>Review course recommendations, semester plans and supporting sources. Use Read aloud on an answer to listen, pause, resume or stop. Voice settings controls the voice and speed.</p></li></ol><div className="help-note">{DEMO ? 'This is a frontend demo. Responses are fixed examples, not AI-generated advice. Documents remain in memory and are cleared on refresh; saved profile fields stay in this browser. Feedback stays in the current chat. Voice input uses your browser’s speech service, which may process audio online; it is separate from the demo AI.' : 'Messages, profile fields and selected files are sent to the team’s configured advisor service. Check official course information before enrolling.'}</div><button className="primary-button" onClick={() => setHelp(false)}>Got it <Check size={16}/></button></section></div>}
   </div>;
 }
 
-function Message({ message, onFollowUp, disabled }) {
+function Message({ message, onFollowUp, disabled, speechState, playbackSupported, onRead, onPause, onResume, onStop }) {
   const [feedback, setFeedback] = useState(null);
+  const reading = speechState.messageId === message.id;
+  const paused = reading && speechState.status === 'paused';
   if (message.role === 'user') return <article className="user-message"><div><p>{message.text}</p>{message.attachments?.length > 0 && <div className="user-files">{message.attachments.map((file, index) => <span key={index}><Paperclip size={13}/>{file.name}</span>)}</div>}</div><span className="user-avatar"><UserRound size={17}/></span></article>;
   return <article className="assistant-message"><span className="assistant-avatar"><Sparkles size={18}/></span><div className="assistant-body"><div className="message-author">PolyPath <span>{DEMO ? 'EXAMPLE RESPONSE' : 'AI ADVISOR'}</span></div><p className="answer-text">{message.text}</p>
     {message.courses?.length > 0 && <div className="course-grid">{message.courses.map((course, index) => <section className="course-card" key={index}><div className="course-top"><span>{course.code}</span><span>{course.credits} credits</span></div><h3>{course.title}</h3><span className="course-tag">{course.tag}</span><p>{course.reason}</p><details><summary>Prerequisites <ChevronDown size={14}/></summary><p>{course.prerequisite}</p></details></section>)}</div>}
     {message.semesters?.length > 0 && <div className="semester-grid">{message.semesters.map((semester, index) => <section className="semester-card" key={index}><div><h3>{semester.title}</h3><span>{semester.credits} credits</span></div><ul>{semester.courses.map((course, i) => <li key={i}><BookOpen size={14}/>{course}</li>)}</ul></section>)}</div>}
     {message.checks?.length > 0 && <div className="checks-panel"><strong><ShieldCheck size={16}/> Planning checks</strong>{message.checks.map((check, i) => <span key={i}><AlertCircle size={13}/>{check}</span>)}</div>}
     {message.sources?.length > 0 && <details className="sources-panel"><summary><FileText size={15}/> Sources & supporting information <ChevronDown size={14}/></summary>{message.sources.map((source, index) => <div key={index}><strong>{source.title}</strong><p>{source.detail}</p>{source.url && /^https?:\/\//i.test(source.url) && <a href={source.url} target="_blank" rel="noreferrer">View source <ArrowUpRight size={13}/></a>}</div>)}</details>}
+    <div className={`read-aloud-bar ${reading ? 'is-reading' : ''}`}>
+      {reading ? <><span className="playback-state" role="status"><Volume2 size={15}/>{paused ? 'Paused' : speechState.status === 'starting' ? 'Preparing audio…' : 'Reading aloud'}</span><button onClick={paused ? onResume : onPause} aria-label={paused ? 'Resume read aloud' : 'Pause read aloud'}>{paused ? <Play size={14}/> : <Pause size={14}/>}<span>{paused ? 'Resume' : 'Pause'}</span></button><button onClick={onStop} aria-label="Stop read aloud"><Square size={13}/><span>Stop</span></button></> : <button onClick={onRead} disabled={disabled || !playbackSupported} title={playbackSupported ? 'Read this answer and its course recommendations aloud' : 'Read aloud is not supported in this browser'}><Volume2 size={15}/> Read aloud</button>}
+      {!playbackSupported && <span className="playback-unavailable">Unavailable in this browser</span>}
+    </div>
     <div className="answer-actions"><span>Was this helpful?</span><button className={`icon-button ${feedback === 'yes' ? 'selected' : ''}`} aria-label="Helpful response" aria-pressed={feedback === 'yes'} onClick={() => setFeedback(feedback === 'yes' ? null : 'yes')}><ThumbsUp size={14}/></button><button className={`icon-button ${feedback === 'no' ? 'selected' : ''}`} aria-label="Unhelpful response" aria-pressed={feedback === 'no'} onClick={() => setFeedback(feedback === 'no' ? null : 'no')}><ThumbsDown size={14}/></button>{feedback && <span role="status">Feedback noted for this session</span>}</div>
     {message.followUps?.length > 0 && <div className="follow-ups">{message.followUps.map((text, index) => <button disabled={disabled} key={index} onClick={() => onFollowUp(text)}>{text}<ArrowUpRight size={13}/></button>)}</div>}
   </div></article>;
