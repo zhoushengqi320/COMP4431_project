@@ -11,8 +11,8 @@ export async function requestAdvice({ message, history, profile, documents, atta
     documents.forEach(doc => { if (doc.file) body.append('documents', doc.file); });
     attachments.forEach(doc => body.append('attachments', doc.file));
     const response = await fetch(API_URL, { method: 'POST', body, signal });
-    if (!response.ok) throw new Error(`The advisor could not respond (${response.status}). Please try again.`);
-    const data = await response.json();
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `The advisor could not respond (${response.status}). Please try again.`);
     if (typeof data.text !== 'string' || !data.text.trim()) throw new Error('The advisor returned an empty response. Please try again.');
     return data;
   }
