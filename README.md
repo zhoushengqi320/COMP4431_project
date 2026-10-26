@@ -16,9 +16,9 @@ npm install
 cp .env.example .env
 ```
 <HTML>
-   <h2 style="font-color: red;">
-      下面是配置.env文件的方法
-   </h2>
+   <h2 style="color: red;">
+  下面是配置.env文件的方法
+</h2>
 </HTML>
 Edit `.env` (never commit this file):
 
