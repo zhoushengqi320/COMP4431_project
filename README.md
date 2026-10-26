@@ -1,3 +1,6 @@
+<HTML>
+   <h1>不要删除Readme文件！！</h1>
+</HTML>
 # PolyPath — PolyU academic planning advisor
 
 A red-and-white React app for the COMP4431 chatbot project. Students chat with an AI advisor about courses, prerequisites and remaining-semester plans. Two screens: **AI Advisor** and **My Profile & Documents**.
