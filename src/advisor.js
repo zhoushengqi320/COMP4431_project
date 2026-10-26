@@ -38,3 +38,16 @@ export async function requestAdvice({ message, history, profile, documents, atta
     followUps: ['Plan my remaining semesters', 'Check my prerequisites']
   };
 }
+
+export async function requestTranscript({ audio, language, signal }) {
+  if (!API_URL) throw new Error('Voice input needs a connected Qwen advisor. Add QWEN_API_KEY and restart.');
+  const body = new FormData();
+  body.append('audio', audio);
+  body.append('language', language || 'zh-CN');
+  const response = await fetch('/api/transcribe', { method: 'POST', body, signal });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || 'Qwen could not transcribe this recording. Please try again.');
+  const text = typeof data.text === 'string' ? data.text.trim() : '';
+  if (!text) throw new Error('No final transcript was returned. Try again or type your question.');
+  return text;
+}

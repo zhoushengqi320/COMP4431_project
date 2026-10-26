@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowUp, ArrowUpRight, BookOpen, Check, ChevronDown, ChevronRight, CircleHelp, FileText, GraduationCap, LayoutGrid, LoaderCircle, Mic, Square, Volume2, Pause, Play, Settings2, Menu, MessageSquare, Paperclip, Plus, ShieldCheck, Sparkles, ThumbsDown, ThumbsUp, Trash2, Upload, UserRound, X, AlertCircle } from 'lucide-react';
-import { DEMO, requestAdvice } from './advisor';
+import { DEMO, requestAdvice, requestTranscript } from './advisor';
 import { createVoiceSession, speechSupport } from './voice';
 import { createSpeechPlayer, narrationFor } from './speech';
 import './styles.css';
@@ -38,11 +38,11 @@ function App() {
   const [voiceState, setVoiceState] = useState('idle');
   const [voicePreview, setVoicePreview] = useState('');
   const [voiceError, setVoiceError] = useState('');
-  const [voiceLanguage, setVoiceLanguage] = useState('en-US');
+  const [voiceLanguage, setVoiceLanguage] = useState('zh-CN');
   const voiceSession = useRef(null);
   const voiceTimer = useRef(null);
   const voiceActive = voiceState !== 'idle';
-  const Recognition = speechSupport(window);
+  const voiceReady = speechSupport(window) && !DEMO;
   const [speechState, setSpeechState] = useState({ messageId: null, status: 'idle' });
   const [speechError, setSpeechError] = useState('');
   const [speechSettings, setSpeechSettings] = useState(false);
@@ -98,10 +98,10 @@ function App() {
     setVoiceState('idle'); setVoicePreview('');
   }
   function startVoice() {
-    if (!Recognition || voiceSession.current || loading) return;
+    if (!voiceReady || voiceSession.current || loading) return;
     stopPlayback(); setSpeechError('');
     setVoiceError(''); setVoicePreview('');
-    const session = createVoiceSession({ Recognition, language: voiceLanguage,
+    const session = createVoiceSession({ language: voiceLanguage, transcribe: requestTranscript,
       onState: state => {
         setVoiceState(state);
         if (state === 'idle') { clearTimeout(voiceTimer.current); voiceSession.current = null; }
@@ -187,11 +187,12 @@ function App() {
             {attachments.length > 0 && <div className="attachment-list">{attachments.map(file => <span className="attachment-chip" key={file.id}><FileText size={14}/><span>{file.name}</span><button type="button" aria-label={`Remove ${file.name}`} onClick={() => setAttachments(previous => previous.filter(item => item.id !== file.id))}><X size={14}/></button></span>)}</div>}
             {voiceOpen && <section className="voice-panel" aria-label="Voice input controls">
               <div className="voice-heading"><span><Mic size={17}/> Voice input</span><button type="button" className="icon-button" aria-label="Close voice input" onClick={() => { cancelVoice(); setVoiceOpen(false); }}><X size={16}/></button></div>
-              <p className="voice-disclosure">Your browser’s speech service may process audio online. Transcribed text stays in the input until you send it.</p>
-              <div className="voice-controls"><label className="sr-only" htmlFor="voice-language">Voice language</label><select id="voice-language" disabled={voiceActive} value={voiceLanguage} onChange={e => setVoiceLanguage(e.target.value)}><option value="en-US">English</option><option value="zh-HK">Cantonese</option><option value="zh-CN">Mandarin</option></select>{voiceActive ? <button className="voice-start" type="button" disabled={voiceState === 'stopping'} onClick={() => voiceSession.current?.stop()}><Square size={12}/>{voiceState === 'stopping' ? 'Finishing…' : 'Stop listening'}</button> : <button className="voice-start" type="button" disabled={!Recognition || loading} onClick={startVoice}><Mic size={14}/> Start microphone</button>}</div>
-              {!Recognition && <p className="voice-error" role="status">Voice recognition is not supported in this browser. Try a current browser with speech recognition on localhost or HTTPS. You can still type your question.</p>}
+              <p className="voice-disclosure">Your browser records audio locally. Qwen transcribes it after you stop. Choose Mandarin, Cantonese or English before you start.</p>
+              <div className="voice-controls"><label className="sr-only" htmlFor="voice-language">Voice language</label><select id="voice-language" disabled={voiceActive} value={voiceLanguage} onChange={e => setVoiceLanguage(e.target.value)}><option value="zh-CN">Mandarin 普通话</option><option value="zh-HK">Cantonese 粤语</option><option value="en-US">English</option></select>{voiceActive ? <button className="voice-start" type="button" disabled={voiceState === 'stopping'} onClick={() => voiceSession.current?.stop()}><Square size={12}/>{voiceState === 'stopping' ? 'Transcribing…' : 'Stop listening'}</button> : <button className="voice-start" type="button" disabled={!voiceReady || loading} onClick={startVoice}><Mic size={14}/> Start microphone</button>}</div>
+              {DEMO && <p className="voice-error" role="status">Voice input needs a connected Qwen advisor. Add QWEN_API_KEY and restart npm run dev.</p>}
+              {!DEMO && !speechSupport(window) && <p className="voice-error" role="status">This browser cannot record audio. Try a current browser on localhost or HTTPS. You can still type your question.</p>}
               {voiceError && <p className="voice-error" role="alert">{voiceError}</p>}
-              {voiceActive && <div className="voice-live" role="status"><span className="recording-dot"/>{voiceState === 'starting' ? 'Waiting for microphone permission…' : voiceState === 'stopping' ? 'Finishing transcription…' : 'Listening… speak your question.'}</div>}
+              {voiceActive && <div className="voice-live" role="status"><span className="recording-dot"/>{voiceState === 'starting' ? 'Waiting for microphone permission…' : voiceState === 'stopping' ? 'Sending audio to Qwen…' : 'Listening… speak your question.'}</div>}
               {voicePreview && <p className="voice-transcript" aria-live="polite">{voicePreview}</p>}
             </section>}
             <textarea ref={input} readOnly={voiceActive} aria-label="Message AI Advisor" placeholder="Ask about courses, your interests, or your next semester…" rows={2} value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }}/>
@@ -215,7 +216,7 @@ function App() {
         </section><div className="profile-bottom-note"><Sparkles size={20}/><p>{DEMO ? 'Add documents to prepare for the next step. The team’s AI integration will enable document analysis and source-based recommendations.' : 'Selected documents will be sent to the connected advisor when you send a message.'}</p><button className="text-button" onClick={() => navigate('advisor')}>Go to AI Advisor <ArrowUpRight size={16}/></button></div>
       </main>}
     </div>
-    {help && <div className="modal-backdrop" onClick={() => setHelp(false)}><section className="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title" onClick={e => e.stopPropagation()}><button autoFocus className="modal-close icon-button" aria-label="Close help" onClick={() => setHelp(false)}><X size={20}/></button><span className="modal-symbol"><GraduationCap size={30}/></span><h2 id="help-title">Your next steps, made clearer.</h2><ol><li><strong>Add your background</strong><p>Fill in your profile and select your reference documents.</p></li><li><strong>Start a conversation</strong><p>Ask about interests, courses, prerequisites or semester planning. Add extra files directly to a message, or use the microphone to dictate and review your question.</p></li><li><strong>Explore your pathway</strong><p>Review course recommendations, semester plans and supporting sources. Use Read aloud on an answer to listen, pause, resume or stop. Voice settings controls the voice and speed.</p></li></ol><div className="help-note">{DEMO ? 'This is a frontend demo. Responses are fixed examples, not AI-generated advice. Documents remain in memory and are cleared on refresh; saved profile fields stay in this browser. Feedback stays in the current chat. Voice input uses your browser’s speech service, which may process audio online; it is separate from the demo AI.' : 'Messages, profile fields and selected files are sent to the team’s configured advisor service. Check official course information before enrolling.'}</div><button className="primary-button" onClick={() => setHelp(false)}>Got it <Check size={16}/></button></section></div>}
+    {help && <div className="modal-backdrop" onClick={() => setHelp(false)}><section className="help-modal" role="dialog" aria-modal="true" aria-labelledby="help-title" onClick={e => e.stopPropagation()}><button autoFocus className="modal-close icon-button" aria-label="Close help" onClick={() => setHelp(false)}><X size={20}/></button><span className="modal-symbol"><GraduationCap size={30}/></span><h2 id="help-title">Your next steps, made clearer.</h2><ol><li><strong>Add your background</strong><p>Fill in your profile and select your reference documents.</p></li><li><strong>Start a conversation</strong><p>Ask about interests, courses, prerequisites or semester planning. Add extra files directly to a message, or use the microphone to dictate and review your question.</p></li><li><strong>Explore your pathway</strong><p>Review course recommendations, semester plans and supporting sources. Use Read aloud on an answer to listen, pause, resume or stop. Voice settings controls the voice and speed.</p></li></ol><div className="help-note">{DEMO ? 'This is a frontend demo. Responses are fixed examples, not AI-generated advice. Documents remain in memory and are cleared on refresh; saved profile fields stay in this browser. Feedback stays in the current chat. Voice input needs a connected Qwen advisor.' : 'Messages, profile fields and selected files are sent to Qwen. Voice recordings are transcribed by Qwen-ASR, then you review the text before sending. Check official course information before enrolling.'}</div><button className="primary-button" onClick={() => setHelp(false)}>Got it <Check size={16}/></button></section></div>}
   </div>;
 }
 

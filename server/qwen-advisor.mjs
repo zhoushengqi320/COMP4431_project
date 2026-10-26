@@ -1,8 +1,11 @@
+import { formatCatalogue, getCourses, retrieveCourses } from './course-knowledge.mjs';
+
 const TEXT_EXTENSIONS = new Set(['txt', 'csv', 'md', 'json']);
 const FILE_CHAR_LIMIT = 6000;
 const HISTORY_LIMIT = 12;
 
 const SYSTEM_PROMPT = `You are PolyPath, an academic planning advisor for students at The Hong Kong Polytechnic University (PolyU).
+You are grounded in a retrieved subset of the team's PolyU course catalogue (Supabase table public.courses). This is retrieval-augmented generation, not a trained fine-tune.
 Reply in the same language as the student's latest question.
 Return a single JSON object only (no markdown fences) with this shape:
 {
@@ -15,9 +18,11 @@ Return a single JSON object only (no markdown fences) with this shape:
 }
 Rules:
 - text is required. Omit empty arrays rather than inventing placeholders.
-- Do not fabricate official PolyU verification, eligibility, or handbook citations.
-- If documents are missing, unreadable, or only listed by filename, say so in text and checks.
-- Prefer real course codes and titles when the student or documents provide them; otherwise give directional advice and label uncertainty.
+- Recommend only courses that appear in the attached catalogue excerpts. Copy codes, titles, credits and prerequisites from those excerpts.
+- Never invent course codes (including DEMO codes) or unofficial titles.
+- If the excerpts do not contain a suitable course, say so in text and checks.
+- Do not claim official eligibility verification unless the student's documents support it.
+- Put matching catalogue course codes in sources, with title "PolyU course catalogue".
 - urls must be real http(s) links or omitted.`;
 
 function json(res, status, payload) {
@@ -90,9 +95,10 @@ function parseAdvisorPayload(content) {
   return { text: trimmed };
 }
 
-function buildUserContent({ message, profile, documents, attachments }) {
+function buildUserContent({ message, profile, documents, attachments, catalogue }) {
   const parts = [`Student question:\n${message}`];
   parts.push(`Student profile:\n${JSON.stringify(profile || {}, null, 2)}`);
+  parts.push(`PolyU course catalogue excerpts (answer using only these records):\n${catalogue}`);
   if (documents.length) {
     parts.push('Reference documents:\n' + documents.map(file => `### ${file.name}\n${file.text}`).join('\n\n'));
   } else {
@@ -112,9 +118,9 @@ async function readRequestBody(req) {
 
 export async function handleAdvisorRequest(req, res, env) {
   try {
-    const apiKey = env.DEEPSEEK_API_KEY?.trim();
+    const apiKey = env.QWEN_API_KEY?.trim() || env.DASHSCOPE_API_KEY?.trim();
     if (!apiKey) {
-      json(res, 503, { error: 'Missing DEEPSEEK_API_KEY in .env. Copy .env.example to .env and add your key.' });
+      json(res, 503, { error: 'Missing QWEN_API_KEY in .env. Copy .env.example to .env and add your key.' });
       return;
     }
 
@@ -151,17 +157,19 @@ export async function handleAdvisorRequest(req, res, env) {
       return;
     }
 
-    const baseUrl = (env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/$/, '');
-    const model = env.DEEPSEEK_MODEL?.trim() || 'deepseek-flash';
+    const baseUrl = (env.QWEN_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1').replace(/\/$/, '');
+    const model = env.QWEN_MODEL?.trim() || 'qwen-plus';
+    const catalogueRows = retrieveCourses(await getCourses(env), { message, profile });
+    const catalogue = formatCatalogue(catalogueRows);
     const payload = {
       model,
       stream: false,
-      thinking: { type: 'disabled' },
+      enable_thinking: false,
       response_format: { type: 'json_object' },
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         ...historyMessages(history),
-        { role: 'user', content: buildUserContent({ message, profile, documents, attachments }) }
+        { role: 'user', content: buildUserContent({ message, profile, documents, attachments, catalogue }) }
       ]
     };
 
@@ -178,9 +186,7 @@ export async function handleAdvisorRequest(req, res, env) {
     if (!upstream.ok) {
       let detail = raw.slice(0, 300);
       try { detail = JSON.parse(raw).error?.message || detail; } catch { /* keep text */ }
-      json(res, upstream.status === 401 ? 502 : 502, {
-        error: `DeepSeek request failed (${upstream.status}): ${detail}`
-      });
+      json(res, 502, { error: `Qwen request failed (${upstream.status}): ${detail}` });
       return;
     }
 
@@ -189,5 +195,89 @@ export async function handleAdvisorRequest(req, res, env) {
     json(res, 200, parseAdvisorPayload(content));
   } catch (error) {
     json(res, 500, { error: error.message || 'The advisor could not respond. Please try again.' });
+  }
+}
+
+const ASR_LANGUAGE = { 'zh-CN': 'zh', 'zh-HK': 'yue', 'en-US': 'en' };
+
+function transcriptText(content) {
+  if (typeof content === 'string') return content.trim();
+  if (Array.isArray(content)) {
+    return content.map(part => typeof part === 'string' ? part : part?.text || '').join('').trim();
+  }
+  return '';
+}
+
+export async function handleTranscribeRequest(req, res, env) {
+  try {
+    const apiKey = env.QWEN_API_KEY?.trim() || env.DASHSCOPE_API_KEY?.trim();
+    if (!apiKey) {
+      json(res, 503, { error: 'Missing QWEN_API_KEY in .env. Copy .env.example to .env and add your key.' });
+      return;
+    }
+
+    const body = await readRequestBody(req);
+    const request = new Request('http://127.0.0.1/api/transcribe', {
+      method: 'POST',
+      headers: { 'content-type': req.headers['content-type'] || 'application/json' },
+      body
+    });
+    const formData = await request.formData();
+    const audio = formData.get('audio');
+    const language = String(formData.get('language') || 'zh-CN');
+    if (!audio || typeof audio === 'string') {
+      json(res, 400, { error: 'An audio recording is required.' });
+      return;
+    }
+
+    const bytes = Buffer.from(await audio.arrayBuffer());
+    if (bytes.length < 256) {
+      json(res, 400, { error: 'No speech was detected. Try again and speak clearly near your microphone.' });
+      return;
+    }
+    if (bytes.length > 7 * 1024 * 1024) {
+      json(res, 400, { error: 'Recording is too long. Please try a shorter clip.' });
+      return;
+    }
+
+    const mime = audio.type || 'audio/webm';
+    const asrLanguage = ASR_LANGUAGE[language];
+    const baseUrl = (env.QWEN_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1').replace(/\/$/, '');
+    const model = env.QWEN_ASR_MODEL?.trim() || 'qwen3-asr-flash';
+    const payload = {
+      model,
+      stream: false,
+      asr_options: { enable_itn: true, ...(asrLanguage ? { language: asrLanguage } : {}) },
+      messages: [{
+        role: 'user',
+        content: [{ type: 'input_audio', input_audio: { data: `data:${mime};base64,${bytes.toString('base64')}` } }]
+      }]
+    };
+
+    const upstream = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    const raw = await upstream.text();
+    if (!upstream.ok) {
+      let detail = raw.slice(0, 300);
+      try { detail = JSON.parse(raw).error?.message || detail; } catch { /* keep text */ }
+      json(res, 502, { error: `Qwen speech recognition failed (${upstream.status}): ${detail}` });
+      return;
+    }
+
+    const completion = JSON.parse(raw);
+    const text = transcriptText(completion.choices?.[0]?.message?.content);
+    if (!text) {
+      json(res, 502, { error: 'Qwen returned an empty transcript. Please try again.' });
+      return;
+    }
+    json(res, 200, { text });
+  } catch (error) {
+    json(res, 500, { error: error.message || 'Qwen could not transcribe this recording. Please try again.' });
   }
 }

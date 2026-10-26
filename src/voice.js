@@ -1,76 +1,128 @@
-// Browser speech input is independent of the AI backend.
+const MIME_CANDIDATES = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'];
+
 export function speechSupport(browser = globalThis) {
-  return browser.SpeechRecognition || browser.webkitSpeechRecognition || null;
+  return Boolean(browser.MediaRecorder && browser.navigator?.mediaDevices?.getUserMedia);
 }
 
-export function createVoiceSession({ Recognition, language = 'en-US', onState, onPreview, onComplete, onError }) {
-  const recognition = new Recognition();
-  recognition.lang = language;
-  recognition.continuous = false;
-  recognition.interimResults = true;
-  recognition.maxAlternatives = 1;
+export function pickRecorderMime(Recorder = globalThis.MediaRecorder) {
+  if (!Recorder?.isTypeSupported) return '';
+  return MIME_CANDIDATES.find(type => Recorder.isTypeSupported(type)) || '';
+}
+
+function permissionMessage(error) {
+  const name = error?.name || '';
+  if (name === 'NotAllowedError' || name === 'SecurityError') {
+    return 'Microphone access was denied. Allow it in your browser’s site settings, then try again.';
+  }
+  if (name === 'NotFoundError' || name === 'OverconstrainedError') {
+    return 'No microphone is available. Check your microphone connection and system permissions.';
+  }
+  return error?.message || 'Could not start voice input. Check microphone permissions and try again.';
+}
+
+export function createVoiceSession({
+  language = 'zh-CN',
+  transcribe,
+  getUserMedia,
+  MediaRecorder: Recorder,
+  onState,
+  onPreview,
+  onComplete,
+  onError
+}) {
+  const requestMic = getUserMedia || (constraints => globalThis.navigator.mediaDevices.getUserMedia(constraints));
+  const RecorderClass = Recorder || globalThis.MediaRecorder;
   let closed = false;
-  let failed = false;
-  let stopped = false;
-  let finalText = '';
-  const errors = {
-    'not-allowed': 'Microphone access was denied. Allow it in your browser’s site settings, then try again.',
-    'service-not-allowed': 'Your browser’s speech service is unavailable. Try a compatible browser on localhost or HTTPS.',
-    'audio-capture': 'No microphone is available. Check your microphone connection and system permissions.',
-    'no-speech': 'No speech was detected. Try again and speak clearly near your microphone.',
-    network: 'The speech service could not connect. Check your internet connection and try again.',
-    'language-not-supported': 'This speech service does not support the selected language. Try another language.'
-  };
-  function fail(message) { failed = true; onError(message); }
-  recognition.onstart = () => { if (!closed) onState(stopped ? 'stopping' : 'listening'); };
-  recognition.onresult = event => {
-    if (closed || failed) return;
-    // Results are a cumulative list. Rebuild it so interim revisions never duplicate words.
-    const final = [], interim = [];
-    for (let i = 0; i < event.results.length; i++) {
-      const result = event.results[i];
-      (result.isFinal ? final : interim).push(result[0].transcript.trim());
-    }
-    finalText = final.join(' ');
-    onPreview([...final, ...interim].join(' '));
-  };
-  recognition.onerror = event => {
-    if (closed) return;
-    fail(errors[event.error] || (event.error === 'aborted' ? 'Voice input was interrupted. Please try again.' : 'Speech recognition failed. Please try again or type your question.'));
-    // Some implementations delay or omit onend after errors. Release the UI immediately.
+  let stopping = false;
+  let stream;
+  let recorder;
+  let chunks = [];
+  let abort;
+
+  function finishIdle() {
     closed = true;
-    recognition.abort();
+    abort?.abort();
+    recorder = null;
+    stream?.getTracks().forEach(track => track.stop());
+    stream = null;
     onPreview('');
     onState('idle');
-  };
-  recognition.onend = () => {
-    if (closed) return;
-    closed = true;
-    onPreview('');
-    onState('idle');
-    if (!failed && finalText) onComplete(finalText);
-    else if (!failed) onError('No final transcript was returned. Try again or type your question.');
-  };
+  }
+
   return {
     start() {
       if (closed) return;
       onState('starting');
-      try { recognition.start(); }
-      catch { closed = true; onState('idle'); onError('Could not start voice input. Check browser support and microphone permissions.'); }
+      onPreview('');
+      requestMic({ audio: true }).then(media => {
+        if (closed) {
+          media.getTracks().forEach(track => track.stop());
+          return;
+        }
+        stream = media;
+        chunks = [];
+        const mimeType = pickRecorderMime(RecorderClass);
+        recorder = mimeType ? new RecorderClass(stream, { mimeType }) : new RecorderClass(stream);
+        recorder.ondataavailable = event => { if (event.data?.size) chunks.push(event.data); };
+        recorder.onerror = () => {
+          if (closed) return;
+          onError('Voice recording failed. Please try again or type your question.');
+          finishIdle();
+        };
+        recorder.onstop = async () => {
+          stream?.getTracks().forEach(track => track.stop());
+          stream = null;
+          if (closed || !stopping) return;
+          const type = recorder?.mimeType || chunks[0]?.type || 'audio/webm';
+          const blob = new Blob(chunks, { type });
+          if (blob.size < 256) {
+            onError('No speech was detected. Try again and speak clearly near your microphone.');
+            finishIdle();
+            return;
+          }
+          abort = new AbortController();
+          onPreview('Transcribing with Qwen…');
+          try {
+            const text = await transcribe({
+              audio: new File([blob], type.includes('mp4') ? 'clip.m4a' : 'clip.webm', { type }),
+              language,
+              signal: abort.signal
+            });
+            if (closed) return;
+            finishIdle();
+            if (text) onComplete(text);
+            else onError('No final transcript was returned. Try again or type your question.');
+          } catch (error) {
+            if (closed || error?.name === 'AbortError') { if (!closed) finishIdle(); return; }
+            onError(error.message || 'Qwen could not transcribe this recording. Please try again.');
+            finishIdle();
+          }
+        };
+        recorder.start(200);
+        onState('listening');
+      }).catch(error => {
+        if (closed) return;
+        onError(permissionMessage(error));
+        finishIdle();
+      });
     },
     stop() {
-      if (closed || stopped) return;
-      stopped = true;
+      if (closed || stopping) return;
+      stopping = true;
       onState('stopping');
-      try { recognition.stop(); }
-      catch { this.cancel(); onError('Could not finish voice input. Please try again.'); }
+      try {
+        if (recorder && recorder.state !== 'inactive') recorder.stop();
+        else finishIdle();
+      } catch {
+        onError('Could not finish voice input. Please try again.');
+        finishIdle();
+      }
     },
     cancel() {
       if (closed) return;
-      closed = true;
-      recognition.abort();
-      onPreview('');
-      onState('idle');
+      stopping = false;
+      try { if (recorder && recorder.state !== 'inactive') recorder.stop(); } catch { /* already stopped */ }
+      finishIdle();
     }
   };
 }

@@ -1,4 +1,4 @@
-// Read-aloud uses the browser's speech service. No DeepSeek key or audio backend is needed.
+// Read-aloud uses the browser's speech service. No Qwen key or audio backend is needed.
 export function narrationFor(message) {
   const parts = [message.text];
   for (const course of message.courses || []) {

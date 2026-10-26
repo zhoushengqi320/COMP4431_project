@@ -1,16 +1,24 @@
 import { defineConfig, loadEnv } from 'vite';
-import { handleAdvisorRequest } from './server/deepseek-advisor.mjs';
+import { startCourseRefresh } from './server/course-knowledge.mjs';
+import { handleAdvisorRequest, handleTranscribeRequest } from './server/qwen-advisor.mjs';
 
 function advisorPlugin(env) {
   const mount = server => {
     server.middlewares.use(async (req, res, next) => {
       const path = req.url?.split('?')[0];
-      if (path !== '/api/advisor' || req.method !== 'POST') return next();
-      await handleAdvisorRequest(req, res, env);
+      if (req.method === 'POST' && path === '/api/advisor') {
+        await handleAdvisorRequest(req, res, env);
+        return;
+      }
+      if (req.method === 'POST' && path === '/api/transcribe') {
+        await handleTranscribeRequest(req, res, env);
+        return;
+      }
+      next();
     });
   };
   return {
-    name: 'deepseek-advisor',
+    name: 'qwen-advisor',
     configureServer: mount,
     configurePreviewServer: mount
   };
@@ -18,6 +26,7 @@ function advisorPlugin(env) {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  startCourseRefresh(env);
   return {
     plugins: [advisorPlugin(env)]
   };
