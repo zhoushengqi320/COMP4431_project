@@ -15,7 +15,11 @@ Need Node.js 22.12+ (or 24 LTS).
 npm install
 cp .env.example .env
 ```
-
+<HTML>
+   <h2 color: red>
+      下面是配置.env文件的方法
+   </h2>
+</HTML>
 Edit `.env` (never commit this file):
 
 ```dotenv
