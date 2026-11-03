@@ -23,13 +23,14 @@ cp .env.example .env
 Edit `.env` (never commit this file):
 
 ```dotenv
+# Local only. Do not commit this file.
 VITE_ADVISOR_API_URL=/api/advisor
-QWEN_API_KEY=sk-ws-your-key
+QWEN_API_KEY=sk-ws-H.YDYYDDY.ZhvV.MEUCIQCgg74njGDhTdqns95Z2P6d2crmH7AikQ259vz_V0tKxgIgbi7TCE9Tp_C5A_GoJr7PkaMtj1EqFmB9dTZOnsOOZE0
 QWEN_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
 QWEN_MODEL=qwen-plus
 QWEN_ASR_MODEL=qwen3-asr-flash
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_ANON_KEY=sb_publishable_your-key
+SUPABASE_URL=https://fmumzuwcuysvrxzamdre.supabase.co
+SUPABASE_ANON_KEY=sb_publishable_ZBbmS-VaXfXqxIQb39h2Ug_YJ8LrvGH
 ```
 
 Then:
