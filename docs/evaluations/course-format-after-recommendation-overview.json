@@ -1,0 +1,293 @@
+{
+  "recordedAt": "2026-11-03T13:42:03.517Z",
+  "stage": "after",
+  "model": "qwen-plus",
+  "catalogue": "local snapshot",
+  "results": [
+    {
+      "message": "我想学machine learning相关内容，给我推荐一些课",
+      "status": 200,
+      "latencyMs": 37412,
+      "answer": {
+        "text": "根据你的兴趣，我为你精选了7门PolyU机器学习相关课程，覆盖基础原理、数学支撑、行业应用和前沿方向。它们难度递进、侧重互补，适合不同背景和目标的学生。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4432",
+            "title": "Machine Learning",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍现代机器学习的基本原理、概念和模型；\n2. 介绍机器学习技术的最新进展及其在模式识别、计算机视觉等领域的应用。",
+            "rating": 4.8,
+            "ratingSource": "simulated",
+            "summary": "这是一门面向工程学生的机器学习入门课，系统讲解回归、分类、聚类等核心任务，以及通过多层计算从例子中学习的模型、根据数据特征区分类别的方法、卷积网络等模型。课程强调实践，包含案例研究、编程实验和论文阅读，帮助你掌握从原理到应用的完整流程。",
+            "learningOutcomes": [
+              "理解监督与从没有答案的数据中找规律的基本任务类型，如分类、回归和聚类",
+              "动手实现通过多层计算从例子中学习的模型和根据数据特征区分类别的方法等主流模型，并评估其性能",
+              "识别过拟合、维度灾难等常见问题，并用交叉验证等方法应对",
+              "通过MNIST手写识别等案例，将模型应用于实际模式识别任务"
+            ],
+            "requiredPrerequisites": "无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）",
+            "reason": "这是一门面向工程学生的机器学习入门课，系统讲解回归、分类、聚类等核心任务，以及通过多层计算从例子中学习的模型、根据数据特征区分类别的方法、卷积网络等模型。课程强调实践，包含案例研究、编程实验和论文阅读，帮助你掌握从原理到应用的完整流程。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "DSAI4203",
+            "title": "Machine Learning",
+            "department": "dsai",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍现代机器学习的基本原理、概念和模型；\n2. 介绍机器学习技术的最新进展及其在模式识别、计算机视觉及其他领域的应用。",
+            "rating": 4.4,
+            "ratingSource": "simulated",
+            "summary": "这门课由数据科学与人工智能学系开设，内容与COMP4432高度重合但更强调数据驱动思维。教学包含大量实验与报告，注重将算法应用于图像识别等具体问题，适合希望夯实实操能力的学生。",
+            "learningOutcomes": [
+              "掌握机器学习基础概念，如偏差-方差权衡与模型泛化",
+              "构建并比较通过一连串问题作判断的方法、贝叶斯模型、SVM及卷积通过多层计算从例子中学习的模型等算法",
+              "运用k-均值、谱聚类等无监督方法发现数据内在结构",
+              "通过人脸检测、物体识别等视觉任务，理解模型在真实场景中的部署"
+            ],
+            "requiredPrerequisites": "建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。",
+            "reason": "这门课由数据科学与人工智能学系开设，内容与COMP4432高度重合但更强调数据驱动思维。教学包含大量实验与报告，注重将算法应用于图像识别等具体问题，适合希望夯实实操能力的学生。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "AMA4680",
+            "title": "Statistical Machine Learning",
+            "department": "ama",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Science",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "提供机器学习的基本介绍。介绍选定主题的机器学习基本概念和算法，为学生提供将机器学习应用于实际问题所需的基础知识，并为有兴趣从事机器学习或相关领域研究的学生提供起点。",
+            "rating": 4.3,
+            "ratingSource": "simulated",
+            "summary": "这门统计学系课程聚焦机器学习的数学根基，特别适合重视理论严谨性的学生。它以统计建模为主线，涵盖线性模型、正则化、模型选择与评估，辅以Python实验，帮你建立可解释、可复现的分析能力。",
+            "learningOutcomes": [
+              "使用岭回归、Lasso等方法进行变量选择和模型简化",
+              "应用主成分分析（PCA）降低高维数据复杂度",
+              "构建朴素贝叶斯、SVM等分类器，并用AUC指标评估效果",
+              "通过Python实现随机梯度下降等优化算法解决实际预测问题"
+            ],
+            "requiredPrerequisites": "先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。排除统计机器学习（AMA3800）。",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "AMA2602"
+                ]
+              },
+              {
+                "level": 3,
+                "courses": [
+                  "AMA3602",
+                  "AMA3631",
+                  "AMA3001",
+                  "AMA3701",
+                  "AMA3723",
+                  "AMA3724",
+                  "AMA3800"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。排除统计机器学习（AMA3800）。",
+            "reason": "这门统计学系课程聚焦机器学习的数学根基，特别适合重视理论严谨性的学生。它以统计建模为主线，涵盖线性模型、正则化、模型选择与评估，辅以Python实验，帮你建立可解释、可复现的分析能力。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP5541",
+            "title": "Machine Learning and Data Analytics",
+            "department": "comp",
+            "level": "5",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍现代机器学习的基本原理、概念和模型；\n2. 培养数据分析技能，从数据中获取洞察。",
+            "rating": 4.9,
+            "ratingSource": "simulated",
+            "summary": "这是一门高阶课程，不仅覆盖监督/从没有答案的数据中找规律，还深入半监督、通过尝试和反馈学习及数据伦理议题。课程强调系统开发与批判性思考，通过小组项目锻炼你将技术落地到生物、金融等复杂领域的综合能力。",
+            "learningOutcomes": [
+              "设计并实施半监督与通过尝试和反馈学习方案解决现实问题",
+              "运用对比学习、自组织映射等高级无监督技术挖掘隐藏模式",
+              "分析深度学习模型的可解释性与伦理风险",
+              "通过小组项目，在基因组学或主题建模等跨领域场景中端到端应用机器学习"
+            ],
+            "requiredPrerequisites": "无（课程库明确注明）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "这是一门高阶课程，不仅覆盖监督/从没有答案的数据中找规律，还深入半监督、通过尝试和反馈学习及数据伦理议题。课程强调系统开发与批判性思考，通过小组项目锻炼你将技术落地到生物、金融等复杂领域的综合能力。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "EIE4121",
+            "title": "Machine Learning in Cyber-security",
+            "department": "eee",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍网络安全中机器学习技术的概念\n2. 发展使用最新技术解决网络安全实际问题的技能",
+            "rating": 4.5,
+            "ratingSource": "simulated",
+            "summary": "本课程将机器学习聚焦于网络安全实战，涵盖恶意软件分析、钓鱼检测和入侵识别。通过三类实验作业，你将在真实安全场景中训练模型、调优参数并撰写技术报告，培养攻防视角下的AI应用能力。",
+            "learningOutcomes": [
+              "使用CNN、LSTM等模型检测恶意软件行为特征",
+              "构建钓鱼网站识别系统，提取URL与页面文本的关键判别特征",
+              "设计异常检测流程，区分网络流量中的正常与攻击模式",
+              "在实验环境中评估不同模型在网络安全任务中的泛化性能"
+            ],
+            "requiredPrerequisites": "无（课程库明确注明）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "本课程将机器学习聚焦于网络安全实战，涵盖恶意软件分析、钓鱼检测和入侵识别。通过三类实验作业，你将在真实安全场景中训练模型、调优参数并撰写技术报告，培养攻防视角下的AI应用能力。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "DSAI5206",
+            "title": "Machine Vision and Intelligence",
+            "department": "dsai",
+            "level": "5",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 为学生提供机器视觉和图像处理的基本知识。\n2. 为学生提供高级计算机视觉算法和技术的知识。\n3. 训练学生将机器视觉和智能应用于开发实际应用。",
+            "rating": 5,
+            "ratingSource": "simulated",
+            "summary": "这是计算机视觉方向的进阶课，从图像滤波讲到ViT、扩散模型和多模态大模型。课程含小组项目，要求你动手开发视觉应用，如人体跟踪或医学图像分析，适合想深耕AI视觉的学生。",
+            "learningOutcomes": [
+              "使用YOLO、SAM等先进模型完成目标检测与图像分割任务",
+              "构建CLIP等跨模态模型实现图文匹配与检索",
+              "训练GAN或扩散模型生成符合要求的合成图像",
+              "分析多模态大模型（MLLM）在视觉问答等任务中的优势与局限"
+            ],
+            "requiredPrerequisites": "无（课程库明确注明）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "这是计算机视觉方向的进阶课，从图像滤波讲到ViT、扩散模型和多模态大模型。课程含小组项目，要求你动手开发视觉应用，如人体跟踪或医学图像分析，适合想深耕AI视觉的学生。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "AP40012",
+            "title": "Machine Learning in Physics",
+            "department": "ap",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Science",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "介绍机器学习的基本原理及其在物理科学中的应用。",
+            "rating": 4.4,
+            "ratingSource": "simulated",
+            "summary": "这门物理系课程教你用机器学习解决真实科研问题，如预测材料性能。你将在nanoHUB云平台运行代码，处理晶体结构数据，把算法直接用于物理建模，是理工科学生跨学科实践的理想选择。",
+            "learningOutcomes": [
+              "用Python和TensorFlow构建物理材料性质的预测模型",
+              "分析Materials Project数据库，提取晶体结构等特征表示",
+              "通过反向传播训练通过多层计算从例子中学习的模型预测带隙或能量等关键物理量",
+              "理解过拟合在小样本物理数据中的表现，并用正则化加以控制"
+            ],
+            "requiredPrerequisites": "AP20005 或 COMP1012",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 1,
+                "courses": [
+                  "COMP1012"
+                ]
+              }
+            ],
+            "prerequisite": "先修：AP20005 或 COMP1012",
+            "reason": "这门物理系课程教你用机器学习解决真实科研问题，如预测材料性能。你将在nanoHUB云平台运行代码，处理晶体结构数据，把算法直接用于物理建模，是理工科学生跨学科实践的理想选择。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP2014",
+            "title": "Mathematics for Machine Learning",
+            "department": "comp",
+            "level": "2",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "• 提供机器学习所需的数学基本概念\n• 通过使用合适的数值计算环境和数学软件库应用实际问题解决技能",
+            "rating": 4.7,
+            "ratingSource": "simulated",
+            "summary": "课程时长\n1. 数值计算软件：数学软件库（例如，Numpy、Pandas、Scikit-Learn）；数值计算环境（例如，Pytorch、Keras、Matlab）\n2. 线性代数：向量空间；线性变换和矩阵；求解线性方程；矩阵分解；特征值和奇异值；矩阵范数和条件数；逆矩阵；列空间和零空间；非方阵作为不同维度之间的变换；伪逆\n3. 优化：一维优化；最小二乘法；约束优化；凸优化；梯度下降；随机梯度下降\n4. 概率与统计：概率的基本概念回顾；最大似然估计；贝叶斯规则；统计推断\n5. 数学技能在机器学习中的应用：将数学技能与机器学习问题联系起来；数学技能在机器学习中的应用示例；与COMP中的机器学习课程的相关性",
+            "learningOutcomes": [
+              "数值计算软件：数学软件库（例如，Numpy、Pandas、Scikit-Learn）；数值计算环境（例如，Pytorch、Keras、Matlab）",
+              "线性代数：向量空间；线性变换和矩阵；求解线性方程；矩阵分解；特征值和奇异值；矩阵范数和条件数；逆矩阵；列空间和零空间；非方阵作为不同维度之间的变换；伪逆",
+              "优化：一维优化；最小二乘法；约束优化；凸优化；梯度下降；随机梯度下降",
+              "概率与统计：概率的基本概念回顾；最大似然估计；贝叶斯规则；统计推断"
+            ],
+            "requiredPrerequisites": "无（课程库明确注明）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "课程时长\n1. 数值计算软件：数学软件库（例如，Numpy、Pandas、Scikit-Learn）；数值计算环境（例如，Pytorch、Keras、Matlab）\n2. 线性代数：向量空间；线性变换和矩阵；求解线性方程；矩阵分解；特征值和奇异值；矩阵范数和条件数；逆矩阵；列空间和零空间；非方阵作为不同维度之间的变换；伪逆\n3. 优化：一维优化；最小二乘法；约束优化；凸优化；梯度下降；随机梯度下降\n4. 概率与统计：概率的基本概念回顾；最大似然估计；贝叶斯规则；统计推断\n5. 数学技能在机器学习中的应用：将数学技能与机器学习问题联系起来；数学技能在机器学习中的应用示例；与COMP中的机器学习课程的相关性"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "DSAI4208",
+            "title": "Introduction to Machine Vision and Intelligence",
+            "department": "dsai",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "• 介绍学生计算机视觉和人工智能的基本概念和原理。\n• 使学生熟悉关键的计算机视觉和机器学习算法及技术。\n• 培养学生将机器视觉和智能概念应用于解决实际问题的能力。",
+            "rating": 4.3,
+            "ratingSource": "simulated",
+            "summary": "1. 图像获取与表示\n    • 图像表示的基本知识和视频表示\n    • 颜色基础知识介绍（RGB、CMYK、HSL/HSV）\n\n2. 图像处理技术\n    • 图像滤波器和基本卷积滤波器介绍\n    • 边缘检测（图像梯度、Sobel滤波器）\n    • 基本的图像匹配概念\n\n3. 视觉领域的机器学习\n    • 有监督和从没有答案的数据中找规律简介\n    • 通过多层计算从例子中学习的模型和深度学习简介\n    • 机器学习中模型泛化理解\n\n4. 视觉识别任务与算法\n    • 图像分类\n    • 对象检测与分割\n    • 图像理解与生成的基本原理\n\n5. 应用\n    • 3D视觉及其在机器人技术中的作用介绍\n    • 机器视觉和智能在日常生活中的应用，如面部识别、医学成像、自动驾驶车辆",
+            "learningOutcomes": [
+              "图像获取与表示",
+              "图像处理技术",
+              "视觉领域的机器学习",
+              "视觉识别任务与算法"
+            ],
+            "requiredPrerequisites": "无（课程库明确注明）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "1. 图像获取与表示\n    • 图像表示的基本知识和视频表示\n    • 颜色基础知识介绍（RGB、CMYK、HSL/HSV）\n\n2. 图像处理技术\n    • 图像滤波器和基本卷积滤波器介绍\n    • 边缘检测（图像梯度、Sobel滤波器）\n    • 基本的图像匹配概念\n\n3. 视觉领域的机器学习\n    • 有监督和从没有答案的数据中找规律简介\n    • 通过多层计算从例子中学习的模型和深度学习简介\n    • 机器学习中模型泛化理解\n\n4. 视觉识别任务与算法\n    • 图像分类\n    • 对象检测与分割\n    • 图像理解与生成的基本原理\n\n5. 应用\n    • 3D视觉及其在机器人技术中的作用介绍\n    • 机器视觉和智能在日常生活中的应用，如面部识别、医学成像、自动驾驶车辆"
+          }
+        ],
+        "overview": "推荐的课程包括：COMP4432（经典机器学习导论）、DSAI4203（同名但侧重数据科学视角）、AMA4680（统计建模导向）、COMP5541（含强化学习与数据分析）、EIE4121（网络安全应用）、DSAI5206（计算机视觉深度应用）和AP40012（物理科学中的实践）。它们分别打下理论基础、强化统计思维、拓展应用场景、深化技术深度，形成从通识到专精的学习路径。",
+        "followUps": [
+          "COMP4432和DSAI4203内容很像，我该选哪一门？",
+          "COMP4432: 我没有编程基础，这些课能跟上吗？需要提前学什么？",
+          "我想做AI+金融方向，COMP5564这门课值得选吗？"
+        ]
+      }
+    }
+  ]
+}

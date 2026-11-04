@@ -1,0 +1,10 @@
+{
+  "pid": 10800,
+  "jobId": "ft-202611040019-7fc7",
+  "lastSuccessfulStatusAt": "2026-11-03T23:34:41.600Z",
+  "status": "SUCCEEDED",
+  "capturedLogEntries": 48,
+  "logError": null,
+  "readOnly": true,
+  "deploymentCreated": false
+}

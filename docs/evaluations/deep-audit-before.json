@@ -1,0 +1,60 @@
+{
+  "date": "2026-11-03",
+  "networkCalls": 0,
+  "cases": [
+    {
+      "id": "malformed-semester-crash",
+      "error": "TypeError"
+    },
+    {
+      "id": "unknown-lookup-substitution",
+      "result": {
+        "shown": [
+          "DSAI2201"
+        ]
+      }
+    },
+    {
+      "id": "completed-course-recommended",
+      "result": {
+        "shown": [
+          "COMP1011",
+          "DSAI2201"
+        ]
+      }
+    },
+    {
+      "id": "topic-switch-keeps-old-goal",
+      "result": {
+        "active": true,
+        "more": true,
+        "query": "我想学机器学习，推荐一些课",
+        "seenCodes": [
+          "COMP4432"
+        ],
+        "reserveCodes": [
+          "AMA4680"
+        ]
+      }
+    },
+    {
+      "id": "boolean-rating-marked-real",
+      "result": {
+        "rating": 0,
+        "ratingSource": "catalogue"
+      }
+    },
+    {
+      "id": "empty-answer-unsafe-followups",
+      "result": {
+        "text": "你好",
+        "followUps": "not-an-array",
+        "courses": []
+      }
+    },
+    {
+      "id": "malformed-metrics-crash",
+      "error": "TypeError"
+    }
+  ]
+}

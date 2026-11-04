@@ -1,0 +1,49 @@
+{
+  "date": "2026-11-03",
+  "datasetVersion": "v5",
+  "oldRuleFlagged": 1009,
+  "oldSamples": 1502,
+  "newRuleFlagged": 47,
+  "newSamples": 1550,
+  "reviewScope": "Automated rule/source checks with AI-reviewed core examples; not full human semantic review",
+  "humanApproved": 0,
+  "candidateCounts": {
+    "train": {
+      "total": 1199,
+      "approvedForPilot": 1168,
+      "excluded": 31
+    },
+    "validation": {
+      "total": 163,
+      "approvedForPilot": 160,
+      "excluded": 3
+    },
+    "test": {
+      "total": 188,
+      "approvedForPilot": 175,
+      "excluded": 13
+    }
+  },
+  "trainingTasks": {
+    "unknown_semester": 270,
+    "course_introduction": 267,
+    "learning_goals": 267,
+    "prerequisite_explanation": 266,
+    "unknown_eligibility": 6,
+    "recommendation": 38,
+    "continue_recommendation": 29,
+    "compare_courses": 16,
+    "unknown_rating": 1,
+    "unknown_course": 5,
+    "empty_retrieval": 1,
+    "resist_fabrication": 1,
+    "no_more_matches": 1
+  },
+  "softwareTestsPassed": 46,
+  "buildPassed": true,
+  "cloudDataUploaded": true,
+  "testSetUploaded": false,
+  "trainingStarted": false,
+  "budgetApproved": false,
+  "estimatedOneEpochCny": 13.62
+}

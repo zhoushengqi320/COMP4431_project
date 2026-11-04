@@ -1,0 +1,17 @@
+{
+  "date": "2026-11-03",
+  "fix": "Prerequisites move from overview to the final preparation section",
+  "oldVersion": "v5",
+  "currentVersion": "v6",
+  "trainCandidates": 1169,
+  "validationCandidates": 160,
+  "testCandidates": 175,
+  "testsPassed": 48,
+  "buildPassed": true,
+  "draftStructuralChecks": 1550,
+  "oldUploadedPackageInvalidated": true,
+  "newVersionUploaded": false,
+  "trainingStarted": false,
+  "semanticGuarantee": false,
+  "additionalFix": "Exclude preclusion subjects from suggested preparation groups; preserve raw conditions separately"
+}

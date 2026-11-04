@@ -1,0 +1,104 @@
+{
+  "recordedAt": "2026-11-03T13:21:10.741Z",
+  "stage": "after",
+  "model": "qwen-plus",
+  "catalogue": "local snapshot",
+  "results": [
+    {
+      "message": "请问Comp4431是什么课",
+      "status": 200,
+      "latencyMs": 4216,
+      "answer": {
+        "text": "COMP4431 是一门面向高年级本科生的人工智能导论课程，重点在概念理解、编程实践与伦理反思。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4431",
+            "title": "Artificial Intelligence",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍人工智能的基本概念\n2. 使学生掌握人工智能技术的编程知识和技能\n3. 掌握问题建模和典型智能算法\n4. 了解人工智能的技术发展\n5. 使学生意识到与人工智能相关的伦理问题。",
+            "rating": 4.9,
+            "ratingSource": "simulated",
+            "summary": "这门课带你认识人工智能的基本思想和实用技术：从智能代理的设计、搜索算法（如启发式搜索、遗传算法）到机器学习三大类型（监督/无监督/强化学习），再到决策树、神经网络等模型。你将通过编程练习和项目动手实现这些方法，并讨论AI带来的社会与伦理影响，例如公平性、隐私和人类就业。课程不要求你已有AI经验，但需先修过程序设计或数据结构类课程。",
+            "requiredPrerequisites": "COMP2011/COMP2013/DSAI2201",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "COMP2011",
+                  "COMP2013",
+                  "DSAI2201"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程：COMP2011/COMP2013/DSAI2201",
+            "reason": "这门课带你认识人工智能的基本思想和实用技术：从智能代理的设计、搜索算法（如启发式搜索、遗传算法）到机器学习三大类型（监督/无监督/强化学习），再到决策树、神经网络等模型。你将通过编程练习和项目动手实现这些方法，并讨论AI带来的社会与伦理影响，例如公平性、隐私和人类就业。课程不要求你已有AI经验，但需先修过程序设计或数据结构类课程。"
+          }
+        ]
+      }
+    },
+    {
+      "message": "请介绍DSAI2201，包括必要先修和建议先修",
+      "status": 200,
+      "latencyMs": 8245,
+      "answer": {
+        "text": "DSAI2201 是一门面向工程学院二年级学生的课程，重点教授如何用数据结构组织信息、用算法高效解决问题。课程包含编程实践，帮助学生将理论转化为实际代码能力。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "DSAI2201",
+            "title": "Data Structures and Algorithms",
+            "department": "dsai",
+            "level": "2",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "向学生介绍数据结构和算法，并教授如何使用它们解决计算问题。",
+            "rating": 4.9,
+            "ratingSource": "simulated",
+            "summary": "本课程教学生使用链表、栈、队列、树、图等数据结构，以及排序、搜索、贪心、分治和动态规划等算法来解决计算问题。通过讲座、辅导和编程实验，学生能动手实现这些方法，提升分析和编程能力。",
+            "requiredPrerequisites": "COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 1,
+                "courses": [
+                  "COMP1011",
+                  "COMP1012",
+                  "AMA1110",
+                  "AMA1501",
+                  "AMA1751"
+                ]
+              },
+              {
+                "level": 2,
+                "courses": [
+                  "ENG2002",
+                  "AMA2634",
+                  "AMA2111"
+                ]
+              },
+              {
+                "level": 3,
+                "courses": [
+                  "LGT3109"
+                ]
+              }
+            ],
+            "prerequisite": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "reason": "本课程教学生使用链表、栈、队列、树、图等数据结构，以及排序、搜索、贪心、分治和动态规划等算法来解决计算问题。通过讲座、辅导和编程实验，学生能动手实现这些方法，提升分析和编程能力。"
+          }
+        ]
+      }
+    }
+  ]
+}

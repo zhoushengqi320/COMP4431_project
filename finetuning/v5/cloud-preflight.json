@@ -1,0 +1,13 @@
+{
+  "recordedAt": "2026-11-03T14:34:26.688Z",
+  "operation": "GET fine-tune list only",
+  "host": "dashscope.aliyuncs.com",
+  "model": "qwen3-8b",
+  "httpStatus": 200,
+  "listAccessConfirmed": true,
+  "errorCode": null,
+  "trainingCreationPermissionVerified": false,
+  "fileUploadPerformed": false,
+  "trainingCreated": false,
+  "note": "List access, if successful, is not proof of training/deployment authorization or a final quote."
+}

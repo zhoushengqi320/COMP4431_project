@@ -1,0 +1,6 @@
+{
+  "directory": "finetuning/v8",
+  "status": "model_deployed_application_verified",
+  "trainingJobId": "ft-202611040019-7fc7",
+  "deployedModel": "qwen3-8b-01fa13690bf1"
+}

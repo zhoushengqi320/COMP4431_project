@@ -1,0 +1,2286 @@
+{
+  "version": "v3",
+  "createdAt": "2026-11-03T14:14:38.438Z",
+  "status": "superseded_by_quality_revision",
+  "source": {
+    "path": "data/courses.json",
+    "sha256": "bc1beb48663f3cab9c0a7934f40befb410c691a89a65e461c05905f25d93eef7",
+    "origin": "supabase.public.courses",
+    "fetchedAt": "2026-10-26T13:25:34.498Z",
+    "totalRecords": 2659
+  },
+  "departments": [
+    "comp",
+    "dsai",
+    "ama"
+  ],
+  "eligibleCourses": 354,
+  "construction": "Deterministic local templates/extracts; no paid teacher calls; NOT human-authored gold answers",
+  "aiAssistedRewrittenCourses": [
+    "DSAI2201",
+    "COMP4431",
+    "COMP4432",
+    "DSAI4203",
+    "COMP5541",
+    "AMA4680"
+  ],
+  "systemPromptHash": "c87b5e87484343c990af4f59f030ed036c80f5802463b0a9b797446d3c69c21c",
+  "grouping": "Same normalized title OR exact description OR >=0.85 character-trigram Jaccard; deterministic group split 80/10/10",
+  "stats": {
+    "train": {
+      "samples": 1153,
+      "courseCount": 276,
+      "utf8Bytes": 11172052,
+      "fileHash": "ba42ef45e8ed03f3457addd57f780cb8ffbbfae7baebd86d0ea25f9e31e262be",
+      "tasks": {
+        "course_introduction": 276,
+        "learning_goals": 276,
+        "prerequisite_explanation": 276,
+        "unknown_semester": 270,
+        "unknown_eligibility": 6,
+        "recommendation": 12,
+        "continue_recommendation": 10,
+        "compare_courses": 18,
+        "unknown_rating": 1,
+        "unknown_course": 5,
+        "empty_retrieval": 1,
+        "resist_fabrication": 1,
+        "no_more_matches": 1
+      }
+    },
+    "validation": {
+      "samples": 161,
+      "courseCount": 36,
+      "utf8Bytes": 1540881,
+      "fileHash": "b425dcb222b7f1a4341095267f2b78d585849a524563c68013f9380a2d7433fa",
+      "tasks": {
+        "course_introduction": 36,
+        "learning_goals": 36,
+        "prerequisite_explanation": 36,
+        "unknown_semester": 36,
+        "recommendation": 3,
+        "continue_recommendation": 2,
+        "compare_courses": 3,
+        "unknown_rating": 1,
+        "unknown_course": 5,
+        "empty_retrieval": 1,
+        "resist_fabrication": 1,
+        "no_more_matches": 1
+      }
+    },
+    "test": {
+      "samples": 188,
+      "courseCount": 42,
+      "utf8Bytes": 1797649,
+      "fileHash": "3bc68322d1706b1a2a8a6fae966f3bc20c7e5f2b8f5a254d042a2c3dec067b95",
+      "tasks": {
+        "course_introduction": 42,
+        "learning_goals": 42,
+        "prerequisite_explanation": 42,
+        "unknown_semester": 42,
+        "recommendation": 6,
+        "continue_recommendation": 2,
+        "compare_courses": 3,
+        "unknown_rating": 1,
+        "unknown_course": 5,
+        "empty_retrieval": 1,
+        "resist_fabrication": 1,
+        "no_more_matches": 1
+      }
+    }
+  },
+  "groupAssignments": [
+    {
+      "groupId": "00973023400f6817",
+      "split": "train",
+      "codes": [
+        "COMP5424"
+      ]
+    },
+    {
+      "groupId": "00c83a40186b4525",
+      "split": "train",
+      "codes": [
+        "DSAI5104"
+      ]
+    },
+    {
+      "groupId": "015f8d755151ccd1",
+      "split": "train",
+      "codes": [
+        "COMP3512"
+      ]
+    },
+    {
+      "groupId": "0231571d244a625b",
+      "split": "train",
+      "codes": [
+        "AMA601"
+      ]
+    },
+    {
+      "groupId": "029a54123c5a2e1d",
+      "split": "train",
+      "codes": [
+        "COMP5564"
+      ]
+    },
+    {
+      "groupId": "0353700be9641a48",
+      "split": "train",
+      "codes": [
+        "COMP5113"
+      ]
+    },
+    {
+      "groupId": "038340ba61c9b5fc",
+      "split": "train",
+      "codes": [
+        "AMA1D01C"
+      ]
+    },
+    {
+      "groupId": "042cc787ce3d2ffd",
+      "split": "train",
+      "codes": [
+        "DSAI5204"
+      ]
+    },
+    {
+      "groupId": "04af8b459383639a",
+      "split": "train",
+      "codes": [
+        "COMP4141"
+      ]
+    },
+    {
+      "groupId": "095763f81253a5ab",
+      "split": "train",
+      "codes": [
+        "AMA538"
+      ]
+    },
+    {
+      "groupId": "096be582f45f4690",
+      "split": "train",
+      "codes": [
+        "DSAI2202"
+      ]
+    },
+    {
+      "groupId": "0af1f730178943f7",
+      "split": "train",
+      "codes": [
+        "AMA3700"
+      ]
+    },
+    {
+      "groupId": "0cca0a44b70627b3",
+      "split": "train",
+      "codes": [
+        "COMP4422"
+      ]
+    },
+    {
+      "groupId": "0d20bdc3a38a5a2f",
+      "split": "train",
+      "codes": [
+        "AMA542"
+      ]
+    },
+    {
+      "groupId": "0e9f5291e4670e9d",
+      "split": "train",
+      "codes": [
+        "AMA535A"
+      ]
+    },
+    {
+      "groupId": "10f9372b7bf9972b",
+      "split": "train",
+      "codes": [
+        "COMP5933"
+      ]
+    },
+    {
+      "groupId": "124322676e0762de",
+      "split": "train",
+      "codes": [
+        "AMA2203"
+      ]
+    },
+    {
+      "groupId": "12cc5c354fafa7b7",
+      "split": "train",
+      "codes": [
+        "AMA1007",
+        "AMA10071"
+      ]
+    },
+    {
+      "groupId": "137bf6707ab5568b",
+      "split": "train",
+      "codes": [
+        "AMA4840"
+      ]
+    },
+    {
+      "groupId": "13f38ff1946565ec",
+      "split": "train",
+      "codes": [
+        "COMP5563"
+      ]
+    },
+    {
+      "groupId": "142fc1626fafdda0",
+      "split": "train",
+      "codes": [
+        "COMP5923"
+      ]
+    },
+    {
+      "groupId": "143de674afc5aadb",
+      "split": "train",
+      "codes": [
+        "AMA2131"
+      ]
+    },
+    {
+      "groupId": "18906c8644960c96",
+      "split": "train",
+      "codes": [
+        "COMP4134"
+      ]
+    },
+    {
+      "groupId": "18fa9b7bb7aa3241",
+      "split": "train",
+      "codes": [
+        "COMP5584"
+      ]
+    },
+    {
+      "groupId": "1936760e9fc627cb",
+      "split": "train",
+      "codes": [
+        "COMP5138"
+      ]
+    },
+    {
+      "groupId": "198e357c681ee6d9",
+      "split": "train",
+      "codes": [
+        "AMA4650",
+        "AMA515A"
+      ]
+    },
+    {
+      "groupId": "19970ab17354baa5",
+      "split": "train",
+      "codes": [
+        "COMP4133"
+      ]
+    },
+    {
+      "groupId": "1b47ec506a340391",
+      "split": "train",
+      "codes": [
+        "COMP5524"
+      ]
+    },
+    {
+      "groupId": "1b952e4e54b730b6",
+      "split": "train",
+      "codes": [
+        "AMA569"
+      ]
+    },
+    {
+      "groupId": "1cf65a19e5cbeaf6",
+      "split": "train",
+      "codes": [
+        "AMA3232"
+      ]
+    },
+    {
+      "groupId": "1d284b4771fbb946",
+      "split": "train",
+      "codes": [
+        "COMP2322"
+      ]
+    },
+    {
+      "groupId": "1d28ddbe29ee7d74",
+      "split": "train",
+      "codes": [
+        "AMA1110"
+      ]
+    },
+    {
+      "groupId": "1d4df9f117f7c5e5",
+      "split": "train",
+      "codes": [
+        "COMP4125"
+      ]
+    },
+    {
+      "groupId": "1efc79870f948efd",
+      "split": "train",
+      "codes": [
+        "COMP1D04"
+      ]
+    },
+    {
+      "groupId": "1f0f2642be76c778",
+      "split": "train",
+      "codes": [
+        "AMA1611",
+        "DSAI1102"
+      ]
+    },
+    {
+      "groupId": "1f2290f5956dce36",
+      "split": "train",
+      "codes": [
+        "AMA578"
+      ]
+    },
+    {
+      "groupId": "208b13a751f5356f",
+      "split": "train",
+      "codes": [
+        "AMA507"
+      ]
+    },
+    {
+      "groupId": "212f0fb4405ad6fa",
+      "split": "train",
+      "codes": [
+        "COMP5573"
+      ]
+    },
+    {
+      "groupId": "21ff8034056bfcb6",
+      "split": "train",
+      "codes": [
+        "AMA532"
+      ]
+    },
+    {
+      "groupId": "235da9edb6108c41",
+      "split": "train",
+      "codes": [
+        "COMP5311"
+      ]
+    },
+    {
+      "groupId": "2497c5812a9727dc",
+      "split": "train",
+      "codes": [
+        "COMP3011"
+      ]
+    },
+    {
+      "groupId": "24a6e5ae70c2144f",
+      "split": "train",
+      "codes": [
+        "AMA610"
+      ]
+    },
+    {
+      "groupId": "253481be4e46edf3",
+      "split": "train",
+      "codes": [
+        "COMP5565"
+      ]
+    },
+    {
+      "groupId": "258d38464b432971",
+      "split": "train",
+      "codes": [
+        "AMA1D04"
+      ]
+    },
+    {
+      "groupId": "26d9565bc3c6d5f9",
+      "split": "train",
+      "codes": [
+        "DSAI4207"
+      ]
+    },
+    {
+      "groupId": "26faa9fb8d9e1a85",
+      "split": "train",
+      "codes": [
+        "COMP5434"
+      ]
+    },
+    {
+      "groupId": "2825924e0ef1f7c7",
+      "split": "train",
+      "codes": [
+        "AMA1140"
+      ]
+    },
+    {
+      "groupId": "28ec4bfe128314cd",
+      "split": "train",
+      "codes": [
+        "AMA1D08"
+      ]
+    },
+    {
+      "groupId": "291663622eef7478",
+      "split": "train",
+      "codes": [
+        "COMP1BN03"
+      ]
+    },
+    {
+      "groupId": "29bca65f4ec55ff3",
+      "split": "train",
+      "codes": [
+        "COMP4142",
+        "DSAI4202"
+      ]
+    },
+    {
+      "groupId": "2a7fc1cd1ea7f99f",
+      "split": "train",
+      "codes": [
+        "AMA4380"
+      ]
+    },
+    {
+      "groupId": "2c33455a81ed2316",
+      "split": "train",
+      "codes": [
+        "COMP4122"
+      ]
+    },
+    {
+      "groupId": "2ce1d1434568b951",
+      "split": "train",
+      "codes": [
+        "COMP5533"
+      ]
+    },
+    {
+      "groupId": "2d0c5d764bb10609",
+      "split": "train",
+      "codes": [
+        "AMA2601"
+      ]
+    },
+    {
+      "groupId": "2e6e6f33700652f9",
+      "split": "train",
+      "codes": [
+        "COMP3921-3923"
+      ]
+    },
+    {
+      "groupId": "2ee598055c67061c",
+      "split": "train",
+      "codes": [
+        "DSAI5206"
+      ]
+    },
+    {
+      "groupId": "327c6ce870d3d332",
+      "split": "train",
+      "codes": [
+        "COMP5579"
+      ]
+    },
+    {
+      "groupId": "33d20f32ca6af6cd",
+      "split": "train",
+      "codes": [
+        "AMA541"
+      ]
+    },
+    {
+      "groupId": "370d70d18b0ce893",
+      "split": "train",
+      "codes": [
+        "COMP2013",
+        "DSAI2201"
+      ]
+    },
+    {
+      "groupId": "370dad9d59864e0e",
+      "split": "train",
+      "codes": [
+        "AMA612"
+      ]
+    },
+    {
+      "groupId": "386b8cbb2a19d54c",
+      "split": "train",
+      "codes": [
+        "COMP4433",
+        "DSAI4204"
+      ]
+    },
+    {
+      "groupId": "38ceae81accbdbc6",
+      "split": "train",
+      "codes": [
+        "AMA1600",
+        "DSAI1101"
+      ]
+    },
+    {
+      "groupId": "3ac7fc912eb9e937",
+      "split": "train",
+      "codes": [
+        "AMA3730"
+      ]
+    },
+    {
+      "groupId": "3af74e0e0d9b1481",
+      "split": "train",
+      "codes": [
+        "AMA534"
+      ]
+    },
+    {
+      "groupId": "3b39c08ec47ac275",
+      "split": "train",
+      "codes": [
+        "COMP5152"
+      ]
+    },
+    {
+      "groupId": "3b412aafe2bd9f6f",
+      "split": "train",
+      "codes": [
+        "COMP2021"
+      ]
+    },
+    {
+      "groupId": "3b86a217bf8dd786",
+      "split": "train",
+      "codes": [
+        "DSAI5205"
+      ]
+    },
+    {
+      "groupId": "3da620b8fe3f845f",
+      "split": "train",
+      "codes": [
+        "AMA617"
+      ]
+    },
+    {
+      "groupId": "3e85ed7a5b2ebea9",
+      "split": "train",
+      "codes": [
+        "AMA4670"
+      ]
+    },
+    {
+      "groupId": "3f1a7a1faef1b5c5",
+      "split": "train",
+      "codes": [
+        "COMP4424"
+      ]
+    },
+    {
+      "groupId": "402e4e61b7cdfd12",
+      "split": "train",
+      "codes": [
+        "DSAI5208"
+      ]
+    },
+    {
+      "groupId": "4040824d4e239d0e",
+      "split": "train",
+      "codes": [
+        "AMA563",
+        "DSAI1103",
+        "DSAI5102"
+      ]
+    },
+    {
+      "groupId": "40dceed2a9ff01bc",
+      "split": "train",
+      "codes": [
+        "AMA3100"
+      ]
+    },
+    {
+      "groupId": "41c20faa9b6580df",
+      "split": "train",
+      "codes": [
+        "AMA546",
+        "DSAI5101"
+      ]
+    },
+    {
+      "groupId": "4281b7298acc4f22",
+      "split": "train",
+      "codes": [
+        "COMP1433",
+        "DSAI1201"
+      ]
+    },
+    {
+      "groupId": "44725e7299141fbf",
+      "split": "train",
+      "codes": [
+        "AMA2201"
+      ]
+    },
+    {
+      "groupId": "44da337b9360303a",
+      "split": "train",
+      "codes": [
+        "COMP5940",
+        "DSAI5901"
+      ]
+    },
+    {
+      "groupId": "473480cc245a4857",
+      "split": "train",
+      "codes": [
+        "AMA4440"
+      ]
+    },
+    {
+      "groupId": "477957b5f13da5db",
+      "split": "train",
+      "codes": [
+        "COMP1901"
+      ]
+    },
+    {
+      "groupId": "483a6af50b3317e2",
+      "split": "train",
+      "codes": [
+        "COMP3424"
+      ]
+    },
+    {
+      "groupId": "495bf50dd85cc5b4",
+      "split": "train",
+      "codes": [
+        "COMP4322"
+      ]
+    },
+    {
+      "groupId": "49ff189f863a96b0",
+      "split": "train",
+      "codes": [
+        "AMA1D03"
+      ]
+    },
+    {
+      "groupId": "4b218e4380407fbb",
+      "split": "train",
+      "codes": [
+        "COMP2014"
+      ]
+    },
+    {
+      "groupId": "4c292f72734f5895",
+      "split": "train",
+      "codes": [
+        "AMA3410",
+        "AMA3708"
+      ]
+    },
+    {
+      "groupId": "4decbaab0ab81175",
+      "split": "train",
+      "codes": [
+        "AMA571"
+      ]
+    },
+    {
+      "groupId": "4e66e12e0457e921",
+      "split": "train",
+      "codes": [
+        "AMA3723",
+        "AMA3724"
+      ]
+    },
+    {
+      "groupId": "508bc6e283a8f1e7",
+      "split": "train",
+      "codes": [
+        "DSAI4101"
+      ]
+    },
+    {
+      "groupId": "50ad1a9f94084f18",
+      "split": "train",
+      "codes": [
+        "COMP5321"
+      ]
+    },
+    {
+      "groupId": "5251e6af431daef9",
+      "split": "train",
+      "codes": [
+        "COMP5924"
+      ]
+    },
+    {
+      "groupId": "549c0f874962026a",
+      "split": "train",
+      "codes": [
+        "COMP3022"
+      ]
+    },
+    {
+      "groupId": "54dcc647df52dfdd",
+      "split": "train",
+      "codes": [
+        "DSAI5203"
+      ]
+    },
+    {
+      "groupId": "57054d1831a61581",
+      "split": "train",
+      "codes": [
+        "COMP5513"
+      ]
+    },
+    {
+      "groupId": "58fae46aa54d9589",
+      "split": "train",
+      "codes": [
+        "AMA523"
+      ]
+    },
+    {
+      "groupId": "59049127c4c2a13c",
+      "split": "train",
+      "codes": [
+        "COMP4531",
+        "DSAI4206"
+      ]
+    },
+    {
+      "groupId": "5b183093d9222946",
+      "split": "train",
+      "codes": [
+        "AMA613"
+      ]
+    },
+    {
+      "groupId": "5bb045cc85259a52",
+      "split": "train",
+      "codes": [
+        "COMP3335"
+      ]
+    },
+    {
+      "groupId": "5c2e111b6de6c283",
+      "split": "train",
+      "codes": [
+        "COMP2011"
+      ]
+    },
+    {
+      "groupId": "5c80ff0c9a4fdaa6",
+      "split": "train",
+      "codes": [
+        "AMA565",
+        "DSAI5103"
+      ]
+    },
+    {
+      "groupId": "5d3c5f4d2a343621",
+      "split": "train",
+      "codes": [
+        "COMP5132"
+      ]
+    },
+    {
+      "groupId": "5d43c6b78488f181",
+      "split": "train",
+      "codes": [
+        "AMA528"
+      ]
+    },
+    {
+      "groupId": "5fca1c64668c1b4c",
+      "split": "train",
+      "codes": [
+        "AMA2104"
+      ]
+    },
+    {
+      "groupId": "6109841f68eb9bda",
+      "split": "train",
+      "codes": [
+        "COMP4121"
+      ]
+    },
+    {
+      "groupId": "6236a5e6156f2f71",
+      "split": "train",
+      "codes": [
+        "AMA2233"
+      ]
+    },
+    {
+      "groupId": "62bcafbde0d1aac1",
+      "split": "train",
+      "codes": [
+        "AMA1131",
+        "AMA1702"
+      ]
+    },
+    {
+      "groupId": "635376d17a0cbbe8",
+      "split": "train",
+      "codes": [
+        "COMP3122"
+      ]
+    },
+    {
+      "groupId": "66adc221414879db",
+      "split": "train",
+      "codes": [
+        "AMA2691"
+      ]
+    },
+    {
+      "groupId": "66f85c538d84e4c2",
+      "split": "train",
+      "codes": [
+        "COMP3422"
+      ]
+    },
+    {
+      "groupId": "676aba89f0828f73",
+      "split": "train",
+      "codes": [
+        "DSAI4001"
+      ]
+    },
+    {
+      "groupId": "69a02e3104e311b5",
+      "split": "train",
+      "codes": [
+        "COMP5567"
+      ]
+    },
+    {
+      "groupId": "6a5fa48fb7336423",
+      "split": "train",
+      "codes": [
+        "COMP5925"
+      ]
+    },
+    {
+      "groupId": "6ae8d58de8795bda",
+      "split": "train",
+      "codes": [
+        "COMP5581"
+      ]
+    },
+    {
+      "groupId": "6b648de597239932",
+      "split": "train",
+      "codes": [
+        "AMA4680",
+        "AMA573"
+      ]
+    },
+    {
+      "groupId": "6ba27cf85946c6b1",
+      "split": "train",
+      "codes": [
+        "AMA540"
+      ]
+    },
+    {
+      "groupId": "6c75dfbcbb54c248",
+      "split": "train",
+      "codes": [
+        "AMA2703"
+      ]
+    },
+    {
+      "groupId": "6d23fd64e9977efa",
+      "split": "train",
+      "codes": [
+        "COMP4002"
+      ]
+    },
+    {
+      "groupId": "6dc4bf245aeddf1b",
+      "split": "train",
+      "codes": [
+        "COMP2022"
+      ]
+    },
+    {
+      "groupId": "6fdcaf61752100a3",
+      "split": "train",
+      "codes": [
+        "COMP4434",
+        "DSAI4205"
+      ]
+    },
+    {
+      "groupId": "707b923449488604",
+      "split": "train",
+      "codes": [
+        "COMP5541"
+      ]
+    },
+    {
+      "groupId": "7127cbca55f5bc72",
+      "split": "train",
+      "codes": [
+        "AMA1104"
+      ]
+    },
+    {
+      "groupId": "7236e87e6ab62cfd",
+      "split": "train",
+      "codes": [
+        "DSAI5T09:DSAI5R09"
+      ]
+    },
+    {
+      "groupId": "72d43cf727726511",
+      "split": "train",
+      "codes": [
+        "COMP2121"
+      ]
+    },
+    {
+      "groupId": "73627eb2904d29aa",
+      "split": "train",
+      "codes": [
+        "COMP3438"
+      ]
+    },
+    {
+      "groupId": "751899e6a4899374",
+      "split": "train",
+      "codes": [
+        "AMA4430"
+      ]
+    },
+    {
+      "groupId": "76bc9457ac603c16",
+      "split": "train",
+      "codes": [
+        "COMP5511"
+      ]
+    },
+    {
+      "groupId": "77fee17b362d1630",
+      "split": "train",
+      "codes": [
+        "COMP5542"
+      ]
+    },
+    {
+      "groupId": "780abb90cef25386",
+      "split": "train",
+      "codes": [
+        "AMA2702"
+      ]
+    },
+    {
+      "groupId": "78773ebf1d872435",
+      "split": "train",
+      "codes": [
+        "AMA614"
+      ]
+    },
+    {
+      "groupId": "78ef9e7ad812a642",
+      "split": "train",
+      "codes": [
+        "AMA531"
+      ]
+    },
+    {
+      "groupId": "79cb05e1afea443d",
+      "split": "train",
+      "codes": [
+        "COMP1002",
+        "COMP1010"
+      ]
+    },
+    {
+      "groupId": "7a2e314954d91371",
+      "split": "train",
+      "codes": [
+        "COMP5574"
+      ]
+    },
+    {
+      "groupId": "7a474bacd06869fd",
+      "split": "train",
+      "codes": [
+        "AMA572"
+      ]
+    },
+    {
+      "groupId": "7a8a0020315a2320",
+      "split": "train",
+      "codes": [
+        "COMP5331"
+      ]
+    },
+    {
+      "groupId": "7acc5abf3dfcaf97",
+      "split": "train",
+      "codes": [
+        "AMA2112"
+      ]
+    },
+    {
+      "groupId": "7b5ac28778ae2e09",
+      "split": "train",
+      "codes": [
+        "COMP5111"
+      ]
+    },
+    {
+      "groupId": "7baaaa8e2f306c79",
+      "split": "train",
+      "codes": [
+        "AMA1602",
+        "AMA2634"
+      ]
+    },
+    {
+      "groupId": "7cb5fa04663ca39a",
+      "split": "train",
+      "codes": [
+        "COMP5934"
+      ]
+    },
+    {
+      "groupId": "7d5f4efea076d7f6",
+      "split": "train",
+      "codes": [
+        "COMP5532"
+      ]
+    },
+    {
+      "groupId": "7d8901af5141f481",
+      "split": "train",
+      "codes": [
+        "COMP3334"
+      ]
+    },
+    {
+      "groupId": "7de1fafdf2e71539",
+      "split": "train",
+      "codes": [
+        "AMA524"
+      ]
+    },
+    {
+      "groupId": "7e01cc357e480347",
+      "split": "train",
+      "codes": [
+        "AMA2111"
+      ]
+    },
+    {
+      "groupId": "7e46ae6a3b1d171e",
+      "split": "train",
+      "codes": [
+        "AMA611"
+      ]
+    },
+    {
+      "groupId": "7e80ef02f8495c51",
+      "split": "train",
+      "codes": [
+        "AMA1500"
+      ]
+    },
+    {
+      "groupId": "7ec375971d05c3eb",
+      "split": "train",
+      "codes": [
+        "AMA3201"
+      ]
+    },
+    {
+      "groupId": "7fc96a62beccc684",
+      "split": "train",
+      "codes": [
+        "COMP5576"
+      ]
+    },
+    {
+      "groupId": "7fd2eb7a3bfeedaf",
+      "split": "train",
+      "codes": [
+        "COMP3121"
+      ]
+    },
+    {
+      "groupId": "7fe16519887928c3",
+      "split": "train",
+      "codes": [
+        "COMP1003"
+      ]
+    },
+    {
+      "groupId": "80e886d5654b915d",
+      "split": "train",
+      "codes": [
+        "AMA1616"
+      ]
+    },
+    {
+      "groupId": "81573a98d35fa4c3",
+      "split": "train",
+      "codes": [
+        "AMA564"
+      ]
+    },
+    {
+      "groupId": "8541e213bdeb0dfd",
+      "split": "train",
+      "codes": [
+        "AMA620"
+      ]
+    },
+    {
+      "groupId": "87611c890171661e",
+      "split": "train",
+      "codes": [
+        "COMP4146"
+      ]
+    },
+    {
+      "groupId": "8824ad5bfea97d81",
+      "split": "train",
+      "codes": [
+        "AMA2512"
+      ]
+    },
+    {
+      "groupId": "8a2c1a7c4954037f",
+      "split": "train",
+      "codes": [
+        "DSAI3101"
+      ]
+    },
+    {
+      "groupId": "8a36d06aaf746294",
+      "split": "train",
+      "codes": [
+        "COMP2S01S"
+      ]
+    },
+    {
+      "groupId": "8a43ae2a03fe754e",
+      "split": "train",
+      "codes": [
+        "AMA2602",
+        "AMA3602",
+        "AMA514A"
+      ]
+    },
+    {
+      "groupId": "8a89cb7b5156419c",
+      "split": "train",
+      "codes": [
+        "COMP3311"
+      ]
+    },
+    {
+      "groupId": "8b051b2e6e7aa1da",
+      "split": "train",
+      "codes": [
+        "COMP4423"
+      ]
+    },
+    {
+      "groupId": "8bcba7305f274988",
+      "split": "train",
+      "codes": [
+        "COMP1004",
+        "DSAI1202"
+      ]
+    },
+    {
+      "groupId": "8c6ae869910999d1",
+      "split": "train",
+      "codes": [
+        "COMP5523"
+      ]
+    },
+    {
+      "groupId": "8c7e7e1c2b7b5a19",
+      "split": "train",
+      "codes": [
+        "COMP1012"
+      ]
+    },
+    {
+      "groupId": "8d0777aafb571040",
+      "split": "train",
+      "codes": [
+        "AMA4850",
+        "AMA505"
+      ]
+    },
+    {
+      "groupId": "8e4037ed7ed27ec1",
+      "split": "train",
+      "codes": [
+        "AMA67721",
+        "AMA67722"
+      ]
+    },
+    {
+      "groupId": "8ed94d1458669ef8",
+      "split": "train",
+      "codes": [
+        "COMP4432",
+        "DSAI4203"
+      ]
+    },
+    {
+      "groupId": "9072e9fed7678f17",
+      "split": "train",
+      "codes": [
+        "COMP3235",
+        "COMP5221"
+      ]
+    },
+    {
+      "groupId": "90a8c510019875a1",
+      "split": "train",
+      "codes": [
+        "COMP5570"
+      ]
+    },
+    {
+      "groupId": "924d6b11e5cde8ec",
+      "split": "train",
+      "codes": [
+        "COMP3211"
+      ]
+    },
+    {
+      "groupId": "92f1a2faafbf29c1",
+      "split": "train",
+      "codes": [
+        "AMA4750"
+      ]
+    },
+    {
+      "groupId": "93978dcc1238a811",
+      "split": "train",
+      "codes": [
+        "COMP1001"
+      ]
+    },
+    {
+      "groupId": "9458121af9eec291",
+      "split": "train",
+      "codes": [
+        "COMP5568"
+      ]
+    },
+    {
+      "groupId": "95e19e02936401b1",
+      "split": "train",
+      "codes": [
+        "AMA4707"
+      ]
+    },
+    {
+      "groupId": "9694e07548227970",
+      "split": "train",
+      "codes": [
+        "DSAI3102"
+      ]
+    },
+    {
+      "groupId": "9710740404bf077f",
+      "split": "train",
+      "codes": [
+        "COMP2421"
+      ]
+    },
+    {
+      "groupId": "97e9ae48811a1191",
+      "split": "train",
+      "codes": [
+        "COMP5585"
+      ]
+    },
+    {
+      "groupId": "981569a371ef8e1c",
+      "split": "train",
+      "codes": [
+        "AMA2882"
+      ]
+    },
+    {
+      "groupId": "99cc85ce827df28f",
+      "split": "train",
+      "codes": [
+        "AMA616"
+      ]
+    },
+    {
+      "groupId": "9a19973ed94c80f6",
+      "split": "train",
+      "codes": [
+        "COMP5572"
+      ]
+    },
+    {
+      "groupId": "9cb03675570375e3",
+      "split": "train",
+      "codes": [
+        "COMP5122"
+      ]
+    },
+    {
+      "groupId": "9d293478a08e10b4",
+      "split": "train",
+      "codes": [
+        "AMA4450"
+      ]
+    },
+    {
+      "groupId": "9d32fde896466e49",
+      "split": "train",
+      "codes": [
+        "COMP3S02"
+      ]
+    },
+    {
+      "groupId": "9da135faa6d86346",
+      "split": "train",
+      "codes": [
+        "DSAI4209"
+      ]
+    },
+    {
+      "groupId": "9ec47de6e76cd24e",
+      "split": "train",
+      "codes": [
+        "DSAI5105"
+      ]
+    },
+    {
+      "groupId": "9ef76e734489b1e4",
+      "split": "train",
+      "codes": [
+        "COMP2411"
+      ]
+    },
+    {
+      "groupId": "9f66325fc8db25e1",
+      "split": "train",
+      "codes": [
+        "AMA4801"
+      ]
+    },
+    {
+      "groupId": "9f78164328368ef8",
+      "split": "train",
+      "codes": [
+        "COMP5123"
+      ]
+    },
+    {
+      "groupId": "a0944b424e82230e",
+      "split": "train",
+      "codes": [
+        "DSAI1104"
+      ]
+    },
+    {
+      "groupId": "a0aa5edba19a2572",
+      "split": "train",
+      "codes": [
+        "AMA1D05"
+      ]
+    },
+    {
+      "groupId": "a0c077919e9f4fa7",
+      "split": "train",
+      "codes": [
+        "COMP5133"
+      ]
+    },
+    {
+      "groupId": "a27ef0204d461833",
+      "split": "train",
+      "codes": [
+        "AMA4688",
+        "AMA518"
+      ]
+    },
+    {
+      "groupId": "a3c6b90fd1a97a75",
+      "split": "train",
+      "codes": [
+        "COMP5521"
+      ]
+    },
+    {
+      "groupId": "a3f8b334f016f11b",
+      "split": "train",
+      "codes": [
+        "AMA536"
+      ]
+    },
+    {
+      "groupId": "a466c107dd49cf94",
+      "split": "train",
+      "codes": [
+        "COMP3021"
+      ]
+    },
+    {
+      "groupId": "a8dac41bd7599ead",
+      "split": "train",
+      "codes": [
+        "AMA3654"
+      ]
+    },
+    {
+      "groupId": "a8e7326e231e3e4d",
+      "split": "train",
+      "codes": [
+        "COMP3133"
+      ]
+    },
+    {
+      "groupId": "a964909458e9cd0a",
+      "split": "train",
+      "codes": [
+        "COMP3911:COMP3S03"
+      ]
+    },
+    {
+      "groupId": "a9cda7a1a73598fa",
+      "split": "train",
+      "codes": [
+        "AMA1D06W"
+      ]
+    },
+    {
+      "groupId": "a9d315efa131aa6e",
+      "split": "train",
+      "codes": [
+        "COMP4332"
+      ]
+    },
+    {
+      "groupId": "ab24170dfbc0dfc6",
+      "split": "train",
+      "codes": [
+        "AMA4300"
+      ]
+    },
+    {
+      "groupId": "ab7c0919ed730f26",
+      "split": "train",
+      "codes": [
+        "AMA567"
+      ]
+    },
+    {
+      "groupId": "ac753d3e322b6be6",
+      "split": "train",
+      "codes": [
+        "COMP5575"
+      ]
+    },
+    {
+      "groupId": "ad36b39abd7c4d09",
+      "split": "train",
+      "codes": [
+        "COMP3924"
+      ]
+    },
+    {
+      "groupId": "ae2d4b04d6ba217c",
+      "split": "train",
+      "codes": [
+        "COMP6434"
+      ]
+    },
+    {
+      "groupId": "afa092d0dd7d65c5",
+      "split": "train",
+      "codes": [
+        "COMP5578"
+      ]
+    },
+    {
+      "groupId": "afa57109b5d4e4d9",
+      "split": "train",
+      "codes": [
+        "COMP4442"
+      ]
+    },
+    {
+      "groupId": "b0c0389d9b8df8ad",
+      "split": "train",
+      "codes": [
+        "COMP3511"
+      ]
+    },
+    {
+      "groupId": "b20707b08c9fc2c7",
+      "split": "train",
+      "codes": [
+        "AMA4381"
+      ]
+    },
+    {
+      "groupId": "b2894d1d21738ac8",
+      "split": "train",
+      "codes": [
+        "COMP5941",
+        "DSAI5902"
+      ]
+    },
+    {
+      "groupId": "b3cc4cdcc19f8ea1",
+      "split": "train",
+      "codes": [
+        "COMP5538"
+      ]
+    },
+    {
+      "groupId": "b635d6c7f0f575ae",
+      "split": "train",
+      "codes": [
+        "COMP1BN02"
+      ]
+    },
+    {
+      "groupId": "b63b9ea4d8c33ce5",
+      "split": "train",
+      "codes": [
+        "DSAI3911"
+      ]
+    },
+    {
+      "groupId": "b754f607011ab92a",
+      "split": "train",
+      "codes": [
+        "COMP6521"
+      ]
+    },
+    {
+      "groupId": "b8beb487d5802277",
+      "split": "train",
+      "codes": [
+        "COMP5425"
+      ]
+    },
+    {
+      "groupId": "b9baf2a4f2bd84b7",
+      "split": "train",
+      "codes": [
+        "COMP5241"
+      ]
+    },
+    {
+      "groupId": "b9f389087a1064a1",
+      "split": "train",
+      "codes": [
+        "COMP5140"
+      ]
+    },
+    {
+      "groupId": "ba36cdc0b61aeb5e",
+      "split": "train",
+      "codes": [
+        "COMP5121"
+      ]
+    },
+    {
+      "groupId": "bdaa4085c1c1d64f",
+      "split": "train",
+      "codes": [
+        "COMP5569"
+      ]
+    },
+    {
+      "groupId": "be5f4c416fdf91d5",
+      "split": "train",
+      "codes": [
+        "COMP4438"
+      ]
+    },
+    {
+      "groupId": "c252ab4e28d4ce95",
+      "split": "train",
+      "codes": [
+        "COMP1411"
+      ]
+    },
+    {
+      "groupId": "c260becd728dd12c",
+      "split": "train",
+      "codes": [
+        "AMA539"
+      ]
+    },
+    {
+      "groupId": "c4892f09f0203974",
+      "split": "train",
+      "codes": [
+        "COMP3131"
+      ]
+    },
+    {
+      "groupId": "c502ba3bc50a2121",
+      "split": "train",
+      "codes": [
+        "AMA4325"
+      ]
+    },
+    {
+      "groupId": "c537ff59027405e8",
+      "split": "train",
+      "codes": [
+        "COMP5322"
+      ]
+    },
+    {
+      "groupId": "c5e4ba493f8952e1",
+      "split": "train",
+      "codes": [
+        "COMP4342"
+      ]
+    },
+    {
+      "groupId": "c5f799e58ad6230a",
+      "split": "train",
+      "codes": [
+        "COMP4001"
+      ]
+    },
+    {
+      "groupId": "c6fa50f755243d93",
+      "split": "train",
+      "codes": [
+        "COMP4512"
+      ]
+    },
+    {
+      "groupId": "c6fab0dc474cba94",
+      "split": "train",
+      "codes": [
+        "COMP4123"
+      ]
+    },
+    {
+      "groupId": "c789c3aed5b95602",
+      "split": "train",
+      "codes": [
+        "AMA1120"
+      ]
+    },
+    {
+      "groupId": "c7a1d3382ca4a1b6",
+      "split": "train",
+      "codes": [
+        "COMP5112"
+      ]
+    },
+    {
+      "groupId": "c8555c0d772813c5",
+      "split": "train",
+      "codes": [
+        "AMA506"
+      ]
+    },
+    {
+      "groupId": "c85693bfe9e0c334",
+      "split": "train",
+      "codes": [
+        "COMP2432"
+      ]
+    },
+    {
+      "groupId": "cb8cd697bad480a6",
+      "split": "train",
+      "codes": [
+        "COMP1011"
+      ]
+    },
+    {
+      "groupId": "ccc80fe4335f12a4",
+      "split": "train",
+      "codes": [
+        "AMA4420"
+      ]
+    },
+    {
+      "groupId": "cf2f600d35953098",
+      "split": "train",
+      "codes": [
+        "AMA570"
+      ]
+    },
+    {
+      "groupId": "cfaf89863484f1bc",
+      "split": "train",
+      "codes": [
+        "AMA6887"
+      ]
+    },
+    {
+      "groupId": "cfdd1c159b25dbdd",
+      "split": "train",
+      "codes": [
+        "AMA615"
+      ]
+    },
+    {
+      "groupId": "cff578fdb1445d30",
+      "split": "train",
+      "codes": [
+        "AMA2D02"
+      ]
+    },
+    {
+      "groupId": "d0629d2eda6bbeb7",
+      "split": "train",
+      "codes": [
+        "COMP5220"
+      ]
+    },
+    {
+      "groupId": "d0b3d0676e38cb34",
+      "split": "train",
+      "codes": [
+        "COMP5580"
+      ]
+    },
+    {
+      "groupId": "d13834d399411b51",
+      "split": "train",
+      "codes": [
+        "COMP5422"
+      ]
+    },
+    {
+      "groupId": "d20f0eceb28a1892",
+      "split": "train",
+      "codes": [
+        "COMP3531"
+      ]
+    },
+    {
+      "groupId": "d21f0d48f560b92a",
+      "split": "train",
+      "codes": [
+        "COMP5131",
+        "COMP5139"
+      ]
+    },
+    {
+      "groupId": "d2afde4a98dd6e89",
+      "split": "train",
+      "codes": [
+        "COMP5577",
+        "DSAI5210"
+      ]
+    },
+    {
+      "groupId": "d59b825d1fa15b06",
+      "split": "train",
+      "codes": [
+        "AMA2222"
+      ]
+    },
+    {
+      "groupId": "d77b6293c7e7ee40",
+      "split": "train",
+      "codes": [
+        "AMA579"
+      ]
+    },
+    {
+      "groupId": "d87bc94eb2b57716",
+      "split": "train",
+      "codes": [
+        "AMA621"
+      ]
+    },
+    {
+      "groupId": "d8f4650b528c9e85",
+      "split": "train",
+      "codes": [
+        "AMA4602"
+      ]
+    },
+    {
+      "groupId": "d989c6c2fcdd26a6",
+      "split": "validation",
+      "codes": [
+        "DSAI5209"
+      ]
+    },
+    {
+      "groupId": "d9b8f6108b6edf07",
+      "split": "validation",
+      "codes": [
+        "COMP5926"
+      ]
+    },
+    {
+      "groupId": "d9cd665709111dcf",
+      "split": "validation",
+      "codes": [
+        "AMA2200",
+        "COMP2012"
+      ]
+    },
+    {
+      "groupId": "d9f737b97cd809f0",
+      "split": "validation",
+      "codes": [
+        "AMA530"
+      ]
+    },
+    {
+      "groupId": "db4916fc0a8c38eb",
+      "split": "validation",
+      "codes": [
+        "AMA2511"
+      ]
+    },
+    {
+      "groupId": "dba7510d6eb8db67",
+      "split": "validation",
+      "codes": [
+        "COMP3421"
+      ]
+    },
+    {
+      "groupId": "dc411f86b9a1eed5",
+      "split": "validation",
+      "codes": [
+        "COMP5586"
+      ]
+    },
+    {
+      "groupId": "dce45c3da1aa41f7",
+      "split": "validation",
+      "codes": [
+        "AMA2380",
+        "AMA290"
+      ]
+    },
+    {
+      "groupId": "dd49629dd12e4d86",
+      "split": "validation",
+      "codes": [
+        "AMA1100"
+      ]
+    },
+    {
+      "groupId": "dd793084017bd789",
+      "split": "validation",
+      "codes": [
+        "COMP4011"
+      ]
+    },
+    {
+      "groupId": "dd8a661e7122d945",
+      "split": "validation",
+      "codes": [
+        "AMA3710"
+      ]
+    },
+    {
+      "groupId": "ddeb4b6ff177b73e",
+      "split": "validation",
+      "codes": [
+        "AMA3707"
+      ]
+    },
+    {
+      "groupId": "de8170eee49cb337",
+      "split": "validation",
+      "codes": [
+        "COMP5423"
+      ]
+    },
+    {
+      "groupId": "de81946d82a53df4",
+      "split": "validation",
+      "codes": [
+        "AMA568"
+      ]
+    },
+    {
+      "groupId": "df00f6ae144ad233",
+      "split": "validation",
+      "codes": [
+        "AMA4390"
+      ]
+    },
+    {
+      "groupId": "df157dd15a259c2e",
+      "split": "validation",
+      "codes": [
+        "AMA2707"
+      ]
+    },
+    {
+      "groupId": "df94a7f1dde612d4",
+      "split": "validation",
+      "codes": [
+        "DSAI3201"
+      ]
+    },
+    {
+      "groupId": "df9c8120972de9da",
+      "split": "validation",
+      "codes": [
+        "DSAI5202"
+      ]
+    },
+    {
+      "groupId": "e05f1bac39e1156e",
+      "split": "validation",
+      "codes": [
+        "COMP4436",
+        "COMP5582"
+      ]
+    },
+    {
+      "groupId": "e09db9a8e29ca408",
+      "split": "validation",
+      "codes": [
+        "AMA1D07"
+      ]
+    },
+    {
+      "groupId": "e118825ae5365a61",
+      "split": "validation",
+      "codes": [
+        "AMA3231"
+      ]
+    },
+    {
+      "groupId": "e2344def3c9fde1b",
+      "split": "validation",
+      "codes": [
+        "COMP5512"
+      ]
+    },
+    {
+      "groupId": "e303a16bb0867f55",
+      "split": "validation",
+      "codes": [
+        "COMP4431"
+      ]
+    },
+    {
+      "groupId": "e3d3f2b6de582e5b",
+      "split": "validation",
+      "codes": [
+        "AMA3820",
+        "AMA502"
+      ]
+    },
+    {
+      "groupId": "e4187e1b47c1624f",
+      "split": "validation",
+      "codes": [
+        "AMA1000"
+      ]
+    },
+    {
+      "groupId": "e523e040e3e9e05c",
+      "split": "validation",
+      "codes": [
+        "COMP4127",
+        "COMP5135"
+      ]
+    },
+    {
+      "groupId": "e731077377c78c93",
+      "split": "validation",
+      "codes": [
+        "COMP4334"
+      ]
+    },
+    {
+      "groupId": "e731ec3125b5f152",
+      "split": "validation",
+      "codes": [
+        "COMP5554"
+      ]
+    },
+    {
+      "groupId": "e73a1d2e1831c30e",
+      "split": "validation",
+      "codes": [
+        "AMA2202"
+      ]
+    },
+    {
+      "groupId": "e86a14c44629e95b",
+      "split": "validation",
+      "codes": [
+        "COMP4136",
+        "DSAI4201"
+      ]
+    },
+    {
+      "groupId": "e8c4c5eb55d94cb7",
+      "split": "test",
+      "codes": [
+        "AMA4951",
+        "AMA4952",
+        "COMP4913",
+        "DSAI4901"
+      ]
+    },
+    {
+      "groupId": "e94727a80785536b",
+      "split": "test",
+      "codes": [
+        "AMA4370"
+      ]
+    },
+    {
+      "groupId": "e9643c0794dc29c2",
+      "split": "test",
+      "codes": [
+        "AMA619"
+      ]
+    },
+    {
+      "groupId": "e96a20479c617d8e",
+      "split": "test",
+      "codes": [
+        "COMP3134"
+      ]
+    },
+    {
+      "groupId": "ea5f117e5a561cb1",
+      "split": "test",
+      "codes": [
+        "COMP5543",
+        "DSAI5201"
+      ]
+    },
+    {
+      "groupId": "eaee85e2998c8c02",
+      "split": "test",
+      "codes": [
+        "AMA3640",
+        "AMA529"
+      ]
+    },
+    {
+      "groupId": "eba118790f0af7d6",
+      "split": "test",
+      "codes": [
+        "AMA1751"
+      ]
+    },
+    {
+      "groupId": "ec05455b4369c59c",
+      "split": "test",
+      "codes": [
+        "DSAI5207"
+      ]
+    },
+    {
+      "groupId": "ec09a46e7212d7b6",
+      "split": "test",
+      "codes": [
+        "COMP5571"
+      ]
+    },
+    {
+      "groupId": "ecbe50e1bb3af376",
+      "split": "test",
+      "codes": [
+        "COMP3233",
+        "COMP5222"
+      ]
+    },
+    {
+      "groupId": "ed51b4c774aa8eb7",
+      "split": "test",
+      "codes": [
+        "AMA3S01"
+      ]
+    },
+    {
+      "groupId": "efd59b383a68a9be",
+      "split": "test",
+      "codes": [
+        "COMP5355"
+      ]
+    },
+    {
+      "groupId": "effaa8628ddd99ad",
+      "split": "test",
+      "codes": [
+        "AMA576"
+      ]
+    },
+    {
+      "groupId": "f013d6bc93504459",
+      "split": "test",
+      "codes": [
+        "COMP3423",
+        "COMP5517"
+      ]
+    },
+    {
+      "groupId": "f0c5d31973d7d38f",
+      "split": "test",
+      "codes": [
+        "AMA577"
+      ]
+    },
+    {
+      "groupId": "f12e7ede73096fee",
+      "split": "test",
+      "codes": [
+        "AMA618"
+      ]
+    },
+    {
+      "groupId": "f16b8d757f3ee5b2",
+      "split": "test",
+      "codes": [
+        "AMA3658"
+      ]
+    },
+    {
+      "groupId": "f21e0f6819603944",
+      "split": "test",
+      "codes": [
+        "AMA1703"
+      ]
+    },
+    {
+      "groupId": "f2339c203fbdc24d",
+      "split": "test",
+      "codes": [
+        "AMA4330"
+      ]
+    },
+    {
+      "groupId": "f2aaeb1f8e9b4d6d",
+      "split": "test",
+      "codes": [
+        "AMA3304"
+      ]
+    },
+    {
+      "groupId": "f2d9efd7a53b4be2",
+      "split": "test",
+      "codes": [
+        "AMA1707"
+      ]
+    },
+    {
+      "groupId": "f35264eacd3636d1",
+      "split": "test",
+      "codes": [
+        "COMP5134"
+      ]
+    },
+    {
+      "groupId": "f6029bc095047620",
+      "split": "test",
+      "codes": [
+        "AMA566"
+      ]
+    },
+    {
+      "groupId": "f706cbdb50bc70ab",
+      "split": "test",
+      "codes": [
+        "AMA3340"
+      ]
+    },
+    {
+      "groupId": "f781d75626ce79d5",
+      "split": "test",
+      "codes": [
+        "AMA580"
+      ]
+    },
+    {
+      "groupId": "f86eb78e75acff3a",
+      "split": "test",
+      "codes": [
+        "COMP5327"
+      ]
+    },
+    {
+      "groupId": "fa1526622dfdbebe",
+      "split": "test",
+      "codes": [
+        "AMA67711",
+        "AMA67712",
+        "AMA67713",
+        "AMA67714"
+      ]
+    },
+    {
+      "groupId": "fb940d18d1244ee8",
+      "split": "test",
+      "codes": [
+        "COMP5566"
+      ]
+    },
+    {
+      "groupId": "fd1ad7e20fb0700a",
+      "split": "test",
+      "codes": [
+        "COMP4135"
+      ]
+    },
+    {
+      "groupId": "ff5488341f9f1ef7",
+      "split": "test",
+      "codes": [
+        "DSAI4208"
+      ]
+    },
+    {
+      "groupId": "ffc7aa3b28a3e7f9",
+      "split": "test",
+      "codes": [
+        "AMA1006",
+        "AMA1606"
+      ]
+    }
+  ],
+  "warnings": [
+    "All samples require semantic/factual review.",
+    "Chinese-only draft; not a multilingual benchmark.",
+    "Shared prompt templates across splits measure course generalization, not unseen task-template generalization.",
+    "Lexical grouping cannot rule out all semantic duplicates.",
+    "No training jobs, uploads, billing or model weights produced."
+  ],
+  "supersededBy": "finetuning/v5"
+}

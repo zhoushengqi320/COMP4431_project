@@ -1,0 +1,115 @@
+{
+  "recordedAt": "2026-11-03T13:19:28.638Z",
+  "stage": "after",
+  "model": "qwen-plus",
+  "catalogue": "local snapshot",
+  "results": [
+    {
+      "message": "请问Comp4431是什么课",
+      "status": 200,
+      "latencyMs": 4206,
+      "answer": {
+        "text": "COMP4431 是一门面向高年级本科生的人工智能导论课程，注重概念理解、算法建模与编程实践。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4431",
+            "title": "Artificial Intelligence",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍人工智能的基本概念\n2. 使学生掌握人工智能技术的编程知识和技能\n3. 掌握问题建模和典型智能算法\n4. 了解人工智能的技术发展\n5. 使学生意识到与人工智能相关的伦理问题。",
+            "rating": 4.2,
+            "ratingSource": "simulated",
+            "summary": "这门课带你认识人工智能的基本思想和实用技术：从智能代理的设计、搜索算法（如启发式搜索、遗传算法）到机器学习三大类型（监督/无监督/强化学习），再到神经网络和支持向量机等模型。你还会探讨AI在现实中的应用及相关的伦理问题。课程结合讲课、练习、实验和项目，帮助你动手实现并思考AI如何工作、为何重要。",
+            "requiredPrerequisites": "COMP2011/COMP2013/DSAI2201",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "COMP2011",
+                  "COMP2013",
+                  "DSAI2201"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程：COMP2011/COMP2013/DSAI2201",
+            "reason": "这门课带你认识人工智能的基本思想和实用技术：从智能代理的设计、搜索算法（如启发式搜索、遗传算法）到机器学习三大类型（监督/无监督/强化学习），再到神经网络和支持向量机等模型。你还会探讨AI在现实中的应用及相关的伦理问题。课程结合讲课、练习、实验和项目，帮助你动手实现并思考AI如何工作、为何重要。"
+          }
+        ]
+      }
+    },
+    {
+      "message": "请介绍DSAI2201，包括必要先修和建议先修",
+      "status": 200,
+      "latencyMs": 8898,
+      "answer": {
+        "text": "DSAI2201 是数据结构与算法的入门核心课，重点训练学生用编程解决实际计算问题的能力。课程涵盖线性与树形数据结构、经典排序搜索算法、图算法及贪心/动态规划等设计技术，并通过编程作业强化实践能力。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "DSAI2201",
+            "title": "Data Structures and Algorithms",
+            "department": "dsai",
+            "level": "2",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "向学生介绍数据结构和算法，并教授如何使用它们解决计算问题。",
+            "rating": 4.5,
+            "ratingSource": "simulated",
+            "summary": "本课程教学生如何组织数据（如链表、树、堆）和设计高效步骤（如排序、搜索、动态规划）来解决编程问题。内容结合讲座与上机实验，通过书面分析和编程作业培养逻辑思维与代码实现能力，是人工智能、大数据等进阶课程的重要基础。",
+            "requiredPrerequisites": "COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 1,
+                "courses": [
+                  "COMP1011",
+                  "COMP1012",
+                  "AMA1110",
+                  "AMA1501",
+                  "AMA1751"
+                ]
+              },
+              {
+                "level": 2,
+                "courses": [
+                  "ENG2002",
+                  "AMA2634",
+                  "AMA2111"
+                ]
+              },
+              {
+                "level": 3,
+                "courses": [
+                  "LGT3109"
+                ]
+              }
+            ],
+            "prerequisite": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "reason": "本课程教学生如何组织数据（如链表、树、堆）和设计高效步骤（如排序、搜索、动态规划）来解决编程问题。内容结合讲座与上机实验，通过书面分析和编程作业培养逻辑思维与代码实现能力，是人工智能、大数据等进阶课程的重要基础。"
+          }
+        ],
+        "checks": [
+          "必要先修：须已完成 COMP1011／COMP1012／ENG2002／LGT3109 中任一科，以及 AMA1110／AMA1501／AMA2634 中任一科，以及 AMA1751／AMA2111 中任一科 —— 请核对成绩单确认是否全部满足",
+          "建议背景：具备基础编程经验（如 Python 或 C）将更易跟上实验环节"
+        ],
+        "sources": [
+          {
+            "title": "PolyU course catalogue",
+            "detail": "DSAI2201 | Data Structures and Algorithms | 3 credits | Faculty of Engineering | dept dsai | level 2",
+            "url": "https://www.polyu.edu.hk/eng/study/undergraduate/programmes/beng-computer-science/"
+          }
+        ]
+      }
+    }
+  ]
+}

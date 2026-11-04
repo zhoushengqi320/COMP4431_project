@@ -1,0 +1,134 @@
+{
+  "recordedAt": "2026-11-03T13:52:05.773Z",
+  "model": "qwen-plus",
+  "catalogue": "local snapshot",
+  "message": "请继续推荐更多相关课程，避开之前介绍过的课程。",
+  "status": 200,
+  "latencyMs": 21688,
+  "previousCodes": [
+    "COMP4432",
+    "AMA4680",
+    "COMP5541"
+  ],
+  "answer": {
+    "text": "根据你的需求，我为你推荐三门新课程：DSAI4203（机器学习核心原理与应用）、AMA573（统计视角下的机器学习实践）和 EIE4121（网络安全场景中的机器学习）。它们均未在前次推荐中出现，分别侧重基础建模、金融数据分析和安全攻防应用，覆盖不同学科背景与实际问题场景。",
+    "courses": [
+      {
+        "format": "course-introduction-v1",
+        "language": "zh",
+        "code": "DSAI4203",
+        "title": "Machine Learning",
+        "department": "dsai",
+        "level": "4",
+        "credits": 3,
+        "faculty": "Faculty of Engineering",
+        "schoolId": "polyu",
+        "id": "资料未提供",
+        "objectives": "1. 介绍现代机器学习的基本原理、概念和模型；\n2. 介绍机器学习技术的最新进展及其在模式识别、计算机视觉及其他领域的应用。",
+        "rating": 5,
+        "ratingSource": "simulated",
+        "summary": "这是一门面向工程学生的机器学习入门课，系统讲解从数学基础（线性代数、概率）到主流模型（通过一连串问题作判断的方法、SVM、CNN、自动编码器）的全链条知识，并通过手写识别、人脸检测、物体跟踪等真实案例帮助你动手实践。适合想打牢基础并快速上手应用的学生。",
+        "learningOutcomes": [
+          "掌握回归、分类、聚类等基本学习任务的原理与适用场景",
+          "能使用通过多层计算从例子中学习的模型、根据数据特征区分类别的方法等模型解决手写识别、目标检测等实际问题",
+          "理解过拟合、偏差-方差困境等关键性能问题并运用交叉验证评估模型",
+          "通过MNIST、人脸检测等案例，动手实现从数据预处理到模型部署的完整流程"
+        ],
+        "requiredPrerequisites": "建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。",
+        "recommendedPrerequisites": "资料未提供，需核实",
+        "prerequisiteLevels": [],
+        "prerequisite": "建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。",
+        "reason": "这是一门面向工程学生的机器学习入门课，系统讲解从数学基础（线性代数、概率）到主流模型（通过一连串问题作判断的方法、SVM、CNN、自动编码器）的全链条知识，并通过手写识别、人脸检测、物体跟踪等真实案例帮助你动手实践。适合想打牢基础并快速上手应用的学生。"
+      },
+      {
+        "format": "course-introduction-v1",
+        "language": "zh",
+        "code": "AMA573",
+        "title": "Statistical Machine Learning",
+        "department": "ama",
+        "level": "5",
+        "credits": 3,
+        "faculty": "Faculty of Science",
+        "schoolId": "polyu",
+        "id": "资料未提供",
+        "objectives": "向学生介绍统计机器学习的关键原理和方法。本课程培养学生的Python数据分析和模型构建能力，并通过金融及相关应用领域的实践，评估和解释结果。",
+        "rating": 4.9,
+        "ratingSource": "simulated",
+        "summary": "这门课从统计学角度切入机器学习，强调用Python分析真实金融数据。你会学习如何用回归预测趋势、用聚类发现客户分群、用PCA简化复杂指标，并在投资、风控等业务场景中解释模型结果，特别适合对数据驱动决策感兴趣的同学。",
+        "learningOutcomes": [
+          "用Python完成金融数据清洗、可视化和特征工程",
+          "构建并比较线性回归、逻辑回归、通过一连串问题作判断的方法等模型用于预测和分类",
+          "应用主成分分析（PCA）等降维方法处理高维金融数据",
+          "结合时间序列建模与聚类技术，分析真实金融场景中的风险与模式"
+        ],
+        "requiredPrerequisites": "无（课程库明确注明）",
+        "recommendedPrerequisites": "资料未提供，需核实",
+        "prerequisiteLevels": [],
+        "prerequisite": "无",
+        "reason": "这门课从统计学角度切入机器学习，强调用Python分析真实金融数据。你会学习如何用回归预测趋势、用聚类发现客户分群、用PCA简化复杂指标，并在投资、风控等业务场景中解释模型结果，特别适合对数据驱动决策感兴趣的同学。"
+      },
+      {
+        "format": "course-introduction-v1",
+        "language": "zh",
+        "code": "EIE4121",
+        "title": "Machine Learning in Cyber-security",
+        "department": "eee",
+        "level": "4",
+        "credits": 3,
+        "faculty": "Faculty of Engineering",
+        "schoolId": "polyu",
+        "id": "资料未提供",
+        "objectives": "1. 介绍网络安全中机器学习技术的概念\n2. 发展使用最新技术解决网络安全实际问题的技能",
+        "rating": 4.2,
+        "ratingSource": "simulated",
+        "summary": "这门课把机器学习直接用在网络安全一线：教你用深度学习识别恶意软件、检测钓鱼邮件、发现异常登录行为。课程含大量实验和小型项目，使用TensorFlow等工具实战，适合对AI+安全交叉领域感兴趣的学生。",
+        "learningOutcomes": [
+          "识别恶意软件、钓鱼网站和异常网络流量的关键特征",
+          "使用CNN、LSTM、自编码器等模型构建安全检测系统",
+          "在实验中评估不同算法在恶意代码分类和异常检测中的表现",
+          "通过实操项目掌握从数据采集、特征提取到模型部署的全流程"
+        ],
+        "requiredPrerequisites": "无（课程库明确注明）",
+        "recommendedPrerequisites": "资料未提供，需核实",
+        "prerequisiteLevels": [],
+        "prerequisite": "无",
+        "reason": "这门课把机器学习直接用在网络安全一线：教你用深度学习识别恶意软件、检测钓鱼邮件、发现异常登录行为。课程含大量实验和小型项目，使用TensorFlow等工具实战，适合对AI+安全交叉领域感兴趣的学生。"
+      }
+    ],
+    "overview": "本次推荐三门全新课程：DSAI4203是面向工程学生的机器学习系统性入门课，涵盖监督/无监督学习及CV应用；AMA573以统计思维为核心，用Python在金融场景中训练模型；EIE4121聚焦网络安全实战，教你在恶意软件检测、钓鱼识别和异常行为分析中应用机器学习技术。",
+    "followUps": [
+      "DSAI4203: 这三门课哪一门的数学要求最低？",
+      "DSAI4203: 有没有提供Python编程练习的课？",
+      "DSAI4203: 我想先学数学基础再学机器学习，有推荐吗？"
+    ],
+    "recommendationContext": {
+      "query": "我想学machine learning相关内容，给我推荐一些课",
+      "seenCodes": [
+        "COMP4432",
+        "AMA4680",
+        "COMP5541",
+        "DSAI4203",
+        "AMA573",
+        "EIE4121"
+      ],
+      "reserveCodes": [
+        "AP40012",
+        "COMP2014",
+        "COMP5564",
+        "DSAI5104",
+        "DSAI5206",
+        "EIE4122",
+        "MM5433",
+        "MM6761",
+        "MM6762",
+        "AMA564",
+        "AMA577",
+        "DSAI4208"
+      ]
+    },
+    "moreCourses": {
+      "available": true,
+      "prompt": "请继续推荐更多相关课程，避开之前介绍过的课程。"
+    }
+  }
+}

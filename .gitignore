@@ -8,3 +8,6 @@ data/
 artifacts/
 deliverables/
 .artifacts-build/
+.venv-finetuning/
+finetuning/tokenizer-cache/
+finetuning/observations/

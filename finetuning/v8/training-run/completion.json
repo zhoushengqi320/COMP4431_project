@@ -1,0 +1,26 @@
+{
+  "observedAt": "2026-11-03T23:34:41.600Z",
+  "requestId": "c63548c1-719d-99b6-8332-23e679377049",
+  "job_id": "ft-202611040019-7fc7",
+  "job_name": "polypath-v8-pilot-20261104",
+  "status": "SUCCEEDED",
+  "model": "qwen3-8b",
+  "base_model": "qwen3-8b",
+  "training_type": "efficient_sft",
+  "hyper_parameters": {
+    "n_epochs": 1,
+    "batch_size": 32,
+    "max_length": 8192,
+    "data_augmentation": false,
+    "learning_rate": "3e-4"
+  },
+  "create_time": "2026-11-04 00:19:53",
+  "end_time": "2026-11-04 01:01:22",
+  "usage": 2724362,
+  "finetuned_output": "qwen3-8b-ft-202611040019-7fc7",
+  "capturedLogEntries": 48,
+  "trainingFeeCnyEstimatedFromReportedUsage": 16.35,
+  "feeIsFinalBill": false,
+  "modelDeployed": false,
+  "evaluationPerformed": false
+}

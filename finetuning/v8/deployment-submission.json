@@ -1,0 +1,37 @@
+{
+  "attemptedAt": "2026-11-03T23:43:05.531Z",
+  "clientDate": "2026-11-04",
+  "status": "created",
+  "userInstruction": "部署",
+  "authorizationScope": "LoRA token-billed deployment, project configuration and a few connectivity tests; no reserved hardware deployment or large evaluation sweep",
+  "request": {
+    "model_name": "qwen3-8b-ft-202611040019-7fc7",
+    "plan": "lora",
+    "capacity": 1,
+    "name": "PolyPath-v8-course-advisor"
+  },
+  "pricing": {
+    "source": "https://help.aliyun.com/zh/model-studio/model-deployment-token",
+    "checkedOn": "2026-11-04",
+    "idleCharge": false,
+    "inputCnyPerMillion": 0.5,
+    "outputCnyPerMillionNonThinking": 2
+  },
+  "httpStatus": 200,
+  "requestId": "c17af242-f7fb-9c5c-b8f4-91d881e867e9",
+  "output": {
+    "name": "PolyPath-v8-course-advisor",
+    "deployed_model": "qwen3-8b-01fa13690bf1",
+    "gmt_create": "2026-11-04T07:43:06.123",
+    "gmt_modified": "2026-11-04T07:43:06.123",
+    "status": "PENDING",
+    "model_name": "qwen3-8b-ft-202611040019-7fc7",
+    "base_model": "qwen3-8b",
+    "workspace_id": "llm-n9hc7d9pu81gvbem",
+    "charge_type": "post_paid",
+    "creator": "1036551255633303",
+    "modifier": "1036551255633303",
+    "plan": "lora",
+    "mu_capacity": {}
+  }
+}

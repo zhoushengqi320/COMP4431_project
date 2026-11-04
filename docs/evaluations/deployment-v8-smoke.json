@@ -1,0 +1,538 @@
+{
+  "startedAt": "2026-11-03T23:50:09.720Z",
+  "model": "qwen3-8b-01fa13690bf1",
+  "deploymentPlan": "lora",
+  "scope": "Connectivity and course-format smoke checks, not independent answer-accuracy evaluation",
+  "upstream": [
+    {
+      "httpStatus": 200,
+      "latencyMs": 3964,
+      "requestedModel": "qwen3-8b-01fa13690bf1",
+      "returnedModel": "qwen3-8b-01fa13690bf1",
+      "requestId": "chatcmpl-0669f6d4-5bd1-9ae2-b1d4-cca349b76f4b",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 2045,
+        "completion_tokens": 265,
+        "total_tokens": 2310
+      },
+      "rawContent": "{\"text\":\"下面介绍COMP4431。\",\"courses\":[{\"code\":\"COMP4431\",\"learningOutcomes\":[\"了解人工智能的基本概念。\",\"掌握人工智能技术的编程知识和技能。\",\"掌握问题建模和典型智能算法。\",\"了解人工智能的技术发展。\"],\"summary\":\"这门课的学习重点是：介绍人工智能的基本概念；使学生掌握人工智能技术的编程知识和技能。学习方式：在课堂上，学生将接触到人工智能的概念、算法和应用，并通过练习、实验室和项目进行补充。\",\"preparation\":{\"levels\":[{\"level\":2,\"courses\":[\"COMP2011\",\"COMP2013\"]},{\"level\":2,\"courses\":[\"DSAI2201\"]}],\"description\":\"先修课程：COMP2011/COMP2013/DSAI2201\",\"note\":\"以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。\",\"sourceText\":\"先修课程：COMP2011/COMP2013/DSAI2201\"}}],\"followUps\":[\"学习COMP4431前可以怎样预习？\",\"COMP4431的主要内容有哪些实际用途？\",\"COMP4431的先修课程分别讲什么？\"]}"
+    },
+    {
+      "httpStatus": 200,
+      "latencyMs": 12918,
+      "requestedModel": "qwen3-8b-01fa13690bf1",
+      "returnedModel": "qwen3-8b-01fa13690bf1",
+      "requestId": "chatcmpl-db7b1fdb-411e-993e-865b-9d6cc3889c17",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 8287,
+        "completion_tokens": 1029,
+        "total_tokens": 9316
+      },
+      "rawContent": "{\"text\":\"本次推荐COMP4432、DSAI4203、AMA4680。\",\"overview\":\"围绕machine learning方向，可以先了解这3门课：COMP4432（Machine Learning），学习重点是介绍现代机器学习的基本原理、概念和模型；DSAI4203（Machine Learning），学习重点是介绍现代机器学习的基本原理、概念和模型；AMA4680（Statistical Machine Learning），学习重点是提供机器学习的基本介绍。下面逐门介绍课程内容与学习收获。\",\"courses\":[{\"code\":\"COMP4432\",\"learningOutcomes\":[\"了解机器学习基础。\",\"了解模型和技术。\",\"了解应用。\",\"了解手写识别挑战，例如 MNIST。\"],\"summary\":\"这门课的学习重点是：介绍现代机器学习的基本原理、概念和模型。学习方式：39学时的课堂活动，包括主要概念和模型的讲授，以及应用案例研究、习题课、课堂/小组讨论、实验室作业和学生报告。\",\"preparation\":{\"levels\":[],\"description\":\"无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）\",\"note\":\"以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。\",\"sourceText\":\"无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）\"}},{\"code\":\"DSAI4203\",\"learningOutcomes\":[\"了解机器学习基础。\",\"了解模型与技术。\",\"了解应用。\",\"了解手写识别挑战，例如 MNIST。\"],\"summary\":\"这门课的学习重点是：介绍现代机器学习的基本原理、概念和模型。学习方式：39学时的课堂活动，包括主要概念和模型的讲授，以及应用案例研究、习题课、课堂/小组讨论、实验和学生报告。根据需要，还将分配阅读相关研究论文。\",\"preparation\":{\"levels\":[],\"description\":\"建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。\",\"note\":\"以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。\",\"sourceText\":\"建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。\"}},{\"code\":\"AMA4680\",\"learningOutcomes\":[\"了解监督学习、回归与模型选择：广义线性模型；岭回归、模型选择、降维、主成分分析、套索；再生核、核岭回归、正则化；随机梯度下降、在线学习。\",\"了解监督学习、分类：朴素贝叶斯；决策树；K近邻分类器；逻辑回归；支持向量机、核化支持向量机；评分分类器，受试者操作特征曲线，AUC评分，不平衡数据。\",\"了解无监督学习、聚类：K均值；凝聚层次聚类。\",\"了解其他选修主题：交叉验证；人工神经网络、反向传播、深度学习算法简介；机器学习软件包简介；随机森林。\"],\"summary\":\"这门课的学习重点是：提供机器学习的基本介绍。学习方式：本课程主要通过计算机实验室的讲授和辅导进行。强调学习算法的理论背景及其实际应用。\",\"preparation\":{\"levels\":[],\"description\":\"先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。\",\"note\":\"以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。\",\"sourceText\":\"先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。\"}}],\"moreCourseCodes\":[\"AP40012\",\"AP40013\",\"COMP2014\",\"COMP5541\",\"COMP5564\",\"CSE6016\",\"DSAI5104\",\"EIE4121\",\"MM5433\",\"MM6761\",\"MM6762\",\"DSAI4208\"],\"followUps\":[\"这些machine learning课程各有什么侧重点？\",\"学习machine learning前应该怎样准备？\",\"COMP4432主要讲什么？\"]}"
+    },
+    {
+      "httpStatus": 200,
+      "latencyMs": 11144,
+      "requestedModel": "qwen3-8b-01fa13690bf1",
+      "returnedModel": "qwen3-8b-01fa13690bf1",
+      "requestId": "chatcmpl-a7dabf67-7bdf-9402-b3a7-ec1408237708",
+      "finishReason": "stop",
+      "usage": {
+        "prompt_tokens": 8469,
+        "completion_tokens": 899,
+        "total_tokens": 9368
+      },
+      "rawContent": "{\"text\":\"本次推荐AMA573、AP40012、AP40013。\",\"overview\":\"围绕machine learning方向，可以先了解这3门课：AMA573（Statistical Machine Learning），学习重点是「向学生介绍统计机器学习的关键原理和方法」；AP40012（Machine Learning in Physics），学习重点是「介绍机器学习的基本原理及其在物理科学中的应用」；AP40013（Energy Conversion and Storage with Machine Learning），学习重点是「1. 介绍能源转换与存储过程中最新技术的概念、原理和应用材料。」。下面逐门介绍课程内容与学习收获。\",\"courses\":[{\"code\":\"AMA573\",\"learningOutcomes\":[\"了解统计学习与计算分析基础。\",\"了解回归与分类模型。\",\"了解时间序列建模与降维技术。\",\"了解现代机器学习算法及其应用。\"],\"summary\":\"这门课的学习重点是：向学生介绍统计机器学习的关键原理和方法。内容包括统计学习与计算分析基础：概览统计学习，复习概率与统计，并介绍Python在数据分析中的应用。学习方式：本课程主要通过讲座和基于练习的辅导课进行讲授。\",\"preparation\":{\"levels\":[],\"description\":\"无\",\"note\":\"以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。\",\"sourceText\":\"无\"}},{\"code\":\"AP40012\",\"learningOutcomes\":[\"了解线性回归与分类。\",\"了解神经网络。\",\"了解机器学习理论。\",\"了解在物理科学中的应用。\"],\"summary\":\"这门课的学习重点是：介绍机器学习的基本原理及其在物理科学中的应用。内容包括线性回归与分类：数据库、特征表示、训练集、误差函数、梯度下降、一元和多元回归、逻辑回归。学习方式：授课：课堂上讲解概念，并通过物理/工程问题的示例和算法进行说明。\",\"preparation\":{\"levels\":[{\"level\":2,\"courses\":[\"AP20005\",\"COMP1012\"]}],\"description\":\"先修：AP20005 或 COMP1012\",\"note\":\"以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。\",\"sourceText\":\"先修：AP20005 或 COMP1012\"}},{\"code\":\"AP40013\",\"learningOutcomes\":[\"了解能源转换与存储过程中最新技术的概念、原理和应用材料。\",\"了解能源存储材料和设备中的机器学习。\",\"了解机器学习在太阳能电池、电池、电容器和异相催化材料设计中的应用实例。\"],\"summary\":\"这门课的学习重点是：1. 介绍能源转换与存储过程中最新技术的概念、原理和应用材料。内容包括能源转换与存储的材料：太阳能电池、电池、电容器和异相催化的关键材料及其物理原理。学习方式：讲授：解释各种能源转换与存储过程的工作原理，重点讲解太阳能电池、电池、超级电容器和异相催化的关键材料问题；说明基本的机器学习概念如何应用于材料设计和设备系统管理。\",\"preparation\":{\"levels\":[{\"level\":4,\"courses\":[\"AP20002\"]}],\"description\":\"先修课程：材料科学（AP20002）\\n排除课程：能源转换与存储的材料（AP40011）\",\"note\":\"以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。\",\"sourceText\":\"先修课程：材料科学（AP20002）\\n\\n排除课程：能源转换与存储的材料（AP40011）\"}}],\"moreCourseCodes\":[\"COMP2014\",\"COMP5541\",\"COMP5564\",\"CSE6016\",\"DSAI5104\",\"EIE4121\",\"MM5433\",\"MM6761\",\"MM6762\",\"DSAI4208\",\"DSAI5206\",\"EIE4122\"],\"followUps\":[\"这些machine learning课程各有什么侧重点？\",\"学习machine learning前应该怎样准备？\",\"COMP4432主要讲什么？\"]}"
+    }
+  ],
+  "results": [
+    {
+      "question": "请问COMP4431是什么课？",
+      "httpStatus": 200,
+      "latencyMs": 6377,
+      "shownCodes": [
+        "COMP4431"
+      ],
+      "checks": {
+        "httpOk": true,
+        "textPresent": true,
+        "courseCountWithinLimit": true,
+        "requestedCoursePresent": true,
+        "courseIntroductionsPresent": true,
+        "overviewBeforeMultipleCards": true,
+        "threeFollowUpsWhenCards": true,
+        "summariesBounded": true,
+        "preparationPresent": true,
+        "noRepeatedContinuation": true
+      },
+      "passed": true,
+      "normalizedAnswer": {
+        "text": "下面介绍COMP4431。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4431",
+            "title": "Artificial Intelligence",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "6fd85604-dd19-4046-a117-5e7fcd757b72",
+            "objectives": "1. 介绍人工智能的基本概念\n2. 使学生掌握人工智能技术的编程知识和技能\n3. 掌握问题建模和典型智能算法\n4. 了解人工智能的技术发展\n5. 使学生意识到与人工智能相关的伦理问题。",
+            "rating": 4.6,
+            "ratingSource": "simulated",
+            "summary": "这门课的学习重点是：介绍人工智能的基本概念；使学生掌握人工智能技术的编程知识和技能。学习方式：在课堂上，学生将接触到人工智能的概念、算法和应用，并通过练习、实验室和项目进行补充。",
+            "learningOutcomes": [
+              "了解人工智能的基本概念。",
+              "掌握人工智能技术的编程知识和技能。",
+              "掌握问题建模和典型智能算法。",
+              "了解人工智能的技术发展。"
+            ],
+            "requiredPrerequisites": "COMP2011/COMP2013/DSAI2201",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "COMP2011",
+                  "COMP2013",
+                  "DSAI2201"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程：COMP2011/COMP2013/DSAI2201",
+            "reason": "这门课的学习重点是：介绍人工智能的基本概念；使学生掌握人工智能技术的编程知识和技能。学习方式：在课堂上，学生将接触到人工智能的概念、算法和应用，并通过练习、实验室和项目进行补充。",
+            "preparation": {
+              "levels": [
+                {
+                  "level": 2,
+                  "courses": [
+                    "COMP2011",
+                    "COMP2013",
+                    "DSAI2201"
+                  ]
+                }
+              ],
+              "description": "先修课程：COMP2011/COMP2013/DSAI2201",
+              "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+              "sourceText": "先修课程：COMP2011/COMP2013/DSAI2201"
+            }
+          }
+        ],
+        "followUps": [
+          "学习COMP4431前可以怎样预习？",
+          "COMP4431的主要内容有哪些实际用途？",
+          "COMP4431的先修课程分别讲什么？"
+        ]
+      }
+    },
+    {
+      "question": "我想学machine learning相关内容，给我推荐一些课",
+      "httpStatus": 200,
+      "latencyMs": 12984,
+      "shownCodes": [
+        "COMP4432",
+        "DSAI4203",
+        "AMA4680"
+      ],
+      "checks": {
+        "httpOk": true,
+        "textPresent": true,
+        "courseCountWithinLimit": true,
+        "requestedCoursePresent": true,
+        "courseIntroductionsPresent": true,
+        "overviewBeforeMultipleCards": true,
+        "threeFollowUpsWhenCards": true,
+        "summariesBounded": true,
+        "preparationPresent": true,
+        "noRepeatedContinuation": true
+      },
+      "passed": true,
+      "normalizedAnswer": {
+        "text": "本次推荐COMP4432、DSAI4203、AMA4680。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4432",
+            "title": "Machine Learning",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "6c61aa97-a46c-411d-a607-585c5614dc60",
+            "objectives": "1. 介绍现代机器学习的基本原理、概念和模型；\n2. 介绍机器学习技术的最新进展及其在模式识别、计算机视觉等领域的应用。",
+            "rating": 4.4,
+            "ratingSource": "simulated",
+            "summary": "这门课的学习重点是：介绍现代机器学习的基本原理、概念和模型。学习方式：39学时的课堂活动，包括主要概念和模型的讲授，以及应用案例研究、习题课、课堂/小组讨论、实验室作业和学生报告。",
+            "learningOutcomes": [
+              "了解机器学习基础。",
+              "了解模型和技术。",
+              "了解应用。",
+              "了解手写识别挑战，例如 MNIST。"
+            ],
+            "requiredPrerequisites": "无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）",
+            "reason": "这门课的学习重点是：介绍现代机器学习的基本原理、概念和模型。学习方式：39学时的课堂活动，包括主要概念和模型的讲授，以及应用案例研究、习题课、课堂/小组讨论、实验室作业和学生报告。",
+            "preparation": {
+              "levels": [],
+              "description": "无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）",
+              "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+              "sourceText": "无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）"
+            }
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "DSAI4203",
+            "title": "Machine Learning",
+            "department": "dsai",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "135ebb60-a6f1-4f9d-a574-722dca788a9b",
+            "objectives": "1. 介绍现代机器学习的基本原理、概念和模型；\n2. 介绍机器学习技术的最新进展及其在模式识别、计算机视觉及其他领域的应用。",
+            "rating": 4.5,
+            "ratingSource": "simulated",
+            "summary": "这门课的学习重点是：介绍现代机器学习的基本原理、概念和模型。学习方式：39学时的课堂活动，包括主要概念和模型的讲授，以及应用案例研究、习题课、课堂/小组讨论、实验和学生报告。根据需要，还将分配阅读相关研究论文。",
+            "learningOutcomes": [
+              "了解机器学习基础。",
+              "了解模型与技术。",
+              "了解应用。",
+              "了解手写识别挑战，例如 MNIST。"
+            ],
+            "requiredPrerequisites": "建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。",
+            "reason": "这门课的学习重点是：介绍现代机器学习的基本原理、概念和模型。学习方式：39学时的课堂活动，包括主要概念和模型的讲授，以及应用案例研究、习题课、课堂/小组讨论、实验和学生报告。根据需要，还将分配阅读相关研究论文。",
+            "preparation": {
+              "levels": [],
+              "description": "建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。",
+              "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+              "sourceText": "建议学生具备一定的初步人工智能/数据分析概念，并熟悉线性代数和概率的基本概念。"
+            }
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "AMA4680",
+            "title": "Statistical Machine Learning",
+            "department": "ama",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Science",
+            "schoolId": "polyu",
+            "id": "82b7d396-0e11-4dd9-9688-522d813e6cbd",
+            "objectives": "提供机器学习的基本介绍。介绍选定主题的机器学习基本概念和算法，为学生提供将机器学习应用于实际问题所需的基础知识，并为有兴趣从事机器学习或相关领域研究的学生提供起点。",
+            "rating": 4.4,
+            "ratingSource": "simulated",
+            "summary": "这门课的学习重点是：提供机器学习的基本介绍。学习方式：本课程主要通过计算机实验室的讲授和辅导进行。强调学习算法的理论背景及其实际应用。",
+            "learningOutcomes": [
+              "了解监督学习（从带答案的例子中学习）、回归与模型选择：广义线性模型；岭回归、模型选择、降维、主成分分析、套索；再生核、核岭回归、正则化；随机梯度下降、在线学习。",
+              "了解监督学习（从带答案的例子中学习）、分类：朴素贝叶斯；决策树（通过一连串问题作判断的方法）；K近邻分类器；逻辑回归；支持向量机（根据数据特征区分类别的方法）、核化支持向量机（根据数据特征区分类别的方法）；评分分类器，受试者操作特征曲线，AUC评分，不平衡数据。",
+              "了解无监督学习（从没有答案的数据中找规律）、聚类：K均值；凝聚层次聚类。",
+              "了解其他选修主题：交叉验证；人工神经网络（通过多层计算从例子中学习的模型）、反向传播、深度学习算法简介；机器学习软件包简介；随机森林。"
+            ],
+            "requiredPrerequisites": "先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。排除统计机器学习（AMA3800）。",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "AMA2602"
+                ]
+              },
+              {
+                "level": 3,
+                "courses": [
+                  "AMA3602",
+                  "AMA3631",
+                  "AMA3001",
+                  "AMA3701",
+                  "AMA3723",
+                  "AMA3724"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。排除统计机器学习（AMA3800）。",
+            "reason": "这门课的学习重点是：提供机器学习的基本介绍。学习方式：本课程主要通过计算机实验室的讲授和辅导进行。强调学习算法的理论背景及其实际应用。",
+            "preparation": {
+              "levels": [
+                {
+                  "level": 2,
+                  "courses": [
+                    "AMA2602"
+                  ]
+                },
+                {
+                  "level": 3,
+                  "courses": [
+                    "AMA3602",
+                    "AMA3631",
+                    "AMA3001",
+                    "AMA3701",
+                    "AMA3723",
+                    "AMA3724"
+                  ]
+                }
+              ],
+              "description": "先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。",
+              "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+              "sourceText": "先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。排除统计机器学习（AMA3800）。"
+            }
+          }
+        ],
+        "overview": "围绕machine learning方向，可以先了解这3门课：COMP4432（Machine Learning），学习重点是介绍现代机器学习的基本原理、概念和模型；DSAI4203（Machine Learning），学习重点是介绍现代机器学习的基本原理、概念和模型；AMA4680（Statistical Machine Learning），学习重点是提供机器学习的基本介绍。下面逐门介绍课程内容与学习收获。",
+        "followUps": [
+          "COMP4432: 这些machine learning课程各有什么侧重点？",
+          "COMP4432: 学习machine learning前应该怎样准备？",
+          "COMP4432主要讲什么？"
+        ],
+        "recommendationContext": {
+          "query": "我想学machine learning相关内容，给我推荐一些课",
+          "seenCodes": [
+            "COMP4432",
+            "DSAI4203",
+            "AMA4680"
+          ],
+          "reserveCodes": [
+            "AP40012",
+            "AP40013",
+            "COMP2014",
+            "COMP5541",
+            "COMP5564",
+            "CSE6016",
+            "DSAI5104",
+            "EIE4121",
+            "MM5433",
+            "MM6761",
+            "MM6762",
+            "DSAI4208"
+          ]
+        },
+        "moreCourses": {
+          "available": true,
+          "prompt": "请继续推荐更多相关课程，避开之前介绍过的课程。"
+        }
+      }
+    },
+    {
+      "question": "请继续推荐更多相关课程，避开之前介绍过的课程。",
+      "httpStatus": 200,
+      "latencyMs": 11220,
+      "shownCodes": [
+        "AMA573",
+        "AP40012",
+        "AP40013"
+      ],
+      "checks": {
+        "httpOk": true,
+        "textPresent": true,
+        "courseCountWithinLimit": true,
+        "requestedCoursePresent": true,
+        "courseIntroductionsPresent": true,
+        "overviewBeforeMultipleCards": true,
+        "threeFollowUpsWhenCards": true,
+        "summariesBounded": true,
+        "preparationPresent": true,
+        "noRepeatedContinuation": true
+      },
+      "passed": true,
+      "normalizedAnswer": {
+        "text": "本次推荐AMA573、AP40012、AP40013。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "AMA573",
+            "title": "Statistical Machine Learning",
+            "department": "ama",
+            "level": "5",
+            "credits": 3,
+            "faculty": "Faculty of Science",
+            "schoolId": "polyu",
+            "id": "128aeb50-ddb5-4c80-8618-c401be796f10",
+            "objectives": "向学生介绍统计机器学习的关键原理和方法。本课程培养学生的Python数据分析和模型构建能力，并通过金融及相关应用领域的实践，评估和解释结果。",
+            "rating": 4.7,
+            "ratingSource": "simulated",
+            "summary": "这门课的学习重点是：向学生介绍统计机器学习的关键原理和方法。内容包括统计学习与计算分析基础：概览统计学习，复习概率与统计，并介绍Python在数据分析中的应用。学习方式：本课程主要通过讲座和基于练习的辅导课进行讲授。",
+            "learningOutcomes": [
+              "了解统计学习与计算分析基础。",
+              "了解回归与分类模型。",
+              "了解时间序列建模与降维技术。",
+              "了解现代机器学习算法及其应用。"
+            ],
+            "requiredPrerequisites": "无（课程库明确注明）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "这门课的学习重点是：向学生介绍统计机器学习的关键原理和方法。内容包括统计学习与计算分析基础：概览统计学习，复习概率与统计，并介绍Python在数据分析中的应用。学习方式：本课程主要通过讲座和基于练习的辅导课进行讲授。",
+            "preparation": {
+              "levels": [],
+              "description": "无",
+              "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+              "sourceText": "无"
+            }
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "AP40012",
+            "title": "Machine Learning in Physics",
+            "department": "ap",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Science",
+            "schoolId": "polyu",
+            "id": "259e5dc1-c297-4e4c-9952-1a1d91eb073d",
+            "objectives": "介绍机器学习的基本原理及其在物理科学中的应用。",
+            "rating": 4.2,
+            "ratingSource": "simulated",
+            "summary": "这门课的学习重点是：介绍机器学习的基本原理及其在物理科学中的应用。内容包括线性回归与分类：数据库、特征表示、训练集、误差函数、梯度下降、一元和多元回归、逻辑回归。学习方式：授课：课堂上讲解概念，并通过物理/工程问题的示例和算法进行说明。",
+            "learningOutcomes": [
+              "了解线性回归与分类。",
+              "了解神经网络（通过多层计算从例子中学习的模型）。",
+              "了解机器学习理论。",
+              "了解在物理科学中的应用。"
+            ],
+            "requiredPrerequisites": "AP20005 或 COMP1012",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 1,
+                "courses": [
+                  "COMP1012"
+                ]
+              },
+              {
+                "level": 2,
+                "courses": [
+                  "AP20005"
+                ]
+              }
+            ],
+            "prerequisite": "先修：AP20005 或 COMP1012",
+            "reason": "这门课的学习重点是：介绍机器学习的基本原理及其在物理科学中的应用。内容包括线性回归与分类：数据库、特征表示、训练集、误差函数、梯度下降、一元和多元回归、逻辑回归。学习方式：授课：课堂上讲解概念，并通过物理/工程问题的示例和算法进行说明。",
+            "preparation": {
+              "levels": [
+                {
+                  "level": 1,
+                  "courses": [
+                    "COMP1012"
+                  ]
+                },
+                {
+                  "level": 2,
+                  "courses": [
+                    "AP20005"
+                  ]
+                }
+              ],
+              "description": "先修：AP20005 或 COMP1012",
+              "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+              "sourceText": "先修：AP20005 或 COMP1012"
+            }
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "AP40013",
+            "title": "Energy Conversion and Storage with Machine Learning",
+            "department": "ap",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Science",
+            "schoolId": "polyu",
+            "id": "a4314286-9f4d-42fe-b42e-f266da230d1c",
+            "objectives": "1. 介绍能源转换与存储过程中最新技术的概念、原理和应用材料。",
+            "rating": 4.6,
+            "ratingSource": "simulated",
+            "summary": "这门课的学习重点是：1. 介绍能源转换与存储过程中最新技术的概念、原理和应用材料。内容包括能源转换与存储的材料：太阳能电池、电池、电容器和异相催化的关键材料及其物理原理。学习方式：讲授：解释各种能源转换与存储过程的工作原理，重点讲解太阳能电池、电池、超级电容器和异相催化的关键材料问题；说明基本的机器学习概念如何应用于材料设计和设备系统管理。",
+            "learningOutcomes": [
+              "了解能源转换与存储过程中最新技术的概念、原理和应用材料。",
+              "了解能源存储材料和设备中的机器学习。",
+              "了解机器学习在太阳能电池、电池、电容器和异相催化材料设计中的应用实例。"
+            ],
+            "requiredPrerequisites": "材料科学（AP20002）\n排除课程：能源转换与存储的材料（AP40011）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "AP20002"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程：材料科学（AP20002）\n排除课程：能源转换与存储的材料（AP40011）",
+            "reason": "这门课的学习重点是：1. 介绍能源转换与存储过程中最新技术的概念、原理和应用材料。内容包括能源转换与存储的材料：太阳能电池、电池、电容器和异相催化的关键材料及其物理原理。学习方式：讲授：解释各种能源转换与存储过程的工作原理，重点讲解太阳能电池、电池、超级电容器和异相催化的关键材料问题；说明基本的机器学习概念如何应用于材料设计和设备系统管理。",
+            "preparation": {
+              "levels": [
+                {
+                  "level": 2,
+                  "courses": [
+                    "AP20002"
+                  ]
+                }
+              ],
+              "description": "先修课程：材料科学（AP20002）",
+              "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+              "sourceText": "先修课程：材料科学（AP20002）\n排除课程：能源转换与存储的材料（AP40011）"
+            }
+          }
+        ],
+        "overview": "围绕machine learning方向，可以先了解这3门课：AMA573（Statistical Machine Learning），学习重点是「向学生介绍统计机器学习的关键原理和方法」；AP40012（Machine Learning in Physics），学习重点是「介绍机器学习的基本原理及其在物理科学中的应用」；AP40013（Energy Conversion and Storage with Machine Learning），学习重点是「1. 介绍能源转换与存储过程中最新技术的概念、原理和应用材料。」。下面逐门介绍课程内容与学习收获。",
+        "followUps": [
+          "AMA573: 这些machine learning课程各有什么侧重点？",
+          "AMA573: 学习machine learning前应该怎样准备？",
+          "AMA573的先修课程分别学什么？"
+        ],
+        "recommendationContext": {
+          "query": "我想学machine learning相关内容，给我推荐一些课",
+          "seenCodes": [
+            "COMP4432",
+            "DSAI4203",
+            "AMA4680",
+            "AMA573",
+            "AP40012",
+            "AP40013"
+          ],
+          "reserveCodes": [
+            "COMP2014",
+            "COMP5541",
+            "COMP5564",
+            "CSE6016",
+            "DSAI5104",
+            "EIE4121",
+            "MM5433",
+            "MM6761",
+            "MM6762",
+            "DSAI4208",
+            "DSAI5206",
+            "EIE4122"
+          ]
+        },
+        "moreCourses": {
+          "available": true,
+          "prompt": "请继续推荐更多相关课程，避开之前介绍过的课程。"
+        }
+      }
+    }
+  ],
+  "completedAt": "2026-11-03T23:50:40.317Z",
+  "passed": true,
+  "reportedUsage": {
+    "inputTokens": 18801,
+    "outputTokens": 2193
+  },
+  "estimatedInferenceFeeCny": 0.0137865,
+  "feeIsFinalBill": false
+}
