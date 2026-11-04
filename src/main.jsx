@@ -4,6 +4,7 @@ import { ArrowUp, ArrowUpRight, BookOpen, Check, ChevronDown, ChevronRight, Circ
 import { DEMO, requestAdvice, requestTranscript } from './advisor';
 import { createVoiceSession, speechSupport } from './voice';
 import { createSpeechPlayer, narrationFor } from './speech';
+import Companion from './avatar/Companion';
 import './styles.css';
 
 const STORAGE = 'polypath-profile-v1';
@@ -168,7 +169,7 @@ function App() {
     <div className="main-shell">
       <header className="topbar"><div className="breadcrumb"><button className="mobile-menu icon-button" aria-label="Open navigation" onClick={() => setMobileNav(true)}><Menu size={21}/></button><span>Workspace</span><ChevronRight size={14}/><strong>{page === 'advisor' ? 'AI Advisor' : 'My Profile & Documents'}</strong></div><div className="topbar-right"><span className="mode-badge"><span/>{DEMO ? 'UI demo' : 'Connected advisor'}</span><span className="university">THE HONG KONG<br/><b>POLYTECHNIC UNIVERSITY</b></span></div></header>
 
-      {page === 'advisor' ? <main className={`advisor-page ${messages.length ? 'has-messages' : ''}`}>
+      {page === 'advisor' ? <div className="advisor-workspace"><main className={`advisor-page ${messages.length ? 'has-messages' : ''}`}>
         <div className="advisor-toolbar"><span><span className="small-spark"><Sparkles size={14}/></span> Your academic planning companion</span><div className="toolbar-actions"><button className="text-button" onClick={() => setSpeechSettings(!speechSettings)} aria-expanded={speechSettings}><Settings2 size={14}/><span>Voice settings</span></button><button className="text-button context-files" onClick={() => navigate('profile')}><FileText size={14}/>{documents.length} context {documents.length === 1 ? 'file' : 'files'}<ChevronRight size={14}/></button></div></div>
         {speechSettings && <section className="speech-settings" aria-label="Read-aloud settings"><div><strong><Volume2 size={16}/> Read-aloud settings</strong><p>Choose a voice and speed. Playback starts only when you click Read aloud.</p></div><div className="speech-setting-fields"><label>Voice<select value={speechVoice} disabled={playbackActive} onChange={e => setSpeechVoice(e.target.value)}><option value="">Automatic (match answer language)</option>{speechVoices.map(voice => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}</option>)}</select></label><label>Speed<select value={speechRate} disabled={playbackActive} onChange={e => setSpeechRate(Number(e.target.value))}><option value={0.8}>0.8× · Slower</option><option value={1}>1× · Normal</option><option value={1.2}>1.2× · Faster</option></select></label><button className="icon-button" aria-label="Close read-aloud settings" onClick={() => setSpeechSettings(false)}><X size={17}/></button></div><p className="speech-settings-note">{!playbackSupported ? 'Read aloud is unavailable in this browser. You can still use text chat.' : playbackActive ? 'Stop playback to change voice or speed.' : 'Available voices depend on your browser and device; some voices may use an online service.'}</p></section>}
         <div className="chat-scroll">
@@ -200,7 +201,7 @@ function App() {
           </form>
           <p className="composer-footnote">{DEMO ? 'Demo mode · Illustrative responses only. Files are not analysed or uploaded.' : 'Review recommendations against official programme requirements.'}<span className="footnote-divider">·</span>Student project, independently developed.</p>
         </div>
-      </main> : <main className="profile-page">
+      </main><Companion loading={loading} voiceState={voiceState} speechState={speechState} error={error || (voiceOpen ? voiceError : '') || speechError}/></div> : <main className="profile-page">
         <div className="page-heading"><div className="eyebrow"><span/> THE STARTING POINT</div><h1>A plan begins with you<span>.</span></h1><p>Keep your academic background and reference documents in one place.</p></div>
         <form onSubmit={saveProfile} className="profile-card"><div className="section-heading"><span className="section-icon"><UserRound size={20}/></span><div><h2>My academic profile</h2><p>A little context to help shape your next steps.</p></div><span className="optional-label">No sign-in required</span></div><div className="profile-fields">
           <label>Programme / Major<input placeholder="e.g. BSc (Hons) in Computing" value={profile.programme} onChange={e => setProfile({ ...profile, programme: e.target.value })}/></label>

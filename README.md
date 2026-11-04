@@ -77,6 +77,17 @@ Call-level request/response details: [docs/AI_INTEGRATION.md](docs/AI_INTEGRATIO
 
 ## Project layout
 
+### 2D / 3D avatar integration
+
+Pear is the floating silver-and-glass companion beside the advisor. Switch between
+an animated SVG character and an interactive procedural Three.js model. It follows
+chat, recording, transcription and read-aloud states, with reduced-motion support
+and an automatic 2D fallback if WebGL fails. No additional avatar service is needed.
+Run normally with `npm install` and `npm run dev`.
+
+Implementation details, controls, limitations and demo steps:
+[docs/AVATAR_FEATURE.md](docs/AVATAR_FEATURE.md).
+
 ```text
 src/main.jsx                 Screens and interactive components
 src/styles.css               Visual system
