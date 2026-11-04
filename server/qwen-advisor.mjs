@@ -1,4 +1,5 @@
-import { formatCatalogue, getCourses, retrieveCourses } from './course-knowledge.mjs';
+import { formatCatalogue, getCourses, hasNoPrerequisite, retrieveCourses, searchCourses } from './course-knowledge.mjs';
+import { planCourseSearch } from './course-search.mjs';
 import { normalizeCourseResponse, recommendationContext } from './course-response.mjs';
 import { RequestError, assertLocalOrigin, readRequestBody, parseJsonObject, validateChatFields, upstreamRequest } from './request-safety.mjs';
 import { observeFinetunedModel } from './finetune-only.mjs';
@@ -197,15 +198,31 @@ export async function handleAdvisorRequest(req, res, env) {
       json(res, 200, { text: /\p{Script=Han}/u.test(message) ? '请先告诉我你想学习的方向，或提供之前推荐的课程，我再为你寻找更多相关课程。' : 'Please tell me your learning interest or the courses already recommended so I can find more options.' });
       return;
     }
-    const catalogueRows = retrieveCourses(await getCourses(env), {
-      message: context.more ? context.query : `${previousQuestion}\n${message}`, profile,
-      excludeCodes: context.more ? context.seenCodes : []
-    });
+    let catalogue;
+    try {
+      catalogue = await getCourses(env);
+    } catch {
+      throw new RequestError(503, 'Could not load the live course catalogue from the database. Check SUPABASE_URL and SUPABASE_ANON_KEY, then retry.');
+    }
+    const searchQuery = context.more ? context.query : `${previousQuestion}\n${message}`.trim();
+    const excludeCodes = context.more ? context.seenCodes : [];
+    let plan = null;
+    try {
+      plan = await planCourseSearch({ message: searchQuery, profile, env, apiKey, res });
+      console.info('[search] Qwen plan', plan);
+    } catch (error) {
+      console.warn('[search] Qwen plan unavailable, using local fallback:', error instanceof RequestError ? error.message : error.message);
+    }
+    let catalogueRows = searchCourses(catalogue, plan, { excludeCodes });
+    if (!catalogueRows.length) {
+      catalogueRows = retrieveCourses(catalogue, { message: searchQuery, profile, excludeCodes });
+      if (plan?.noPrerequisite) catalogueRows = catalogueRows.filter(hasNoPrerequisite);
+    }
     if (context.more && !catalogueRows.length) {
       json(res, 200, { text: /\p{Script=Han}/u.test(message) ? '目前没有检索到更多尚未介绍的相关课程，你可以换一个学习方向继续探索。' : 'No more unseen related courses were found. Try exploring a different learning interest.' });
       return;
     }
-    const catalogue = formatCatalogue(catalogueRows);
+    const catalogueText = formatCatalogue(catalogueRows);
     const payload = {
       model,
       stream: false,
@@ -215,7 +232,7 @@ export async function handleAdvisorRequest(req, res, env) {
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         ...historyMessages(history),
-        { role: 'user', content: buildUserContent({ message, profile, documents, attachments, catalogue, recommendation: context }) }
+        { role: 'user', content: buildUserContent({ message, profile, documents, attachments, catalogue: catalogueText, recommendation: context }) }
       ]
     };
 
