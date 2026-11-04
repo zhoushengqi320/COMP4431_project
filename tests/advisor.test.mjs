@@ -39,7 +39,11 @@ test('advisor defaults to real domain retrieval and reports mode without exposin
   assert.ok(!followup.data.evidence.some(source => source.code === 'COMP4432'));
   assert.equal(getAdvisorStatus({}).mode, 'knowledge');
   assert.ok(getAdvisorStatus({}).knowledgeCount > 0);
-  assert.deepEqual(Object.keys(getAdvisorStatus({ DEEPSEEK_API_KEY: 'secret' })).sort(), ['knowledgeCount', 'mode', 'model']);
+  assert.deepEqual(Object.keys(getAdvisorStatus({ DEEPSEEK_API_KEY: 'secret' })).sort(), ['knowledgeCount', 'mode', 'model', 'provider']);
+  assert.equal(getAdvisorStatus({ DEEPSEEK_API_KEY: 'secret' }).provider, 'deepseek');
+  assert.equal(getAdvisorStatus({ QWEN_API_KEY: 'secret', QWEN_MODEL: 'qwen3-8b' }).mode, 'llm');
+  assert.equal(getAdvisorStatus({ QWEN_API_KEY: 'secret', QWEN_MODEL: 'qwen3-8b' }).model, 'qwen3-8b');
+  assert.equal(getAdvisorStatus({ QWEN_API_KEY: 'secret', QWEN_MODEL: 'qwen3-8b' }).provider, 'qwen');
 });
 
 test('multipart uploads supply actual evidence and a failed file becomes a visible warning', async t => {
@@ -113,6 +117,35 @@ test('LLM requests contain retrieved evidence and only verified citations reach 
   assert.equal(result.data.courses[0].credits, 3);
   assert.deepEqual(result.data.followUps, ['How can I prepare?']);
   assert.doesNotMatch(JSON.stringify(result.data), /attacker\.example|made-up-source|test-only-key/);
+});
+
+test('Qwen requests use the DashScope-compatible endpoint and retrieved evidence', async t => {
+  let captured;
+  const app = await fixture(t, {
+    QWEN_API_KEY: 'qwen-test-key',
+    QWEN_BASE_URL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+    QWEN_MODEL: 'qwen3-8b-01fa13690bf1'
+  }, {
+    fetchImpl: async (url, options) => {
+      const payload = JSON.parse(options.body);
+      const context = JSON.parse(payload.messages.at(-1).content);
+      captured = { url, payload, context };
+      const source = context.retrieved_sources[0];
+      return Response.json({ choices: [{ message: { content: JSON.stringify({
+        text: 'Answer grounded in retrieved catalogue evidence.',
+        sourceIds: source ? [source.id] : [],
+        courses: [], followUps: ['Ask another course?']
+      }) } }] });
+    }
+  });
+  const result = await app.ask({ message: 'Tell me about COMP4431' });
+  assert.equal(result.status, 200);
+  assert.equal(result.data.mode, 'llm');
+  assert.equal(captured.url, 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions');
+  assert.equal(captured.payload.model, 'qwen3-8b-01fa13690bf1');
+  assert.equal(captured.payload.thinking, undefined);
+  assert.equal(captured.payload.enable_thinking, false);
+  assert.ok(captured.context.retrieved_sources.some(source => source.code === 'COMP4431'));
 });
 
 test('model schema normalization rejects invalid answers and filters hostile array types', () => {

@@ -81,6 +81,21 @@ test('comparison contains both requested subjects and all citations refer to evi
   for (const source of response.sources) assert.ok(response.evidence.some(chunk => chunk.id === source.id && chunk.url === source.url));
 });
 
+test('requests for courses without prerequisites do not return subjects that require other courses', () => {
+  const response = answerFromKnowledge({
+    message: '推荐没有先修课要求的课',
+    history: [
+      { role: 'user', text: 'Tell me about COMP2011' },
+      { role: 'assistant', text: 'COMP2011 Data Structures requires COMP1011.', courses: [{ code: 'COMP2011' }] }
+    ]
+  });
+  assert.ok(response.courses?.length);
+  assert.ok(response.courses.every(course => !/COMP1011|COMP1012|ENG2002/.test(`${course.prerequisite || ''}`)));
+  assert.equal(response.courses[0].code, 'COMP4432');
+  assert.match(response.text, /未列出先修|没有列出正式先修/);
+  assert.doesNotMatch(response.text, /DSAI2201|先修课程为 COMP1011/);
+});
+
 test('an unknown course is not invented or substituted', () => {
   const response = answerFromKnowledge({ message: 'What is the credit value and prerequisite of COMP9999?' });
   assert.equal(response.courses, undefined);

@@ -4,13 +4,37 @@ import { retrieveKnowledge, answerFromKnowledge, getKnowledgeCount } from './kno
 
 const SYSTEM_PROMPT = readFileSync(new URL('../prompts/advisor-system.txt', import.meta.url), 'utf8');
 const DEFAULT_MODEL = 'deepseek-flash';
+const DEFAULT_QWEN_MODEL = 'qwen-plus';
 const HISTORY_LIMIT = 12;
 const PROFILE_FIELDS = ['programme', 'year', 'semester', 'graduation', 'interests'];
 
+export function resolveAdvisorModel(env = process.env) {
+  const qwenKey = env.QWEN_API_KEY?.trim();
+  if (qwenKey) {
+    return {
+      provider: 'qwen',
+      apiKey: qwenKey,
+      baseUrl: (env.QWEN_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1').replace(/\/$/, ''),
+      model: env.QWEN_MODEL?.trim() || DEFAULT_QWEN_MODEL
+    };
+  }
+  const deepseekKey = env.DEEPSEEK_API_KEY?.trim();
+  if (deepseekKey) {
+    return {
+      provider: 'deepseek',
+      apiKey: deepseekKey,
+      baseUrl: (env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/$/, ''),
+      model: env.DEEPSEEK_MODEL?.trim() || DEFAULT_MODEL
+    };
+  }
+  return null;
+}
+
 export function getAdvisorStatus(env = process.env) {
+  const model = resolveAdvisorModel(env);
   return {
-    mode: env.DEEPSEEK_API_KEY?.trim() ? 'llm' : 'knowledge',
-    ...(env.DEEPSEEK_API_KEY?.trim() ? { model: env.DEEPSEEK_MODEL?.trim() || DEFAULT_MODEL } : {}),
+    mode: model ? 'llm' : 'knowledge',
+    ...(model ? { model: model.model, provider: model.provider } : {}),
     knowledgeCount: getKnowledgeCount()
   };
 }
@@ -185,15 +209,16 @@ export function normalizeAdvisorPayload(content, evidence) {
 }
 
 async function callModel(input, env, { fetchImpl = fetch, timeoutMs = 30_000 } = {}) {
+  const llm = resolveAdvisorModel(env);
   const evidence = knownSources(retrieveKnowledge(input));
-  const baseUrl = (env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com').replace(/\/$/, '');
+  if (!llm) throw fail(503, 'The AI service is not configured.');
   try {
-    const url = new URL(baseUrl);
+    const url = new URL(llm.baseUrl);
     if (!['http:', 'https:'].includes(url.protocol) || url.username || url.password || url.search || url.hash) throw new Error();
   } catch { throw fail(503, 'The AI service endpoint is not configured correctly.'); }
   const payload = {
-    model: env.DEEPSEEK_MODEL?.trim() || DEFAULT_MODEL,
-    stream: false, thinking: { type: 'disabled' }, max_tokens: 3000,
+    model: llm.model,
+    stream: false, max_tokens: 3000,
     response_format: { type: 'json_object' },
     messages: [
       { role: 'system', content: SYSTEM_PROMPT },
@@ -206,6 +231,8 @@ async function callModel(input, env, { fetchImpl = fetch, timeoutMs = 30_000 } =
       }) }
     ]
   };
+  if (llm.provider === 'deepseek') payload.thinking = { type: 'disabled' };
+  if (llm.provider === 'qwen') payload.enable_thinking = false;
   const controller = new AbortController();
   let timer;
   const timeout = new Promise((resolve, reject) => {
@@ -217,9 +244,9 @@ async function callModel(input, env, { fetchImpl = fetch, timeoutMs = 30_000 } =
   const operation = async () => {
     let response;
     try {
-      response = await fetchImpl(`${baseUrl}/chat/completions`, {
+      response = await fetchImpl(`${llm.baseUrl}/chat/completions`, {
         method: 'POST', signal: controller.signal,
-        headers: { Authorization: `Bearer ${env.DEEPSEEK_API_KEY.trim()}`, 'Content-Type': 'application/json' },
+        headers: { Authorization: `Bearer ${llm.apiKey}`, 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
     } catch (error) {
@@ -248,7 +275,7 @@ export async function handleAdvisorRequest(req, res, env = process.env, options)
     // Uploading and document extraction can outlive a session; recheck immediately
     // before any retrieval or paid model work, without changing a member into a guest.
     if (!guest && options?.revalidateMember && !options.revalidateMember()) return;
-    const answer = !guest && env.DEEPSEEK_API_KEY?.trim()
+    const answer = resolveAdvisorModel(env)
       ? await callModel(input, env, options)
       : answerFromKnowledge(input);
     json(res, 200, {

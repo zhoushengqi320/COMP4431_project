@@ -34,6 +34,8 @@ getKnowledgeCount();
 
 The retrieval engine performs actual TF-IDF vector construction and cosine similarity over the curated references and extracted uploaded text. It supplements lexical retrieval with explicit course-code matching and English/Chinese topic aliases. Course codes constrain the result set: a missing code is not replaced by another subject. Specific previous course references, first/second references and saved interests can resolve short follow-up questions; ambiguous singular references ask for clarification.
 
+When the server has `SUPABASE_URL` and a publishable/anon key, `server/course-catalogue.mjs` reads `public.courses` once at startup and calls `setRemoteCourses()`. Curated entries win on code overlap. Remote-only codes become answerable; topic ranking of the nine official Computing PDFs stays on the curated corpus so their tests and citations do not change. This is retrieval, not model fine-tuning.
+
 The local answer path composes facts from retrieved entries, prerequisite relationships and relevant uploaded excerpts. It is a deterministic extractive system, **not a fine-tuned language model or vector database**. When a separately configured LLM is used by the server, the same chunks can ground its input and citations. The local path remains usable without an API key.
 
 Every source chunk has `id`, `title`, `text`, `kind` and `score`. Official entries additionally have `url`, `version`, `verifiedAt`, and `code` for subjects. Local responses provide `text`, optional `courses` and `checks`, `sources`, `followUps`, `mode: 'knowledge'`, `language`, `evidence` and retrieval metadata. Every displayed source points to a retrieved evidence ID.

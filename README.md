@@ -52,7 +52,7 @@ npm start
 
 可在本地 `.env` 设置 `SUPABASE_URL` 和 `SUPABASE_PUBLISHABLE_KEY`（也接受 `SUPABASE_ANON_KEY`），运行 `npm run check:supabase` 只读检查连接及邮箱确认设置。连接层位于 `server/supabase-client.mjs`，仅供服务端使用；用户数据请求通过用户 JWT 和 RLS 进行授权，不使用管理员 key 绕过访问策略。
 
-**当前运行时仍使用 SQLite，尚未启用 Supabase 数据读取。** 已收到并检查现有表结构和 RLS 策略，但只读数据映射尚未实现。按用户要求，对 Supabase 只允许读取，不修改数据、表结构或权限，也不创建云端账户、会话或迁移本地数据；账户、学业资料和聊天记录继续保存在本地。`scripts/inspect-supabase-schema.sql` 可用于只读检查表字段、约束和访问策略，不读取用户行。实际 URL、key 和用户提供的结构导出文件不进入 Git 或源码包。
+配置上述变量后，服务启动时会用 publishable/anon key **只读拉取 `public.courses`**，映射为检索条目并入顾问知识库。这是检索增强，不是对模型做微调；回答仍只能引用检索到的课程，不会编造课程代码。账户、学业资料和聊天记录继续保存在本地 SQLite，不写入 Supabase，也不修改表结构或 RLS。`scripts/inspect-supabase-schema.sql` 可用于只读检查表字段、约束和访问策略，不读取用户行。实际 URL、key 和用户提供的结构导出文件不进入 Git 或源码包。
 
 ## 两种问答模式
 
@@ -60,24 +60,24 @@ npm start
 
 默认 `/api/advisor` 使用 **TF-IDF 特征、余弦相似度、中英文主题扩展和课程代码匹配**组织回答。访客只检索内置课程资料；登录用户还可检索上传文档。它不是随机示例或统一模板回复，也不伪装成大模型。
 
-资料库目前包含 9 门 PolyU Computing 课程与 3 项指导资料；每项保留官方来源、原始版本和核查日期。可询问 `COMP4431 的先修课程是什么？`、`Recommend courses for machine learning`，或围绕上一轮课程继续提问。库外课程与无法确定的毕业资格会明确说明证据不足。
+本地精选库包含 9 门 PolyU Computing 课程与 3 项指导资料，每项保留官方来源、原始版本和核查日期。若已配置 Supabase，启动时还会并入 `public.courses` 只读目录；同一课程代码以精选官方 PDF 条目为准。可询问 `COMP4431 的先修课程是什么？`、`Recommend courses for machine learning`，或围绕上一轮课程继续提问。目录与精选库都没有的课程、以及无法确定的毕业资格，会明确说明证据不足。
 
 ### AI advisor：检索支持的大模型
 
-在 `.env` 中设置以下配置，或通过已有环境变量提供密钥：
+在 `.env` 或 `.env.local` 中设置 Qwen（优先）或 DeepSeek：
 
 ```dotenv
 VITE_ADVISOR_API_URL=/api/advisor
-DEEPSEEK_API_KEY=replace_with_your_server_side_key
-DEEPSEEK_BASE_URL=https://api.deepseek.com
-DEEPSEEK_MODEL=deepseek-flash
+QWEN_API_KEY=replace_with_your_server_side_key
+QWEN_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+QWEN_MODEL=qwen-plus
 ```
 
-重启服务后，登录用户即可使用该模式；访客始终使用知识库回答。前端 `VITE_` 配置变化后需重新构建；服务端密钥和模型配置不进入前端。`DEEPSEEK_API_KEY` **不能加 `VITE_` 前缀**，不得放进截图、提交包或 Git。
+重启服务后，配置了 Qwen 就会先检索课程目录，再把问题和检索到的证据发给 Qwen。前端 `VITE_` 配置变化后需重新构建；服务端密钥和模型配置不进入前端。`QWEN_API_KEY` / `DEEPSEEK_API_KEY` **不能加 `VITE_` 前缀**，不得放进截图、提交包或 Git。
 
 该模式先检索相关证据，再将问题、最近对话、学业资料和相关文档节选发送给配置的模型服务。输出经过类型检查；引用 ID 必须来自实际检索结果，已收录课程的名称和学分由资料核对。模型调用失败会明确报错，不会悄悄切换模式。模型配置成功不等于答案完全准确，仍需核对适用入学年级的官方资料。
 
-界面会显示当前模式；模型密钥有效性必须通过实际请求确认。模型名称和接口细节以 [DeepSeek 官方文档](https://api-docs.deepseek.com/) 为准。
+界面会显示当前模式；登录后应变为 **AI advisor**。模型密钥有效性必须通过实际请求确认。Qwen 接口见 [DashScope compatible-mode](https://help.aliyun.com/zh/model-studio/developer-reference/compatibility-of-openai-with-dashscope)。
 
 ## 已实现功能
 
@@ -113,7 +113,7 @@ Browser sessionStorage: guest chats + account-scoped unsynced chat drafts
 - `server/auth.mjs`：密码使用随机盐与 scrypt；会话令牌随机生成，数据库仅保存令牌哈希，通过 HttpOnly / SameSite Cookie 传递。默认 7 天，“Keep me signed in”为 30 天。登录／注册限流，同源校验，资料与聊天按账号隔离；聊天保存检查版本，防止其他标签页的新记录被旧状态覆盖。
 - `server/advisor-access.mjs`：Vite 与生产服务共用访客／会员权限规则、访客限流和模式选择；会员上传解析后再次校验登录状态，失效请求不会降级访客或调用模型。
 - `src/useConversations.js`、`src/conversations.js`：聊天列表、切换、新建和保存队列；访客记录保存在当前标签页，会员未同步对话按账号缓存，保存失败或版本冲突会提示处理。
-- `server/knowledge.mjs`：课程代码精确约束、中英文术语扩展、TF-IDF 向量与余弦排序、上下文课程指代。资料与算法见 `knowledge/README.md`。
+- `server/knowledge.mjs`：课程代码精确约束、中英文术语扩展、TF-IDF 向量与余弦排序、上下文课程指代。`server/course-catalogue.mjs` 在配置了 Supabase 时只读并入 `public.courses`。资料与算法见 `knowledge/README.md`。
 - `server/documents.mjs`：PDF.js 提取 PDF 文本，Mammoth 提取 DOCX；二进制解析在有时间与内存限制的 worker 中运行，失败文件不影响其他可读文件。
 - `server/deepseek-advisor.mjs` 与 `prompts/advisor-system.txt`：检索增强提示词、模型超时、结构检查、来源白名单与错误处理。
 - `src/voice.js`、`src/speech.js`：浏览器语音状态机，处理取消、晚到事件、分段朗读和权限错误。
@@ -130,7 +130,7 @@ Browser sessionStorage: guest chats + account-scoped unsynced chat drafts
 - 前端最多选择 8 个文件，总计 24 MiB，每个 10 MiB；后端整个 multipart 请求上限 25 MiB。
 - 每个 PDF 最多处理 40 页，每文件最多 60,000 字符，合计 120,000 字符。超限和截断会提示；扫描图片、加密 PDF 和 XLSX 不支持。OCR 未实现。
 - 已提取文本仍可能受到版式、表格顺序与字符编码影响。上传的成绩单／笔记不会自动证明已通过课程或官方学分。
-- 课程库是小型有日期的快照，不是完整或实时课程目录；其中 COMP4432 公开来源为 2021 年版本，回答会提示核对更新。
+- 精选课程库是小型有日期的快照；配置 Supabase 后会只读并入 `public.courses`。目录条目没有精选 PDF 的官方链接与版本日期，不能当作实时课表。COMP4432 精选来源为 2021 年版本，回答会提示核对更新。
 - 可以解释先修依赖，不能自动确认学期供应、名额、正式选课资格或毕业资格。
 - 浏览器语音可用性、实际声音和权限依设备而异；语音服务可能联网。普通文本聊天始终保留。
 - 暂无邮箱验证、密码重置、邮件发送、第三方登录或账户管理后台。

@@ -65,7 +65,9 @@ export function createAdvisorAccess({
     const forceGuest = req.headers['x-polypath-access'] === 'guest';
     const guest = forceGuest || !account;
     const access = guest ? 'guest' : 'member';
-    const advisorEnv = guest ? {} : env;
+    const advisorEnv = guest
+      ? (env.QWEN_API_KEY ? { QWEN_API_KEY: env.QWEN_API_KEY, QWEN_BASE_URL: env.QWEN_BASE_URL, QWEN_MODEL: env.QWEN_MODEL } : {})
+      : env;
     if (path.endsWith('/status')) {
       json(res, 200, { ...getAdvisorStatus(advisorEnv), access, ...(guest ? { guestLimits } : {}) });
       return true;

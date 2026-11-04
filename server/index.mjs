@@ -6,6 +6,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createAuthService } from './auth.mjs';
 import { handleAdvisorRequest } from './deepseek-advisor.mjs';
 import { createAdvisorAccess } from './advisor-access.mjs';
+import { startCatalogueRefresh } from './course-catalogue.mjs';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const contentTypes = {
@@ -75,6 +76,7 @@ export function createAppServer({
     allowedOrigin: env.AUTH_ORIGIN || undefined
   });
   const advisorAccess = createAdvisorAccess({ ...advisorAccessOptions, auth: authService, env, advisorHandler });
+  startCatalogueRefresh(env, { logger });
 
   async function handle(req, res) {
     res.setHeader('X-Content-Type-Options', 'nosniff');
@@ -143,8 +145,11 @@ export function createAppServer({
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
-  const envFile = resolve(projectRoot, '.env');
-  if (existsSync(envFile)) process.loadEnvFile(envFile);
+  // .env.local first so its values win; loadEnvFile does not override existing keys.
+  for (const name of ['.env.local', '.env']) {
+    const envFile = resolve(projectRoot, name);
+    if (existsSync(envFile)) process.loadEnvFile(envFile);
+  }
   const host = process.env.HOST || '127.0.0.1';
   const port = Number(process.env.PORT || 3000);
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
