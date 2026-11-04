@@ -4,9 +4,10 @@ import { readFile, realpath, stat } from 'node:fs/promises';
 import { dirname, extname, isAbsolute, relative, resolve, sep } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createAuthService } from './auth.mjs';
-import { handleAdvisorRequest } from './deepseek-advisor.mjs';
+import { handleAdvisorRequest } from './qwen-advisor.mjs';
 import { createAdvisorAccess } from './advisor-access.mjs';
 import { startCatalogueRefresh } from './course-catalogue.mjs';
+import { startCourseRefresh } from './course-knowledge.mjs';
 
 const projectRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const contentTypes = {
@@ -77,6 +78,7 @@ export function createAppServer({
   });
   const advisorAccess = createAdvisorAccess({ ...advisorAccessOptions, auth: authService, env, advisorHandler });
   startCatalogueRefresh(env, { logger });
+  startCourseRefresh(env);
 
   async function handle(req, res) {
     res.setHeader('X-Content-Type-Options', 'nosniff');

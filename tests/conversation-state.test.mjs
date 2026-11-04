@@ -48,6 +48,30 @@ test('stored messages preserve visible structured answers and remove raw files o
   assert.equal(result.feedback, undefined);
 });
 
+test('stored messages keep yucan course-introduction cards, overview and more-course prompts', () => {
+  const result = storedMessage({
+    ...message('a2', '本次推荐ABCT1700。', 'assistant'),
+    overview: '本次推荐2门课程。',
+    followUps: ['ABCT1700主要讲什么？'],
+    moreCourses: { available: true, prompt: '请继续推荐更多相关课程，避开之前介绍过的课程。' },
+    recommendationContext: { query: '推荐化学课', seenCodes: ['ABCT1700'], reserveCodes: ['ABCT1741'] },
+    courses: [{
+      format: 'course-introduction-v1', language: 'zh', code: 'ABCT1700', title: 'Introduction to Chemistry',
+      department: 'ABCT', level: '1', credits: 3, objectives: '化学入门。', summary: '介绍化学基本原理。',
+      rating: 4.6, ratingSource: 'simulated', learningOutcomes: ['解释化学基本原理。'],
+      requiredPrerequisites: '无（课程库明确注明）', recommendedPrerequisites: '资料未提供，需核实',
+      prerequisiteLevels: [{ level: 1, courses: ['ABCT1D14'] }],
+      preparation: { description: '无', note: '以上课程可作为提前学习的参考。', levels: [{ level: 1, courses: ['ABCT1D14'] }] }
+    }]
+  });
+  assert.equal(result.courses[0].format, 'course-introduction-v1');
+  assert.equal(result.courses[0].objectives, '化学入门。');
+  assert.deepEqual(result.courses[0].learningOutcomes, ['解释化学基本原理。']);
+  assert.equal(result.overview, '本次推荐2门课程。');
+  assert.equal(result.moreCourses.available, true);
+  assert.deepEqual(result.recommendationContext.seenCodes, ['ABCT1700']);
+});
+
 test('guest/account snapshots have distinct storage keys and reject a mismatched owner', () => {
   assert.notEqual(conversationStorageKey(null), conversationStorageKey('alice'));
   assert.notEqual(conversationStorageKey('alice'), conversationStorageKey('bob'));

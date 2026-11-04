@@ -11,29 +11,88 @@ function pick(source, fields) {
   return Object.fromEntries(fields.filter(field => typeof source[field] === 'string' || (typeof source[field] === 'number' && Number.isFinite(source[field]))).map(field => [field, source[field]]));
 }
 
+function storedLevels(value) {
+  if (!Array.isArray(value)) return undefined;
+  const levels = value.filter(record).map(item => {
+    const level = typeof item.level === 'number' && Number.isFinite(item.level) ? item.level : typeof item.level === 'string' ? item.level : null;
+    const courses = textArray(item.courses) || [];
+    if (level == null && !courses.length) return null;
+    return { ...(level != null ? { level } : {}), courses };
+  }).filter(Boolean);
+  return levels.length ? levels : undefined;
+}
+
+function storedPreparation(value) {
+  if (!record(value)) return undefined;
+  const preparation = {};
+  for (const field of ['description', 'note', 'sourceText']) if (typeof value[field] === 'string') preparation[field] = value[field];
+  const levels = storedLevels(value.levels);
+  if (levels) preparation.levels = levels;
+  return Object.keys(preparation).length ? preparation : undefined;
+}
+
+function storedCourse(item) {
+  const course = pick(item, [
+    'format', 'language', 'code', 'title', 'department', 'level', 'faculty', 'schoolId', 'id',
+    'credits', 'tag', 'reason', 'prerequisite', 'objectives', 'summary',
+    'requiredPrerequisites', 'recommendedPrerequisites', 'rating', 'ratingSource'
+  ]);
+  if (!course) return null;
+  const outcomes = textArray(item.learningOutcomes);
+  if (outcomes?.length) course.learningOutcomes = outcomes;
+  const levels = storedLevels(item.prerequisiteLevels);
+  if (levels) course.prerequisiteLevels = levels;
+  const preparation = storedPreparation(item.preparation);
+  if (preparation) course.preparation = preparation;
+  return Object.keys(course).length ? course : null;
+}
+
 /** Only renderable data is stored; File objects, raw evidence and UI state stay transient. */
 export function storedMessage(message) {
   if (!record(message) || !['user', 'assistant'].includes(message.role) || typeof message.id !== 'string' || !message.id || typeof message.text !== 'string') return null;
   const result = { id: message.id, role: message.role, text: message.text };
-  for (const field of ['mode', 'language', 'providerWarning']) if (typeof message[field] === 'string') result[field] = message[field];
-  for (const field of ['checks', 'followUps', 'warnings', 'documentWarnings']) {
+  for (const field of ['mode', 'language', 'providerWarning', 'overview', 'decisionNotice', 'model', 'finishReason']) if (typeof message[field] === 'string') result[field] = message[field];
+  for (const field of ['rawMode', 'observationSaved']) if (typeof message[field] === 'boolean') result[field] = message[field];
+  if (Number.isFinite(message.latencyMs)) result.latencyMs = message.latencyMs;
+  for (const field of ['checks', 'followUps', 'warnings', 'documentWarnings', 'unavailableCourses']) {
     const values = textArray(message[field]);
     if (values?.length) result[field] = values;
   }
-  const arrays = {
-    attachments: ['name', 'size'],
-    courses: ['code', 'title', 'credits', 'tag', 'reason', 'prerequisite'],
-    sources: ['id', 'title', 'detail', 'url', 'kind'],
-  };
-  for (const [field, keys] of Object.entries(arrays)) {
-    if (Array.isArray(message[field])) {
-      const values = message[field].map(item => pick(item, keys)).filter(item => item && Object.keys(item).length);
-      if (values.length) result[field] = values;
-    }
+  if (Array.isArray(message.attachments)) {
+    const values = message.attachments.map(item => pick(item, ['name', 'size'])).filter(item => item && Object.keys(item).length);
+    if (values.length) result.attachments = values;
+  }
+  if (Array.isArray(message.courses)) {
+    const values = message.courses.map(storedCourse).filter(Boolean);
+    if (values.length) result.courses = values;
+  }
+  if (Array.isArray(message.sources)) {
+    const values = message.sources.map(item => pick(item, ['id', 'title', 'detail', 'url', 'kind'])).filter(item => item && Object.keys(item).length);
+    if (values.length) result.sources = values;
   }
   if (Array.isArray(message.semesters)) {
     const values = message.semesters.filter(record).map(item => ({ ...pick(item, ['title', 'credits']), courses: textArray(item.courses) || [] }));
     if (values.length) result.semesters = values;
+  }
+  if (record(message.moreCourses)) {
+    const more = {};
+    if (typeof message.moreCourses.available === 'boolean') more.available = message.moreCourses.available;
+    if (typeof message.moreCourses.prompt === 'string') more.prompt = message.moreCourses.prompt;
+    if (Object.keys(more).length) result.moreCourses = more;
+  }
+  if (record(message.recommendationContext)) {
+    const context = {};
+    if (typeof message.recommendationContext.query === 'string') context.query = message.recommendationContext.query;
+    const seenCodes = textArray(message.recommendationContext.seenCodes);
+    const reserveCodes = textArray(message.recommendationContext.reserveCodes);
+    if (seenCodes?.length) context.seenCodes = seenCodes;
+    if (reserveCodes?.length) context.reserveCodes = reserveCodes;
+    if (Object.keys(context).length) result.recommendationContext = context;
+  }
+  if (record(message.usage)) {
+    const usage = {};
+    for (const field of ['prompt_tokens', 'completion_tokens', 'total_tokens']) if (Number.isFinite(message.usage[field])) usage[field] = message.usage[field];
+    if (Object.keys(usage).length) result.usage = usage;
   }
   return result;
 }

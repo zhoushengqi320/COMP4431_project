@@ -24,10 +24,30 @@ const SYNONYMS = [
   ['database', '数据库'],
   ['network', '网络'],
   ['cybersecurity', 'security', '网络安全'],
-  ['computer', 'computing', '计算机', '计算']
+  ['computer', 'computing', '计算机', '计算'],
+  ['chemistry', 'chemical', 'chem', '化学'],
+  ['physics', 'physical', '物理'],
+  ['biology', 'biological', '生物'],
+  ['history', 'historical', '历史', '歷史'],
+  ['economics', 'economic', '经济', '經濟'],
+  ['accounting', 'accountancy', '会计', '會計'],
+  ['psychology', '心理'],
+  ['geography', '地理'],
+  ['engineering', '工程'],
+  ['business', '管理', '商科', '商业', '商業']
 ];
 
-let cache = { at: 0, courses: null };
+let cache = { at: 0, courses: null, live: false };
+
+function supabaseCredentials(env = {}) {
+  const url = env.SUPABASE_URL?.replace(/\/$/, '');
+  const key = env.SUPABASE_ANON_KEY?.trim() || env.SUPABASE_PUBLISHABLE_KEY?.trim();
+  return url && key ? { url, key } : null;
+}
+
+export function resetCourseCache() {
+  cache = { at: 0, courses: null, live: false };
+}
 
 function snapshotCourses() {
   const data = JSON.parse(readFileSync(SNAPSHOT, 'utf8'));
@@ -43,7 +63,7 @@ function expandQuery(text) {
   return `${text} ${extra.join(' ')}`;
 }
 
-const STOP = new Set(['in', 'of', 'on', 'to', 'for', 'and', 'the', 'or', 'is', 'at', 'an', 'a', 'i', 'my', 'me', 'we', 'you', 'which', 'should', 'consider', 'want', 'focus', 'hons', 'bsc', 'year', 'with', 'from']);
+const STOP = new Set(['in', 'of', 'on', 'to', 'for', 'and', 'the', 'or', 'is', 'at', 'an', 'a', 'i', 'my', 'me', 'we', 'you', 'which', 'should', 'consider', 'want', 'focus', 'hons', 'bsc', 'year', 'with', 'from', '给我', '我想', '请', '推荐', '介绍', '一下', '一些', '什么', '哪些', '有关', '相关', '课程']);
 
 function tokens(text) {
   return String(text || '')
@@ -64,11 +84,12 @@ function containsToken(hay, token) {
   return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`, 'i').test(hay);
 }
 
-function departmentGuess(profile = {}) {
-  const hay = `${profile.programme || ''} ${profile.interests || ''}`.toLowerCase();
+function departmentGuess(text = '') {
+  const hay = String(text || '').toLowerCase();
   if (/comput|programming|software|comp\b/.test(hay)) return 'comp';
   if (/\bai\b|artificial|dsai|data scien/.test(hay)) return 'dsai';
   if (/math|统计|statist/.test(hay)) return 'ama';
+  if (/chem|化学/.test(hay)) return 'abct';
   return '';
 }
 
@@ -94,13 +115,21 @@ export function scoreCourse(course, { queryText, queryTokens, codes, department 
   return score;
 }
 
+export function hasNoPrerequisite(course) {
+  const raw = String(course?.prerequisites ?? '').replace(/\s+/g, ' ').trim();
+  if (!raw) return true;
+  if (/not stated|未提供|unknown/i.test(raw) && !/^(无|無)/.test(raw)) return false;
+  return /^(none|nil|n\/?a|no(\s+formal)?(\s+prerequisites?)?)(\b|[。．.\s（(，,]|$)/i.test(raw)
+    || /^(无|無)(?!机)/.test(raw);
+}
+
 export function retrieveCourses(courses, { message, profile, limit = 18, excludeCodes = [] } = {}) {
   const excluded = new Set(excludeCodes.flatMap(courseCodeAliases));
   const catalogue = (Array.isArray(courses) ? courses : []).filter(course => !courseCodeAliases(course.code).some(code => excluded.has(code)));
   const queryText = expandQuery(`${message || ''} ${profile?.interests || ''} ${profile?.programme || ''}`);
   const queryTokens = [...new Set(tokens(queryText))].slice(0, 40);
   const codes = extractCourseCodes(`${message || ''} ${profile?.programme || ''}`);
-  const department = departmentGuess(profile);
+  const department = departmentGuess(queryText);
   const ranked = catalogue
     .map(course => ({ course, score: scoreCourse(course, { queryText, queryTokens, codes, department }) }))
     .filter(item => item.score > 0)
@@ -108,6 +137,35 @@ export function retrieveCourses(courses, { message, profile, limit = 18, exclude
   let hits = ranked.slice(0, limit).map(item => item.course);
   if (!hits.length && department) {
     hits = catalogue.filter(course => String(course.department || '').toLowerCase() === department).slice(0, Math.min(12, limit));
+  }
+  return hits;
+}
+
+export function searchCourses(courses, plan = {}, { limit = 18, excludeCodes = [] } = {}) {
+  if (!plan || typeof plan !== 'object') return [];
+  const excluded = new Set(excludeCodes.flatMap(courseCodeAliases));
+  let pool = (Array.isArray(courses) ? courses : []).filter(course => !courseCodeAliases(course.code).some(code => excluded.has(code)));
+  if (plan.noPrerequisite) pool = pool.filter(hasNoPrerequisite);
+  const codes = (Array.isArray(plan.courseCodes) ? plan.courseCodes : []).flatMap(value => extractCourseCodes(String(value)));
+  const keywords = (Array.isArray(plan.keywords) ? plan.keywords : []).filter(value => typeof value === 'string' && value.trim());
+  const queryText = keywords.join(' ');
+  const queryTokens = [...new Set(tokens(queryText))].slice(0, 40);
+  const department = String(plan.department || '').trim().toLowerCase();
+  if (codes.length) {
+    const wanted = new Set(codes.flatMap(courseCodeAliases));
+    const exact = pool.filter(course => courseCodeAliases(course.code).some(code => wanted.has(code)));
+    if (exact.length) return exact.slice(0, limit);
+  }
+  const ranked = pool
+    .map(course => ({ course, score: scoreCourse(course, { queryText, queryTokens, codes, department }) }))
+    .filter(item => item.score > 0)
+    .sort((a, b) => b.score - a.score);
+  let hits = ranked.slice(0, limit).map(item => item.course);
+  if (!hits.length && department) {
+    hits = pool.filter(course => String(course.department || '').toLowerCase() === department).slice(0, limit);
+  }
+  if (!hits.length && plan.noPrerequisite) {
+    hits = [...pool].sort((a, b) => Number(a.level) - Number(b.level) || String(a.code).localeCompare(String(b.code))).slice(0, limit);
   }
   return hits;
 }
@@ -131,15 +189,16 @@ export function formatCatalogue(courses) {
 }
 
 export async function fetchCoursesFromSupabase(env) {
-  const base = env.SUPABASE_URL?.replace(/\/$/, '');
-  const key = env.SUPABASE_ANON_KEY?.trim();
-  if (!base || !key) throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY');
-  const headers = { apikey: key, Authorization: `Bearer ${key}` };
+  const creds = supabaseCredentials(env);
+  if (!creds) throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY');
+  const headers = { apikey: creds.key, Authorization: `Bearer ${creds.key}` };
   const all = [];
-  const signal = AbortSignal.timeout(10000);
   let from = 0;
   while (true) {
-    const response = await fetch(`${base}/rest/v1/courses?select=${SELECT}&order=code.asc&offset=${from}&limit=${PAGE}`, { headers, signal });
+    const response = await fetch(`${creds.url}/rest/v1/courses?select=${SELECT}&order=code.asc&offset=${from}&limit=${PAGE}`, {
+      headers,
+      signal: AbortSignal.timeout(15000)
+    });
     if (!response.ok) throw new Error(`Supabase courses fetch failed (${response.status})`);
     const rows = await response.json();
     if (!Array.isArray(rows) || !rows.length) break;
@@ -153,18 +212,17 @@ export async function fetchCoursesFromSupabase(env) {
 }
 
 export async function getCourses(env = {}) {
-  if (cache.courses && Date.now() - cache.at < TTL_MS) return cache.courses;
-  try {
-    if (env.SUPABASE_URL && env.SUPABASE_ANON_KEY) {
-      const courses = await fetchCoursesFromSupabase(env);
-      cache = { at: Date.now(), courses };
-      return courses;
-    }
-  } catch (error) {
-    console.warn('Live Supabase catalogue unavailable, using snapshot:', error.message);
+  const live = Boolean(supabaseCredentials(env));
+  if (cache.courses && Date.now() - cache.at < TTL_MS && cache.live === live) return cache.courses;
+  if (live) {
+    const courses = await fetchCoursesFromSupabase(env);
+    cache = { at: Date.now(), courses, live: true };
+    console.info(`[catalogue] Loaded ${courses.length} live Supabase courses.`);
+    return courses;
   }
+  console.warn('[catalogue] SUPABASE_URL / SUPABASE_ANON_KEY missing; using local snapshot. Set both to answer from the database.');
   const courses = snapshotCourses();
-  cache = { at: Date.now(), courses };
+  cache = { at: Date.now(), courses, live: false };
   return courses;
 }
 

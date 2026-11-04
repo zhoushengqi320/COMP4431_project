@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowUp, ArrowUpRight, BookOpen, Check, ChevronDown, CircleHelp, Compass, FileText, GraduationCap, LayoutGrid, LoaderCircle, LockKeyhole, LogOut, Mic, Square, Volume2, Pause, Play, Settings2, Menu, MessageSquare, Paperclip, Plus, ShieldCheck, Sparkles, ThumbsDown, ThumbsUp, Trash2, Upload, UserRound, X, AlertCircle } from 'lucide-react';
-import { requestAdvice } from './advisor';
+import { requestAdvice, requestTranscript } from './advisor';
 import { createVoiceSession, speechSupport } from './voice';
 import { createSpeechPlayer, narrationFor } from './speech';
 import { AuthScreen, AuthLoading } from './Auth.jsx';
 import { apiRequest } from './auth.js';
 import { useConversations } from './useConversations.js';
 import './styles.css';
+import './course-guide.css';
 
 const emptyProfile = { programme: '', year: '', semester: '', graduation: '', interests: '' };
 const prompts = [
@@ -50,11 +51,11 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
   const [voiceState, setVoiceState] = useState('idle');
   const [voicePreview, setVoicePreview] = useState('');
   const [voiceError, setVoiceError] = useState('');
-  const [voiceLanguage, setVoiceLanguage] = useState('en-US');
+  const [voiceLanguage, setVoiceLanguage] = useState('zh-CN');
   const voiceSession = useRef(null);
   const voiceTimer = useRef(null);
   const voiceActive = voiceState !== 'idle';
-  const Recognition = speechSupport(window);
+  const voiceReady = speechSupport(window);
   const [speechState, setSpeechState] = useState({ messageId: null, status: 'idle' });
   const [speechError, setSpeechError] = useState('');
   const [speechSettings, setSpeechSettings] = useState(false);
@@ -117,10 +118,10 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
   }
   function startVoice() {
     if (guest) { onSignIn(); return; }
-    if (!Recognition || voiceSession.current || loading) return;
+    if (!voiceReady || voiceSession.current || loading) return;
     stopPlayback(); setSpeechError('');
     setVoiceError(''); setVoicePreview('');
-    const session = createVoiceSession({ Recognition, language: voiceLanguage,
+    const session = createVoiceSession({ language: voiceLanguage, transcribe: requestTranscript,
       onState: state => {
         setVoiceState(state);
         if (state === 'idle') { clearTimeout(voiceTimer.current); voiceSession.current = null; }
@@ -166,7 +167,7 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
     setPendingChats(previous => ({ ...previous, [chatId]: true })); navigate('advisor');
     const controller = new AbortController();
     controllers.current.set(chatId, controller);
-    const timeout = setTimeout(() => controller.abort(), 60000);
+    const timeout = setTimeout(() => controller.abort(), 120000);
     try {
       const result = await requestAdvice({ userId: user?.id, message: text, history: messages, profile: guest ? {} : profile, documents: guest ? [] : documents, attachments: currentAttachments, signal: controller.signal });
       if (controllers.current.get(chatId) === controller) {
@@ -253,11 +254,11 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
             {attachments.length > 0 && <div className="attachment-list">{attachments.map(file => <span className="attachment-chip" key={file.id}><FileText size={14}/><span>{file.name}</span><button type="button" aria-label={`Remove ${file.name}`} onClick={() => setAttachments(previous => previous.filter(item => item.id !== file.id))}><X size={14}/></button></span>)}</div>}
             {voiceOpen && <section className="voice-panel" aria-label="Voice input controls">
               <div className="voice-heading"><span><Mic size={17}/> Voice input</span><button type="button" className="icon-button" aria-label="Close voice input" onClick={() => { cancelVoice(); setVoiceOpen(false); }}><X size={16}/></button></div>
-              <p className="voice-disclosure">Your browser’s speech service may process audio online. Transcribed text stays in the input until you send it.</p>
-              <div className="voice-controls"><label className="sr-only" htmlFor="voice-language">Voice language</label><select id="voice-language" disabled={voiceActive} value={voiceLanguage} onChange={e => setVoiceLanguage(e.target.value)}><option value="en-US">English</option><option value="zh-HK">Cantonese</option><option value="zh-CN">Mandarin</option></select>{voiceActive ? <button className="voice-start" type="button" disabled={voiceState === 'stopping'} onClick={() => voiceSession.current?.stop()}><Square size={12}/>{voiceState === 'stopping' ? 'Finishing…' : 'Stop listening'}</button> : <button className="voice-start" type="button" disabled={!Recognition || loading} onClick={startVoice}><Mic size={14}/> Start microphone</button>}</div>
-              {!Recognition && <p className="voice-error" role="status">Voice recognition is not supported in this browser. Try a current browser with speech recognition on localhost or HTTPS. You can still type your question.</p>}
+              <p className="voice-disclosure">Your browser records audio locally. Qwen transcribes it after you stop. Choose Mandarin, Cantonese or English before you start.</p>
+              <div className="voice-controls"><label className="sr-only" htmlFor="voice-language">Voice language</label><select id="voice-language" disabled={voiceActive} value={voiceLanguage} onChange={e => setVoiceLanguage(e.target.value)}><option value="zh-CN">Mandarin 普通话</option><option value="zh-HK">Cantonese 粤语</option><option value="en-US">English</option></select>{voiceActive ? <button className="voice-start" type="button" disabled={voiceState === 'stopping'} onClick={() => voiceSession.current?.stop()}><Square size={12}/>{voiceState === 'stopping' ? 'Transcribing…' : 'Stop listening'}</button> : <button className="voice-start" type="button" disabled={!voiceReady || loading} onClick={startVoice}><Mic size={14}/> Start microphone</button>}</div>
+              {!voiceReady && <p className="voice-error" role="status">This browser cannot record audio. Try a current browser on localhost or HTTPS. You can still type your question.</p>}
               {voiceError && <p className="voice-error" role="alert">{voiceError}</p>}
-              {voiceActive && <div className="voice-live" role="status"><span className="recording-dot"/>{voiceState === 'starting' ? 'Waiting for microphone permission…' : voiceState === 'stopping' ? 'Finishing transcription…' : 'Listening… speak your question.'}</div>}
+              {voiceActive && <div className="voice-live" role="status"><span className="recording-dot"/>{voiceState === 'starting' ? 'Waiting for microphone permission…' : voiceState === 'stopping' ? 'Sending audio to Qwen…' : 'Listening… speak your question.'}</div>}
               {voicePreview && <p className="voice-transcript" aria-live="polite">{voicePreview}</p>}
             </section>}
             <textarea ref={input} readOnly={voiceActive || !ready || signingOut} aria-label="Message AI Advisor" placeholder="Ask about courses, your interests, or your next semester…" rows={2} maxLength={6000} value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }}/>
@@ -286,21 +287,105 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
   </div>;
 }
 
+function CourseIntroduction({ course }) {
+  const zh = course.language === 'zh';
+  const groups = course.preparation?.levels || course.prerequisiteLevels || [];
+  return (
+    <section className="course-card course-introduction">
+      <header className="course-identity">
+        <div className="course-kicker">
+          <span className="course-code-badge">{course.code}</span>
+          <span>{zh ? '课程指南' : 'COURSE GUIDE'}</span>
+        </div>
+        <h3>{course.title}</h3>
+        <div className="course-facts">
+          <span>{course.department?.toUpperCase()}</span>
+          <span>Level {course.level}</span>
+          <span>{course.credits ?? '—'} credits</span>
+        </div>
+      </header>
+      <div className="course-objective">
+        <span className="section-number">01</span>
+        <div>
+          <h4>{zh ? '学习目标' : 'What you will learn'}</h4>
+          <p>{course.objectives}</p>
+          {course.learningOutcomes?.length > 0 && (
+            <div className="learning-outcomes">
+              <h5>{zh ? '学完后，你将能够' : 'By the end, you will be able to'}</h5>
+              <ul>
+                {course.learningOutcomes.map((outcome, index) => (
+                  <li key={index}>
+                    <span className="outcome-check"><Check size={13} /></span>
+                    <span>{outcome}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="course-rating">
+        <span>{zh ? '课程评价' : 'Course rating'}</span>
+        <div>
+          <span className="rating-stars" aria-hidden="true">★★★★★</span>
+          <strong>{Number(course.rating).toFixed(1)}<small> / 5</small></strong>
+          {course.ratingSource === 'simulated' && <span className="rating-example">{zh ? '示例' : 'Example'}</span>}
+        </div>
+      </div>
+      <div className="course-section">
+        <span className="section-number">02</span>
+        <div>
+          <h4>{zh ? '这门课学什么？' : 'What is this course about?'}</h4>
+          <p>{course.summary}</p>
+        </div>
+      </div>
+      <div className="course-section course-prerequisites">
+        <span className="section-number">03</span>
+        <div>
+          <h4>{zh ? '建议先修' : 'Suggested preparation'}</h4>
+          {groups.length > 0 ? (
+            <div className="prerequisite-levels">
+              {groups.map(group => (
+                <div className="prerequisite-level" key={group.level}>
+                  <span className="level-badge">Level {group.level}</span>
+                  <div className="prerequisite-chips">{group.courses.map(code => <span key={code}>{code}</span>)}</div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>{course.preparation?.description || course.prerequisite}</p>
+          )}
+          {groups.length > 0 && (
+            <p className="prerequisite-relation">{zh ? '以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。' : 'Use these courses as preparation references. Please check the official course description for actual enrolment requirements.'}</p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Message({ message, onFollowUp, disabled, speechState, playbackSupported, guest, onSignIn, onRead, onPause, onResume, onStop }) {
   const [feedback, setFeedback] = useState(null);
   const reading = speechState.messageId === message.id;
   const paused = reading && speechState.status === 'paused';
+  const audioBar = <div className={`read-aloud-bar ${reading ? 'is-reading' : ''}`}>
+    {guest ? <button onClick={onSignIn}><LockKeyhole size={14}/> Sign in for audio</button> : reading ? <><span className="playback-state" role="status"><Volume2 size={15}/>{paused ? 'Paused' : speechState.status === 'starting' ? 'Preparing audio…' : 'Reading aloud'}</span><button onClick={paused ? onResume : onPause} aria-label={paused ? 'Resume read aloud' : 'Pause read aloud'}>{paused ? <Play size={14}/> : <Pause size={14}/>}<span>{paused ? 'Resume' : 'Pause'}</span></button><button onClick={onStop} aria-label="Stop read aloud"><Square size={13}/><span>Stop</span></button></> : <button onClick={onRead} disabled={disabled || !playbackSupported} title={playbackSupported ? 'Read this answer and its course recommendations aloud' : 'Read aloud is not supported in this browser'}><Volume2 size={15}/> Read aloud</button>}
+    {!guest && !playbackSupported && <span className="playback-unavailable">Unavailable in this browser</span>}
+  </div>;
+  const feedbackBar = <div className="answer-actions"><span>Was this helpful?</span><button className={`icon-button ${feedback === 'yes' ? 'selected' : ''}`} aria-label="Helpful response" aria-pressed={feedback === 'yes'} onClick={() => setFeedback(feedback === 'yes' ? null : 'yes')}><ThumbsUp size={14}/></button><button className={`icon-button ${feedback === 'no' ? 'selected' : ''}`} aria-label="Unhelpful response" aria-pressed={feedback === 'no'} onClick={() => setFeedback(feedback === 'no' ? null : 'no')}><ThumbsDown size={14}/></button>{feedback && <span role="status">Feedback noted for this session</span>}</div>;
   if (message.role === 'user') return <article className="user-message"><div><p>{message.text}</p>{message.attachments?.length > 0 && <div className="user-files">{message.attachments.map((file, index) => <span key={index}><Paperclip size={13}/>{file.name}</span>)}</div>}</div><span className="user-avatar"><UserRound size={17}/></span></article>;
+  if (message.rawMode) return <article className="assistant-message"><span className="assistant-avatar"><Sparkles size={18}/></span><div className="assistant-body"><div className="message-author">PolyPath <span>微调原始输出</span></div><p className="raw-mode-note">仅发送当前问题；未使用系统提示词、课程资料、历史回答或自动排版。</p><pre className="raw-model-output">{message.text}</pre><p className="raw-mode-note">{message.model} · {message.latencyMs} ms{message.usage && ` · 输入 ${message.usage.prompt_tokens ?? '?'} / 输出 ${message.usage.completion_tokens ?? '?'} tokens`}{message.finishReason === 'length' && ' · 达到输出长度上限，回答可能不完整'} · {message.observationSaved ? '观察记录已保存' : '观察记录保存失败'}</p></div></article>;
+  if (message.courses?.some(course => course.format === 'course-introduction-v1')) {
+    const zh = message.courses.some(course => course.language === 'zh');
+    return <article className="assistant-message course-only-message"><span className="assistant-avatar"><Sparkles size={18}/></span><div className="assistant-body"><div className="message-author">PolyPath <span>COURSE GUIDE</span></div>{message.decisionNotice && <p className="course-missing-notice" role="status">{message.decisionNotice}</p>}{message.unavailableCourses?.length > 0 && <p className="course-missing-notice" role="status">{zh ? '未找到课程资料，请核对编号：' : 'No course records found; please check: '}{message.unavailableCourses.join('、')}</p>}{message.overview && <section className="recommendation-overview"><div className="overview-heading"><Sparkles size={16}/><h4>{zh ? '选课建议' : 'Your course recommendations'}</h4></div><p>{message.overview}</p><span>{zh ? '下面逐门了解' : 'Explore each course below'} <span aria-hidden="true">↓</span></span></section>}<div className="course-grid course-introduction-list">{message.courses.filter(course => course.format === 'course-introduction-v1').map(course => <CourseIntroduction key={course.code} course={course}/>)}</div>{message.followUps?.length > 0 && <section className="course-follow-ups"><h4><MessageSquare size={15}/>{zh ? '可能的继续提问' : 'Keep exploring'}</h4><div>{message.followUps.map((question, index) => <button type="button" key={index} disabled={disabled} onClick={() => onFollowUp(question)}><span>{question}</span><ArrowUpRight size={16}/></button>)}</div></section>}{message.moreCourses?.available && <section className="more-course-prompt"><p>{zh ? '还有其他相关课程可以继续了解。' : 'There are more related courses to explore.'}</p><button type="button" disabled={disabled} onClick={() => onFollowUp(message.moreCourses.prompt)}>{zh ? '查看更多相关课程' : 'Explore more courses'}<ArrowUpRight size={16}/></button></section>}{audioBar}{feedbackBar}</div></article>;
+  }
   return <article className="assistant-message"><span className="assistant-avatar"><Sparkles size={18}/></span><div className="assistant-body"><div className="message-author">PolyPath <span>{message.mode === 'llm' ? 'QWEN' : 'KNOWLEDGE ASSISTANT'}</span></div><p className="answer-text">{message.text}</p>{message.warnings?.length > 0 && <div className="response-notes" role="status">{message.warnings.map((note, index) => <p key={index}><AlertCircle size={14}/>{note}</p>)}</div>}
     {message.courses?.length > 0 && <div className="course-grid">{message.courses.map((course, index) => <section className="course-card" key={index}><div className="course-top"><span>{course.code}</span>{Number.isFinite(course.credits) && <span>{course.credits} credits</span>}</div><h3>{course.title}</h3><span className="course-tag">{course.tag}</span><p>{course.reason}</p><details><summary>Prerequisites <ChevronDown size={14}/></summary><p>{course.prerequisite}</p></details></section>)}</div>}
     {message.semesters?.length > 0 && <div className="semester-grid">{message.semesters.map((semester, index) => <section className="semester-card" key={index}><div><h3>{semester.title}</h3>{Number.isFinite(semester.credits) && <span>{semester.credits} credits</span>}</div><ul>{semester.courses.map((course, i) => <li key={i}><BookOpen size={14}/>{course}</li>)}</ul></section>)}</div>}
     {message.checks?.length > 0 && <div className="checks-panel"><strong><ShieldCheck size={16}/> Planning checks</strong>{message.checks.map((check, i) => <span key={i}><AlertCircle size={13}/>{check}</span>)}</div>}
     {message.sources?.length > 0 && <details className="sources-panel"><summary><FileText size={15}/> Sources & supporting information <ChevronDown size={14}/></summary>{message.sources.map((source, index) => <div key={index}><strong>{source.title}</strong><p>{source.detail}</p>{source.url && /^https?:\/\//i.test(source.url) && <a href={source.url} target="_blank" rel="noreferrer">View source <ArrowUpRight size={13}/></a>}</div>)}</details>}
-    <div className={`read-aloud-bar ${reading ? 'is-reading' : ''}`}>
-      {guest ? <button onClick={onSignIn}><LockKeyhole size={14}/> Sign in for audio</button> : reading ? <><span className="playback-state" role="status"><Volume2 size={15}/>{paused ? 'Paused' : speechState.status === 'starting' ? 'Preparing audio…' : 'Reading aloud'}</span><button onClick={paused ? onResume : onPause} aria-label={paused ? 'Resume read aloud' : 'Pause read aloud'}>{paused ? <Play size={14}/> : <Pause size={14}/>}<span>{paused ? 'Resume' : 'Pause'}</span></button><button onClick={onStop} aria-label="Stop read aloud"><Square size={13}/><span>Stop</span></button></> : <button onClick={onRead} disabled={disabled || !playbackSupported} title={playbackSupported ? 'Read this answer and its course recommendations aloud' : 'Read aloud is not supported in this browser'}><Volume2 size={15}/> Read aloud</button>}
-      {!guest && !playbackSupported && <span className="playback-unavailable">Unavailable in this browser</span>}
-    </div>
-    <div className="answer-actions"><span>Was this helpful?</span><button className={`icon-button ${feedback === 'yes' ? 'selected' : ''}`} aria-label="Helpful response" aria-pressed={feedback === 'yes'} onClick={() => setFeedback(feedback === 'yes' ? null : 'yes')}><ThumbsUp size={14}/></button><button className={`icon-button ${feedback === 'no' ? 'selected' : ''}`} aria-label="Unhelpful response" aria-pressed={feedback === 'no'} onClick={() => setFeedback(feedback === 'no' ? null : 'no')}><ThumbsDown size={14}/></button>{feedback && <span role="status">Feedback noted for this session</span>}</div>
+    {audioBar}
+    {feedbackBar}
     {message.followUps?.length > 0 && <div className="follow-ups">{message.followUps.map((text, index) => <button disabled={disabled} key={index} onClick={() => onFollowUp(text)}>{text}<ArrowUpRight size={13}/></button>)}</div>}
   </div></article>;
 }

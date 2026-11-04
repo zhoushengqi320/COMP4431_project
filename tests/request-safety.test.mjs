@@ -64,7 +64,7 @@ test('HTTP integration accepts valid chat and rejects malformed/cross-origin req
     assert.equal((await response.json()).courses[0].code, 'DSAI2201');
     mode = 'invalid';
     assert.equal((await post({ message: '介绍DSAI2201' })).status, 502);
-    assert.equal(calls, 2);
+    assert.equal(calls, 4);
   } finally {
     server.closeAllConnections(); mock.closeAllConnections();
     await Promise.all([new Promise(resolve => server.close(resolve)), new Promise(resolve => mock.close(resolve))]);

@@ -155,7 +155,17 @@ function conversationMessages(value) {
     for (const [key, max] of Object.entries(strings)) {
       if (item[key] !== undefined) message[key] = textField(item[key], `${label}.${key}`, max);
     }
-    for (const key of ['checks', 'warnings', 'documentWarnings', 'followUps']) {
+    for (const key of ['overview', 'decisionNotice', 'model', 'finishReason']) {
+      if (item[key] !== undefined) message[key] = textField(item[key], `${label}.${key}`, key === 'overview' || key === 'decisionNotice' ? 8000 : 200);
+    }
+    for (const key of ['rawMode', 'observationSaved']) {
+      if (item[key] !== undefined) {
+        if (typeof item[key] !== 'boolean') throw fail(400, `${label}.${key} must be a boolean.`);
+        message[key] = item[key];
+      }
+    }
+    if (item.latencyMs !== undefined) message.latencyMs = numberField(item.latencyMs, `${label}.latencyMs`, 600000);
+    for (const key of ['checks', 'warnings', 'documentWarnings', 'followUps', 'unavailableCourses']) {
       const list = listField(item[key], `${label}.${key}`, 30, (text, path) => textField(text, path, 4000, true));
       if (list !== undefined) message[key] = list;
     }
@@ -164,12 +174,70 @@ function conversationMessages(value) {
       return { name: textField(attachment.name, `${path}.name`, 255, true), size: numberField(attachment.size, `${path}.size`, 10 * 1024 * 1024) };
     });
     if (attachments !== undefined) message.attachments = attachments;
+    const storedLevels = (value, path) => listField(value, path, 12, (group, groupPath) => {
+      record(group, groupPath);
+      const courses = listField(group.courses, `${groupPath}.courses`, 40, (code, itemPath) => textField(code, itemPath, 40, true));
+      const level = typeof group.level === 'number'
+        ? numberField(group.level, `${groupPath}.level`, 9)
+        : textField(group.level, `${groupPath}.level`, 40);
+      return { ...(level !== undefined ? { level } : {}), ...(courses !== undefined ? { courses } : { courses: [] }) };
+    });
     const courses = listField(item.courses, `${label}.courses`, 20, (course, path) => {
-      const clean = stringFields(course, path, { code: 40, title: 300, tag: 100, reason: 4000, prerequisite: 4000 });
+      const clean = stringFields(course, path, {
+        format: 40, language: 8, code: 40, title: 300, department: 120, level: 40, faculty: 120, schoolId: 80, id: 80,
+        tag: 100, reason: 4000, prerequisite: 4000, objectives: 4000, summary: 4000,
+        requiredPrerequisites: 4000, recommendedPrerequisites: 4000, ratingSource: 32
+      });
       const credits = numberField(course.credits, `${path}.credits`);
-      return { ...clean, ...(credits !== undefined ? { credits } : {}) };
+      const rating = numberField(course.rating, `${path}.rating`, 5);
+      const learningOutcomes = listField(course.learningOutcomes, `${path}.learningOutcomes`, 8, (outcome, itemPath) => textField(outcome, itemPath, 400, true));
+      const prerequisiteLevels = storedLevels(course.prerequisiteLevels, `${path}.prerequisiteLevels`);
+      let preparation;
+      if (course.preparation !== undefined) {
+        record(course.preparation, `${path}.preparation`);
+        preparation = {
+          ...stringFields(course.preparation, `${path}.preparation`, { description: 4000, note: 800, sourceText: 4000 }),
+          ...(course.preparation.levels !== undefined ? { levels: storedLevels(course.preparation.levels, `${path}.preparation.levels`) } : {})
+        };
+      }
+      return {
+        ...clean,
+        ...(credits !== undefined ? { credits } : {}),
+        ...(rating !== undefined ? { rating } : {}),
+        ...(learningOutcomes !== undefined ? { learningOutcomes } : {}),
+        ...(prerequisiteLevels !== undefined ? { prerequisiteLevels } : {}),
+        ...(preparation !== undefined ? { preparation } : {})
+      };
     });
     if (courses !== undefined) message.courses = courses;
+    if (item.moreCourses !== undefined) {
+      record(item.moreCourses, `${label}.moreCourses`);
+      const more = {};
+      if (item.moreCourses.available !== undefined) {
+        if (typeof item.moreCourses.available !== 'boolean') throw fail(400, `${label}.moreCourses.available must be a boolean.`);
+        more.available = item.moreCourses.available;
+      }
+      if (item.moreCourses.prompt !== undefined) more.prompt = textField(item.moreCourses.prompt, `${label}.moreCourses.prompt`, 400);
+      message.moreCourses = more;
+    }
+    if (item.recommendationContext !== undefined) {
+      record(item.recommendationContext, `${label}.recommendationContext`);
+      const context = {};
+      if (item.recommendationContext.query !== undefined) context.query = textField(item.recommendationContext.query, `${label}.recommendationContext.query`, 6000);
+      const seenCodes = listField(item.recommendationContext.seenCodes, `${label}.recommendationContext.seenCodes`, 500, (code, path) => textField(code, path, 40, true));
+      const reserveCodes = listField(item.recommendationContext.reserveCodes, `${label}.recommendationContext.reserveCodes`, 100, (code, path) => textField(code, path, 40, true));
+      if (seenCodes !== undefined) context.seenCodes = seenCodes;
+      if (reserveCodes !== undefined) context.reserveCodes = reserveCodes;
+      message.recommendationContext = context;
+    }
+    if (item.usage !== undefined) {
+      record(item.usage, `${label}.usage`);
+      const usage = {};
+      for (const key of ['prompt_tokens', 'completion_tokens', 'total_tokens']) {
+        if (item.usage[key] !== undefined) usage[key] = numberField(item.usage[key], `${label}.usage.${key}`, 1_000_000);
+      }
+      message.usage = usage;
+    }
     const semesters = listField(item.semesters, `${label}.semesters`, 20, (semester, path) => {
       const clean = stringFields(semester, path, { title: 300 });
       const credits = numberField(semester.credits, `${path}.credits`);

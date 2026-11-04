@@ -1,4 +1,5 @@
-import { getAdvisorStatus, handleAdvisorRequest } from './deepseek-advisor.mjs';
+import { getAdvisorStatus } from './deepseek-advisor.mjs';
+import { handleAdvisorRequest, handleTranscribeRequest } from './qwen-advisor.mjs';
 
 function json(res, status, payload) {
   res.statusCode = status;
@@ -9,10 +10,17 @@ function json(res, status, payload) {
 }
 
 /** The same access boundary serves both Vite and the production HTTP server. */
+function qwenGuestEnv(env) {
+  if (!env.QWEN_API_KEY && !env.DASHSCOPE_API_KEY) return {};
+  const keys = ['QWEN_API_KEY', 'DASHSCOPE_API_KEY', 'QWEN_BASE_URL', 'QWEN_MODEL', 'QWEN_PLANNER_MODEL', 'QWEN_ASR_MODEL', 'QWEN_ADVISOR_MODE', 'SUPABASE_URL', 'SUPABASE_ANON_KEY', 'SUPABASE_PUBLISHABLE_KEY'];
+  return Object.fromEntries(keys.filter(key => env[key]).map(key => [key, env[key]]));
+}
+
 export function createAdvisorAccess({
   auth,
   env = process.env,
   advisorHandler = handleAdvisorRequest,
+  transcribeHandler = handleTranscribeRequest,
   rateLimitMax = 20,
   rateLimitWindowMs = 15 * 60 * 1000,
   now = Date.now,
@@ -47,7 +55,7 @@ export function createAdvisorAccess({
 
   return async function handleAdvisorAccess(req, res) {
     const path = req.url?.split('?')[0];
-    if (path !== '/api/advisor' && path !== '/api/advisor/status') return false;
+    if (path !== '/api/advisor' && path !== '/api/advisor/status' && path !== '/api/transcribe') return false;
     res.setHeader('Cache-Control', 'no-store');
     const expectedMethod = path.endsWith('/status') ? 'GET' : 'POST';
     if (req.method !== expectedMethod) {
@@ -65,15 +73,17 @@ export function createAdvisorAccess({
     const forceGuest = req.headers['x-polypath-access'] === 'guest';
     const guest = forceGuest || !account;
     const access = guest ? 'guest' : 'member';
-    const advisorEnv = guest
-      ? (env.QWEN_API_KEY ? { QWEN_API_KEY: env.QWEN_API_KEY, QWEN_BASE_URL: env.QWEN_BASE_URL, QWEN_MODEL: env.QWEN_MODEL } : {})
-      : env;
+    const advisorEnv = guest ? qwenGuestEnv(env) : env;
     if (path.endsWith('/status')) {
       json(res, 200, { ...getAdvisorStatus(advisorEnv), access, ...(guest ? { guestLimits } : {}) });
       return true;
     }
     const guestRemaining = guest ? useGuestQuota(req, res) : undefined;
     if (guest && guestRemaining === null) return true;
+    if (path === '/api/transcribe') {
+      await transcribeHandler(req, res, advisorEnv);
+      return true;
+    }
     const initialUserId = account?.user.id;
     const revalidateMember = guest ? undefined : () => {
       const current = auth.requireUser(req, res);

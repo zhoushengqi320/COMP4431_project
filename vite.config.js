@@ -3,9 +3,11 @@ import { defineConfig, loadEnv, normalizePath } from 'vite';
 import { createAdvisorAccess } from './server/advisor-access.mjs';
 import { createAuthService } from './server/auth.mjs';
 import { startCatalogueRefresh } from './server/course-catalogue.mjs';
+import { startCourseRefresh } from './server/course-knowledge.mjs';
 
 export function advisorPlugin(env, { advisorAccessOptions = {} } = {}) {
   startCatalogueRefresh(env);
+  startCourseRefresh(env);
   const mount = server => {
     const auth = createAuthService({
       databasePath: env.AUTH_DATABASE_PATH || undefined,
