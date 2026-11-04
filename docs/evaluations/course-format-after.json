@@ -1,0 +1,126 @@
+{
+  "recordedAt": "2026-11-03T12:49:03.066Z",
+  "stage": "after",
+  "model": "qwen-plus",
+  "catalogue": "local snapshot",
+  "results": [
+    {
+      "message": "请问Comp4431是什么课",
+      "status": 200,
+      "latencyMs": 10766,
+      "answer": {
+        "text": "COMP4431 是一门3学分的四年级人工智能课程，面向计算学系学生开设。课程系统介绍人工智能基本概念、智能代理设计、问题求解策略（含搜索算法与约束满足）、机器学习三大范式（监督/无监督/强化学习）及典型应用，并涵盖人工智能伦理议题。修读前须完成 COMP2011 或 COMP2013 或 DSAI2201 其中一门。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4431",
+            "title": "Artificial Intelligence",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍人工智能的基本概念\n2. 使学生掌握人工智能技术的编程知识和技能\n3. 掌握问题建模和典型智能算法\n4. 了解人工智能的技术发展\n5. 使学生意识到与人工智能相关的伦理问题。",
+            "rating": 4.2,
+            "ratingSource": "simulated",
+            "summary": "本课程介绍人工智能基本概念、智能代理与知识表示、无/有信息搜索策略、启发式算法、约束满足与博弈问题、监督/无监督/强化学习、决策树、支持向量机与神经网络，并探讨AI最新发展、典型应用及伦理影响。教学结合课堂讲授、练习、实验与项目。",
+            "requiredPrerequisites": "COMP2011/COMP2013/DSAI2201",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisite": "先修课程：COMP2011/COMP2013/DSAI2201",
+            "reason": "本课程介绍人工智能基本概念、智能代理与知识表示、无/有信息搜索策略、启发式算法、约束满足与博弈问题、监督/无监督/强化学习、决策树、支持向量机与神经网络，并探讨AI最新发展、典型应用及伦理影响。教学结合课堂讲授、练习、实验与项目。"
+          }
+        ],
+        "semesters": [
+          {
+            "title": "第四学年第一学期（建议）",
+            "credits": 3,
+            "courses": [
+              "COMP4431 · Artificial Intelligence"
+            ]
+          }
+        ],
+        "checks": [
+          "已确认课程代码 COMP4431 在PolyU课程目录中存在",
+          "先修要求为 COMP2011/COMP2013/DSAI2201（三选一），非同时修读",
+          "课程属Faculty of Engineering，dept comp，level 4"
+        ],
+        "sources": [
+          {
+            "title": "PolyU course catalogue",
+            "detail": "Course record for COMP4431",
+            "url": "https://www.polyu.edu.hk/comp/study/undergraduate/programmes/beng-computing/course-list/"
+          }
+        ],
+        "followUps": [
+          "COMP4431 和 COMP4432 有什么区别？",
+          "COMP2011 和 COMP2013 哪一门更适合做 COMP4431 的先修课？",
+          "COMP4431 有实验或编程项目吗？"
+        ]
+      }
+    },
+    {
+      "message": "请介绍DSAI2201，包括必要先修和建议先修",
+      "status": 200,
+      "latencyMs": 14194,
+      "answer": {
+        "text": "DSAI2201《数据结构和算法》是一门3学分的二年级工程学院课程，旨在教授学生如何使用数据结构与算法解决计算问题。课程涵盖算法分析、线性与树形数据结构、排序与搜索（含哈希、堆、图遍历）、贪心/动态规划/分治等设计技术，并强调编程实践。教学采用大班讲座+小班辅导与实验结合方式，辅以书面与编程作业。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "DSAI2201",
+            "title": "Data Structures and Algorithms",
+            "department": "dsai",
+            "level": "2",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "向学生介绍数据结构和算法，并教授如何使用它们解决计算问题。",
+            "rating": 5,
+            "ratingSource": "simulated",
+            "summary": "本课程介绍数据结构和算法，内容包括渐近分析、链表/栈/队列/二叉树/平衡树、快速排序/归并排序/堆排序、哈希、图的表示与遍历（DFS/BFS）、贪心算法、动态规划、分治法及递归；通过讲座、辅导与实验室强化分析、设计与编程实现能力。",
+            "requiredPrerequisites": "COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisite": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "reason": "本课程介绍数据结构和算法，内容包括渐近分析、链表/栈/队列/二叉树/平衡树、快速排序/归并排序/堆排序、哈希、图的表示与遍历（DFS/BFS）、贪心算法、动态规划、分治法及递归；通过讲座、辅导与实验室强化分析、设计与编程实现能力。"
+          }
+        ],
+        "semesters": [
+          {
+            "title": "必修先修课程（须全部满足）",
+            "credits": 0,
+            "courses": [
+              "COMP1011 · Programming Fundamentals",
+              "COMP1012 · Introduction to Computing",
+              "ENG2002 · Engineering Mathematics II",
+              "LGT3109 · Operations Research",
+              "AMA1110 · Basic Mathematics I",
+              "AMA1501 · Linear Algebra for Engineers",
+              "AMA2634 · Probability and Statistics",
+              "AMA1751 · Calculus for Engineers",
+              "AMA2111 · Mathematical Methods"
+            ]
+          }
+        ],
+        "checks": [
+          "DSAI2201明确要求同时完成三组先修：①任一编程/工程基础课（COMP1011／COMP1012／ENG2002／LGT3109）；②任一数学基础课（AMA1110／AMA1501／AMA2634）；③任一高阶数学课（AMA1751／AMA2111）。未说明‘建议先修’，仅列明‘先修’即为强制要求。"
+        ],
+        "sources": [
+          {
+            "title": "PolyU course catalogue",
+            "detail": "DSAI2201 record with prerequisites, objectives, description and teaching method.",
+            "url": "https://www.polyu.edu.hk/reg/subject-search/"
+          }
+        ],
+        "followUps": [
+          "DSAI2201是否有替代先修课程？",
+          "如果我已修读AMA1008但未在列表中，能否豁免数学先修？",
+          "DSAI2201的实验室用什么编程语言？"
+        ]
+      }
+    }
+  ]
+}

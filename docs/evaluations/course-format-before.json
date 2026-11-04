@@ -1,0 +1,86 @@
+{
+  "recordedAt": "2026-11-03T12:46:52.169Z",
+  "stage": "before",
+  "model": "qwen-plus",
+  "catalogue": "local snapshot",
+  "results": [
+    {
+      "message": "请问Comp4431是什么课",
+      "status": 200,
+      "latencyMs": 9719,
+      "answer": {
+        "text": "COMP4431 是一门 3 学分的四年级本科课程，题为「人工智能」，隶属工程学院计算机系。课程涵盖人工智能基本概念、智能代理建模、搜索算法（无信息/有信息/启发式/随机）、知识表示与推理（含贝叶斯网络）、机器学习三大范式（监督/无监督/强化学习）及典型模型（决策树、SVM、神经网络），并包含人工智能伦理与社会影响专题。修读前须完成 COMP2011、COMP2013 或 DSAI2201 中任一先修课。",
+        "courses": [
+          {
+            "code": "COMP4431",
+            "title": "Artificial Intelligence",
+            "credits": 3,
+            "tag": "",
+            "reason": "直接匹配学生查询的课程代码",
+            "prerequisite": "COMP2011/COMP2013/DSAI2201"
+          }
+        ],
+        "semesters": [],
+        "checks": [
+          "请确认您已修毕至少一门先修课程（COMP2011、COMP2013 或 DSAI2201）；若尚未完成，需优先安排该先修课。"
+        ],
+        "sources": [
+          {
+            "title": "PolyU course catalogue",
+            "detail": "COMP4431 | Artificial Intelligence | 3 credits | Faculty of Engineering | dept comp | level 4",
+            "url": "https://www.polyu.edu.hk/comp/study/undergraduate/bsc-computer-science/"
+          }
+        ],
+        "followUps": [
+          "COMP4431 通常在哪一学期开课？",
+          "有没有推荐的先修课替代方案？",
+          "这门课是否包含编程实践或项目？"
+        ]
+      }
+    },
+    {
+      "message": "请介绍DSAI2201，包括必要先修和建议先修",
+      "status": 200,
+      "latencyMs": 14038,
+      "answer": {
+        "text": "DSAI2201《数据结构和算法》是一门3学分的二年级工程学院课程，旨在教授学生如何使用核心数据结构（如链表、栈、队列、二叉树、堆、哈希表、图）和经典算法（如排序、搜索、贪心、分治、动态规划）解决计算问题，并强调算法效率分析（渐近符号、时间/空间复杂度）。该课程是人工智能与数据智能（DSAI）专业的重要基础课，亦为高阶AI课程（如COMP4431）的明确先修要求。",
+        "courses": [
+          {
+            "code": "DSAI2201",
+            "title": "Data Structures and Algorithms",
+            "credits": 3,
+            "tag": "core foundation",
+            "reason": "核心专业基础课，支撑后续算法密集型AI课程",
+            "prerequisite": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111"
+          }
+        ],
+        "semesters": [
+          {
+            "title": "第二学年第一学期（建议）",
+            "credits": 3,
+            "courses": [
+              "DSAI2201 · Data Structures and Algorithms"
+            ]
+          }
+        ],
+        "checks": [
+          "请确认您已修读任一编程入门课（COMP1011/COMP1012/ENG2002/LGT3109）",
+          "请确认您已修读任一数学基础课（AMA1110/AMA1501/AMA2634）及任一进阶数学课（AMA1751/AMA2111）",
+          "未在提供的课程摘要中查到‘建议先修’（recommended prerequisites）的官方说明；仅列出强制先修（prerequisites）"
+        ],
+        "sources": [
+          {
+            "title": "PolyU course catalogue",
+            "detail": "DSAI2201 record with full prerequisite list and description",
+            "url": "https://www.polyu.edu.hk/en/programmes/courses/dsai2201"
+          }
+        ],
+        "followUps": [
+          "我已修过COMP1012和AMA1110，是否满足DSAI2201先修要求？",
+          "DSAI2201和COMP2011在内容上有什么区别？",
+          "修完DSAI2201后，可衔接哪些人工智能方向的高年级课程？"
+        ]
+      }
+    }
+  ]
+}

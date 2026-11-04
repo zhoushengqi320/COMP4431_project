@@ -1,0 +1,47 @@
+{
+  "recordedAt": "2026-11-03T16:16:28.973Z",
+  "host": "dashscope.aliyuncs.com",
+  "interface": "compatible-mode/v1/files",
+  "uploadedFiles": [
+    {
+      "file_id": "file-ft-ca8242271048447baa056680",
+      "name": "polypath-v8-train.jsonl",
+      "split": "train",
+      "status": "processed",
+      "bytes": 13762351,
+      "retrieveHttpStatus": 200,
+      "verifiedStatus": "processed",
+      "verifiedBytes": 13762351,
+      "bytesMatch": true
+    },
+    {
+      "file_id": "file-ft-0d7020d185f74f668f8a24a7",
+      "name": "polypath-v8-validation.jsonl",
+      "split": "validation",
+      "status": "processed",
+      "bytes": 1848478,
+      "retrieveHttpStatus": 200,
+      "verifiedStatus": "processed",
+      "verifiedBytes": 1848478,
+      "bytesMatch": true
+    }
+  ],
+  "failedFiles": [],
+  "releaseFiles": {
+    "train": {
+      "samples": 1151,
+      "sha256": "523ebe4df635175f3b795522beddfe6216268cfe11ea92161124a09b03fc4787",
+      "bytes": 13762351
+    },
+    "validation": {
+      "samples": 160,
+      "sha256": "678db0cfc48dc63f24257984d7fa8a51d083b31febd18ce58d527801a083492c",
+      "bytes": 1848478
+    }
+  },
+  "trainingCreated": false,
+  "paidTrainingAuthorized": false,
+  "testSetUploaded": false,
+  "status": "uploaded_not_trained",
+  "verifiedAt": "2026-11-03T16:18:00.052Z"
+}

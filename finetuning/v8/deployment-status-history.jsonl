@@ -1,0 +1,4 @@
+{"observedAt":"2026-11-03T23:46:40.619Z","httpStatus":200,"deployed_model":"qwen3-8b-01fa13690bf1","model_name":"qwen3-8b-ft-202611040019-7fc7","base_model":"qwen3-8b","status":"PENDING","plan":"lora"}
+{"observedAt":"2026-11-03T23:48:09.215Z","httpStatus":200,"deployed_model":"qwen3-8b-01fa13690bf1","model_name":"qwen3-8b-ft-202611040019-7fc7","base_model":"qwen3-8b","status":"PENDING","plan":"lora"}
+{"observedAt":"2026-11-03T23:49:55.844Z","httpStatus":200,"deployed_model":"qwen3-8b-01fa13690bf1","model_name":"qwen3-8b-ft-202611040019-7fc7","base_model":"qwen3-8b","status":"RUNNING","plan":"lora"}
+{"observedAt":"2026-11-04T00:44:05.026Z","httpStatus":200,"deployed_model":"qwen3-8b-01fa13690bf1","model_name":"qwen3-8b-ft-202611040019-7fc7","base_model":"qwen3-8b","status":"RUNNING","plan":"lora"}

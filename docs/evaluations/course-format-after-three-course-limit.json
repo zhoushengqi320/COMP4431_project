@@ -1,0 +1,150 @@
+{
+  "recordedAt": "2026-11-03T13:51:08.507Z",
+  "stage": "after",
+  "model": "qwen-plus",
+  "catalogue": "local snapshot",
+  "results": [
+    {
+      "message": "我想学machine learning相关内容，给我推荐一些课",
+      "status": 200,
+      "latencyMs": 23183,
+      "answer": {
+        "text": "根据你的兴趣，我为你精选了三门核心机器学习课程：COMP4432（面向工程背景的全面入门）、AMA4680（侧重统计建模与理论基础）和 COMP5541（涵盖前沿方向如强化学习与可解释性）。它们覆盖不同侧重点，适合初学者建立扎实基础。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4432",
+            "title": "Machine Learning",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍现代机器学习的基本原理、概念和模型；\n2. 介绍机器学习技术的最新进展及其在模式识别、计算机视觉等领域的应用。",
+            "rating": 4,
+            "ratingSource": "simulated",
+            "summary": "这是一门面向本科生的机器学习入门课，从数学基础（线性代数、概率）讲起，系统介绍从带答案的例子中学习（如SVM、通过多层计算从例子中学习的模型）、从没有答案的数据中找规律（如k-均值、自动编码器）和实际应用（如人脸识别、目标检测）。课程包含编程实验和案例研究，帮助你动手实现主流模型。",
+            "learningOutcomes": [
+              "能用线性回归、通过一连串问题作判断的方法和通过多层计算从例子中学习的模型解决分类与回归问题",
+              "能通过交叉验证和正则化方法防止模型过拟合",
+              "能用卷积通过多层计算从例子中学习的模型处理图像识别任务（如MNIST手写数字识别）",
+              "能用k-均值等聚类算法对未标记数据进行分组分析"
+            ],
+            "requiredPrerequisites": "无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无（但建议学生对入门级人工智能/数据挖掘概念有所了解，并熟悉线性代数和概率的基本概念）",
+            "reason": "这是一门面向本科生的机器学习入门课，从数学基础（线性代数、概率）讲起，系统介绍从带答案的例子中学习（如SVM、通过多层计算从例子中学习的模型）、从没有答案的数据中找规律（如k-均值、自动编码器）和实际应用（如人脸识别、目标检测）。课程包含编程实验和案例研究，帮助你动手实现主流模型。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "AMA4680",
+            "title": "Statistical Machine Learning",
+            "department": "ama",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Science",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "提供机器学习的基本介绍。介绍选定主题的机器学习基本概念和算法，为学生提供将机器学习应用于实际问题所需的基础知识，并为有兴趣从事机器学习或相关领域研究的学生提供起点。",
+            "rating": 4.9,
+            "ratingSource": "simulated",
+            "summary": "这门统计导向的机器学习课聚焦模型背后的数学逻辑，教你如何用统计方法解决回归、分类和聚类问题。内容包括广义线性模型、特征选择、核方法和基础深度学习概念，并通过实验室练习培养用Python建模与评估的实际能力。",
+            "learningOutcomes": [
+              "能用岭回归和Lasso进行带正则化的线性建模",
+              "能使用主成分分析（PCA）降低数据维度并可视化",
+              "能评估分类模型性能（如AUC、ROC曲线）并处理不平衡数据",
+              "能用Python实现朴素贝叶斯、根据数据特征区分类别的方法等算法并解释结果"
+            ],
+            "requiredPrerequisites": "先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。排除统计机器学习（AMA3800）。",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "AMA2602"
+                ]
+              },
+              {
+                "level": 3,
+                "courses": [
+                  "AMA3602",
+                  "AMA3631",
+                  "AMA3001",
+                  "AMA3701",
+                  "AMA3723",
+                  "AMA3724",
+                  "AMA3800"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程/金融分析应用线性模型（AMA2602）或应用线性模型（AMA3602）或数据科学统计（AMA3631）或同等课程和数据科学数学方法（AMA3001/AMA3701）或金融数学方法（AMA3723）或高等数学方法（AMA3724）或同等课程。排除统计机器学习（AMA3800）。",
+            "reason": "这门统计导向的机器学习课聚焦模型背后的数学逻辑，教你如何用统计方法解决回归、分类和聚类问题。内容包括广义线性模型、特征选择、核方法和基础深度学习概念，并通过实验室练习培养用Python建模与评估的实际能力。"
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP5541",
+            "title": "Machine Learning and Data Analytics",
+            "department": "comp",
+            "level": "5",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍现代机器学习的基本原理、概念和模型；\n2. 培养数据分析技能，从数据中获取洞察。",
+            "rating": 4.8,
+            "ratingSource": "simulated",
+            "summary": "这门高阶课拓展了传统机器学习边界，涵盖半从带答案的例子中学习、通过尝试和反馈学习（如Q-learning）、对比学习和深度信念网络等前沿主题，并结合基因组学、预测分析等案例，引导你思考技术落地中的可解释性、法律与社会影响。",
+            "learningOutcomes": [
+              "能区分监督、无监督、半监督和通过尝试和反馈学习的应用场景",
+              "能用k-NN、朴素贝叶斯等算法完成分类任务并比较其表现",
+              "能设计简单异常检测或主题建模方案解决实际问题",
+              "能讨论机器学习在基因组学、预测等领域的可扩展性与伦理挑战"
+            ],
+            "requiredPrerequisites": "无（课程库明确注明）",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "这门高阶课拓展了传统机器学习边界，涵盖半从带答案的例子中学习、通过尝试和反馈学习（如Q-learning）、对比学习和深度信念网络等前沿主题，并结合基因组学、预测分析等案例，引导你思考技术落地中的可解释性、法律与社会影响。"
+          }
+        ],
+        "overview": "推荐COMP4432、AMA4680和COMP5541三门课：COMP4432是经典入门课，系统讲解监督/无监督学习及计算机视觉应用；AMA4680从统计视角切入，强调模型选择、正则化与实际建模能力；COMP5541则拓展至半监督、强化学习和伦理议题，适合希望了解技术边界的同学。三者互补，无严格先后顺序，但建议先修数学基础。",
+        "followUps": [
+          "COMP4432: 这些课会用Python吗？需要提前学编程吗？",
+          "COMP4432: 有没有偏重动手实践、项目多的机器学习课？",
+          "COMP4432: 如果我想往金融方向应用机器学习，有哪些课推荐？"
+        ],
+        "recommendationContext": {
+          "query": "我想学machine learning相关内容，给我推荐一些课",
+          "seenCodes": [
+            "COMP4432",
+            "AMA4680",
+            "COMP5541"
+          ],
+          "reserveCodes": [
+            "DSAI4203",
+            "AMA573",
+            "AP40012",
+            "EIE4121",
+            "MM5433",
+            "MM6761",
+            "DSAI4208",
+            "DSAI5206",
+            "EIE4122",
+            "DSAI5104",
+            "COMP2014",
+            "COMP5564"
+          ]
+        },
+        "moreCourses": {
+          "available": true,
+          "prompt": "请继续推荐更多相关课程，避开之前介绍过的课程。"
+        }
+      }
+    }
+  ]
+}

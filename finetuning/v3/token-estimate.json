@@ -1,0 +1,53 @@
+{
+  "recordedAt": "2026-11-03T14:15:24.187274+00:00",
+  "tokenizer": {
+    "repository": "Qwen/Qwen3-8B",
+    "revision": "b968826d9c46dd6066d109eabc6255188de91218",
+    "url": "https://huggingface.co/Qwen/Qwen3-8B/resolve/b968826d9c46dd6066d109eabc6255188de91218/tokenizer.json",
+    "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+  },
+  "tokenizersVersion": "0.23.3",
+  "method": "Qwen3-8B public tokenizer with generic ChatML framing; estimate only, not a provider quote",
+  "stats": {
+    "train": {
+      "samples": 1153,
+      "estimatedTokens": 2248369,
+      "maxTokens": 5567,
+      "meanTokens": 1950.0,
+      "p95Tokens": 2371
+    },
+    "validation": {
+      "samples": 161,
+      "estimatedTokens": 311231,
+      "maxTokens": 4394,
+      "meanTokens": 1933.1,
+      "p95Tokens": 2446
+    },
+    "test": {
+      "samples": 188,
+      "estimatedTokens": 360113,
+      "maxTokens": 3987,
+      "meanTokens": 1915.5,
+      "p95Tokens": 2422
+    }
+  },
+  "feeEstimate": {
+    "currency": "CNY",
+    "model": "qwen3-8b",
+    "pricePerThousandTokens": 0.006,
+    "priceCheckedOn": "2026-11-03",
+    "source": "https://help.aliyun.com/zh/model-studio/model-training-overview",
+    "oneEpoch": 13.49,
+    "threeEpochs": 40.47,
+    "excludes": [
+      "deployment",
+      "inference",
+      "validation charges if applicable",
+      "data cleaning",
+      "provider-specific tokenization/framing differences"
+    ],
+    "note": "Based on ALL DRAFT training rows, not an approved training release. No money spent on training."
+  },
+  "modelWeightsDownloaded": false,
+  "trainingStarted": false
+}

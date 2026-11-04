@@ -1,0 +1,98 @@
+{
+  "recordedAt": "2026-11-03T15:51:43.391Z",
+  "paidInferenceCalls": 0,
+  "cloudUploadsThisAudit": 0,
+  "trainingJobsCreated": 0,
+  "cases": [
+    {
+      "id": "malformed-semester-crash",
+      "result": {
+        "shown": 0
+      }
+    },
+    {
+      "id": "unknown-lookup-substitution",
+      "result": {
+        "shown": []
+      }
+    },
+    {
+      "id": "completed-course-recommended",
+      "result": {
+        "shown": [
+          "DSAI2201"
+        ]
+      }
+    },
+    {
+      "id": "topic-switch-keeps-old-goal",
+      "result": {
+        "active": true,
+        "more": false,
+        "hasPrevious": false,
+        "query": "还有其他金融课程吗",
+        "seenCodes": [],
+        "reserveCodes": []
+      }
+    },
+    {
+      "id": "boolean-rating-marked-real",
+      "result": {
+        "rating": 4.9,
+        "ratingSource": "simulated"
+      }
+    },
+    {
+      "id": "empty-answer-unsafe-followups",
+      "result": {
+        "text": "你好",
+        "courses": []
+      }
+    },
+    {
+      "id": "malformed-metrics-crash",
+      "result": {
+        "returnedObject": true
+      }
+    }
+  ],
+  "checks": {
+    "nodeTests": {
+      "passed": 65,
+      "failed": 0
+    },
+    "productionBuild": "passed",
+    "dependencyAudit": {
+      "knownVulnerabilities": 0,
+      "scope": "npm audit result observed during this audit; not a penetration test"
+    },
+    "release": {
+      "version": "v8",
+      "verified": true,
+      "defaultAutomatedReleaseBlocked": true,
+      "obsoleteV6Blocked": true,
+      "files": {
+        "train": {
+          "samples": 1151,
+          "sha256": "523ebe4df635175f3b795522beddfe6216268cfe11ea92161124a09b03fc4787",
+          "bytes": 13762351
+        },
+        "validation": {
+          "samples": 160,
+          "sha256": "678db0cfc48dc63f24257984d7fa8a51d083b31febd18ce58d527801a083492c",
+          "bytes": 1848478
+        }
+      }
+    },
+    "currentConfiguredKeyScan": {
+      "scannedFiles": 170,
+      "checkedVariableNames": [
+        "QWEN_API_KEY",
+        "SUPABASE_ANON_KEY"
+      ],
+      "matches": [],
+      "scope": "Current configured key strings only; excludes env files, dependencies, Python environment and tokenizer cache. No key values are recorded."
+    }
+  },
+  "caveat": "Local code/fixture/rule checks, not empirical model accuracy or full human semantic review."
+}

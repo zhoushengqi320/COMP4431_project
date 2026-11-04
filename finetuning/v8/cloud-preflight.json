@@ -1,0 +1,19 @@
+{
+  "recordedAt": "2026-11-03T16:18:00.269Z",
+  "clientDate": "2026-11-04",
+  "operation": "Read-only uploaded-file verification and fine-tune list",
+  "httpStatus": 200,
+  "listAccessConfirmed": true,
+  "errorCode": null,
+  "matchingExistingJobs": [],
+  "trainingCreationPermissionVerified": false,
+  "trainingCreated": false,
+  "providerPriceCheckedOn": "2026-11-04",
+  "providerPriceSource": "https://help.aliyun.com/zh/model-studio/model-training-and-deployment-billing",
+  "model": "qwen3-8b",
+  "pricePerThousandTokensCny": 0.006,
+  "estimatedTrainingTokens": 2722119,
+  "estimatedTrainingFeeCny": 16.332714,
+  "providerQuoteVerified": false,
+  "budgetApproved": false
+}

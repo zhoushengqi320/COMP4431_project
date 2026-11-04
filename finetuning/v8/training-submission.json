@@ -1,0 +1,85 @@
+{
+  "clientDate": "2026-11-04",
+  "attemptedAt": "2026-11-03T16:19:52.376Z",
+  "status": "created",
+  "endpoint": "https://dashscope.aliyuncs.com/api/v1/fine-tunes",
+  "request": {
+    "model": "qwen3-8b",
+    "training_type": "efficient_sft",
+    "job_name": "polypath-v8-pilot-20261104",
+    "training_datasets": [
+      {
+        "data_source_type": "file_id",
+        "file_id": "file-ft-ca8242271048447baa056680"
+      }
+    ],
+    "validation_datasets": [
+      {
+        "data_source_type": "file_id",
+        "file_id": "file-ft-0d7020d185f74f668f8a24a7"
+      }
+    ],
+    "hyper_parameters": {
+      "n_epochs": 1,
+      "batch_size": 32,
+      "max_length": 8192,
+      "data_augmentation": false
+    }
+  },
+  "requestHash": "3e286c598bf1896bf55acc59521ae3571e2b82af61f065529e60b17adc6ec226",
+  "budgetCapCny": 20,
+  "estimatedTrainingFeeCny": 16.33,
+  "quoteType": "Local token estimate at verified public tariff; not a platform quote or provider-enforced spending cap",
+  "dataVersion": "v8",
+  "testSetUploaded": false,
+  "deploymentCreated": false,
+  "httpStatus": 200,
+  "requestId": "f26c7c9d-a716-942f-b20b-ff661f6956a4",
+  "jobId": "ft-202611040019-7fc7",
+  "providerStatus": "PENDING",
+  "output": {
+    "job_id": "ft-202611040019-7fc7",
+    "job_name": "polypath-v8-pilot-20261104",
+    "status": "PENDING",
+    "finetuned_output": "qwen3-8b-ft-202611040019-7fc7",
+    "model": "qwen3-8b",
+    "base_model": "qwen3-8b",
+    "training_file_ids": [],
+    "validation_file_ids": [],
+    "training_datasets": [
+      {
+        "declaredMountSource": false,
+        "data_source_type": "file_id",
+        "file_id": "file-ft-ca8242271048447baa056680"
+      }
+    ],
+    "validation_datasets": [
+      {
+        "declaredMountSource": false,
+        "data_source_type": "file_id",
+        "file_id": "file-ft-0d7020d185f74f668f8a24a7"
+      }
+    ],
+    "evaluation_datasets": [],
+    "hyper_parameters": {
+      "n_epochs": 1,
+      "batch_size": 32,
+      "max_length": 8192,
+      "data_augmentation": false,
+      "learning_rate": "3e-4"
+    },
+    "cost_message": "任务提交成功。此任务训练费用不支持预估，请阅读文档谨慎评估。",
+    "training_type": "efficient_sft",
+    "create_time": "2026-11-04 00:19:53",
+    "workspace_id": "llm-n9hc7d9pu81gvbem",
+    "user_identity": "1036551255633303",
+    "modifier": "1036551255633303",
+    "creator": "1036551255633303",
+    "group": "llm",
+    "model_name": "polypath-v8-pilot-20261104",
+    "max_output_cnt": 2,
+    "charge_type": "token",
+    "priority": "L3"
+  },
+  "createdAt": "2026-11-03T16:19:53.500Z"
+}

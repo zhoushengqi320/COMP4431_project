@@ -1,0 +1,24 @@
+{
+  "clientDate": "2026-11-04",
+  "reportedBy": "user",
+  "reportedUpstreamHttpStatus": 400,
+  "reportedMessage": "Access denied, please make sure your account is in good standing.",
+  "reportedProviderCode": null,
+  "officialMessageCategory": "Arrearage / account billing restriction",
+  "officialErrorReference": "https://help.aliyun.com/zh/model-studio/error-code#overdue-payment",
+  "officialBillingReference": "https://help.aliyun.com/zh/model-studio/bill-query-and-cost-management",
+  "deploymentCheck": {
+    "observedAt": "2026-11-04T00:44:05.026Z",
+    "httpStatus": 200,
+    "status": "RUNNING",
+    "deployedModel": "qwen3-8b-01fa13690bf1",
+    "plan": "lora"
+  },
+  "trainingFeeFromReportedUsageCny": 16.35,
+  "feeIsFinalBill": false,
+  "accountBalanceKnown": false,
+  "amountOverdueKnown": false,
+  "trainingFeeCausedRestrictionConfirmed": false,
+  "additionalInferenceRequestsMadeForDiagnosis": 0,
+  "recommendedAction": "Check the owning Alibaba Cloud account's available credit and unsettled bills; resolve arrears and allow time for billing status to update. If the account is not in arrears, check API-key account ownership and contact provider support."
+}

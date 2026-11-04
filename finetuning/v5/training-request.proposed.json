@@ -1,0 +1,23 @@
+{
+  "model": "qwen3-8b",
+  "training_type": "efficient_sft",
+  "job_name": "polypath-v5-pilot-20261103",
+  "training_datasets": [
+    {
+      "data_source_type": "file_id",
+      "file_id": "file-ft-3d1b7ae6df114c79b046b81c"
+    }
+  ],
+  "validation_datasets": [
+    {
+      "data_source_type": "file_id",
+      "file_id": "file-ft-f50a480aee704cbbb68b6e20"
+    }
+  ],
+  "hyper_parameters": {
+    "n_epochs": 1,
+    "batch_size": 32,
+    "max_length": 8192,
+    "data_augmentation": false
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "verifiedAt": "2026-11-03T23:53:04.534Z",
+  "configuredModel": "qwen3-8b-01fa13690bf1",
+  "configurationFile": ".env.local",
+  "apiRoute": "/api/advisor",
+  "apiBase": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+  "appUrl": "http://127.0.0.1:5173/",
+  "frontendHttpStatus": 200,
+  "actualLocalApiHttpStatus": 200,
+  "question": "请问DSAI2201是什么课？",
+  "latencyMs": 6234,
+  "checks": {
+    "httpOk": true,
+    "requestedCourse": true,
+    "threeFollowUps": true,
+    "preparationPresent": true
+  },
+  "passed": true,
+  "normalizedAnswer": {
+    "text": "下面介绍DSAI2201。",
+    "courses": [
+      {
+        "format": "course-introduction-v1",
+        "language": "zh",
+        "code": "DSAI2201",
+        "title": "Data Structures and Algorithms",
+        "department": "dsai",
+        "level": "2",
+        "credits": 3,
+        "faculty": "Faculty of Engineering",
+        "schoolId": "polyu",
+        "id": "612b7b59-91b7-4a23-8052-9825b802ed6d",
+        "objectives": "向学生介绍数据结构和算法，并教授如何使用它们解决计算问题。",
+        "rating": 4.7,
+        "ratingSource": "simulated",
+        "summary": "这门课的学习重点是：向学生介绍数据结构和算法，并教授如何使用它们解决计算问题。学习方式：课程内容将以大班讲座和小班监督辅导及实验室课程相结合的方式进行。",
+        "learningOutcomes": [
+          "了解数据结构和算法，并教授如何使用它们解决计算问题。",
+          "了解算法分析（比较解决问题的方法有多快、占多少内存）。",
+          "了解线性结构：链表、栈、队列。",
+          "了解树结构：二叉树、平衡树、树遍历。"
+        ],
+        "requiredPrerequisites": "COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+        "recommendedPrerequisites": "资料未提供，需核实",
+        "prerequisiteLevels": [
+          {
+            "level": 1,
+            "courses": [
+              "COMP1011",
+              "COMP1012",
+              "AMA1110",
+              "AMA1501",
+              "AMA1751"
+            ]
+          },
+          {
+            "level": 2,
+            "courses": [
+              "ENG2002",
+              "AMA2634",
+              "AMA2111"
+            ]
+          },
+          {
+            "level": 3,
+            "courses": [
+              "LGT3109"
+            ]
+          }
+        ],
+        "prerequisite": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+        "reason": "这门课的学习重点是：向学生介绍数据结构和算法，并教授如何使用它们解决计算问题。学习方式：课程内容将以大班讲座和小班监督辅导及实验室课程相结合的方式进行。",
+        "preparation": {
+          "levels": [
+            {
+              "level": 1,
+              "courses": [
+                "COMP1011",
+                "COMP1012",
+                "AMA1110",
+                "AMA1501",
+                "AMA1751"
+              ]
+            },
+            {
+              "level": 2,
+              "courses": [
+                "ENG2002",
+                "AMA2634",
+                "AMA2111"
+              ]
+            },
+            {
+              "level": 3,
+              "courses": [
+                "LGT3109"
+              ]
+            }
+          ],
+          "description": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+          "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+          "sourceText": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111"
+        }
+      }
+    ],
+    "followUps": [
+      "学习DSAI2201前可以怎样预习？",
+      "DSAI2201的主要内容有哪些实际用途？",
+      "DSAI2201的先修课程分别讲什么？"
+    ]
+  },
+  "smokeReport": "docs/evaluations/deployment-v8-smoke.json",
+  "credentialsWrittenToEvidence": false
+}
