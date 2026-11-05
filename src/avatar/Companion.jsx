@@ -1,5 +1,5 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { Box, X, RotateCcw, Sparkles } from 'lucide-react';
+import { Box, X, RotateCcw, Sparkles, Mic, Square } from 'lucide-react';
 import Avatar2D from './Avatar2D';
 import { createAvatarScene } from './scene';
 import { companionState, states } from './state';
@@ -29,6 +29,20 @@ function Avatar3D({ state, motion, gaze, activityKey, onFailure, onInteract, res
   }, [onFailure, onInteract, resetRef]);
   useEffect(() => { scene.current?.update(state, motion, gaze, activityKey); }, [state, motion, gaze, activityKey]);
   return <div className="pear-avatar-webgl" ref={host}/>;
+}
+
+function VoiceConversationControls({ conversation, compact = false }) {
+  if (!conversation) return null;
+  const { active, state, start, end, interrupt, finish, language, setLanguage, disabled, guest } = conversation;
+  return <section className={`pear-voice-controls ${compact ? 'is-compact' : ''}`} aria-label="Voice conversation">
+    {!active ? <>
+      {!compact && <><label>Conversation language<select aria-label="Conversation language" value={language} onChange={event => setLanguage(event.target.value)}><option value="en-US">English</option><option value="zh-CN">Mandarin</option><option value="zh-HK">Cantonese</option></select></label><p>Speak naturally, then pause. Pear replies briefly and listens again. Audio is sent to Qwen for transcription; replies are spoken without chat bubbles. Text is saved only to remember the conversation; audio is not saved.</p></>}
+      <button type="button" className="pear-talk-button" disabled={disabled} onClick={start}><Mic size={14}/>{guest ? 'Sign in to talk' : state === 'error' ? 'Try voice again' : 'Start voice conversation'}</button>
+    </> : <>
+      <span className="pear-voice-live" role="status">{({ starting: 'Opening microphone…', listening: 'Listening…', stopping: 'Transcribing…', thinking: 'Thinking…', preparing: 'Answering…', waiting: 'Your turn next…' })[state]}</span>
+      <div className="pear-talk-actions">{state === 'listening' ? <button type="button" onClick={finish}>Done speaking</button> : state !== 'starting' && <button type="button" onClick={interrupt}>Interrupt</button>}<button type="button" onClick={end}><Square size={11}/> End conversation</button></div>
+    </>}
+  </section>;
 }
 
 export default function Companion(props) {
@@ -69,6 +83,7 @@ export default function Companion(props) {
     return () => { media.removeEventListener('change', update);document.removeEventListener('visibilitychange',visibility); clearTimeout(timer.current); };
   }, []);
   useEffect(() => { setPreview(null); clearTimeout(timer.current); }, [live]);
+  useEffect(() => { if (props.conversation?.active && dockRef.current) dockRef.current.scrollTop = 0; }, [props.conversation?.active]);
   useEffect(() => {
     // Dock above the actual composer, including its recording/error panels.
     // ResizeObserver handles content growth; viewport/scroll events handle zoom
@@ -141,6 +156,7 @@ export default function Companion(props) {
       <span className="pear-launcher-status" role="status" aria-live="polite"><span className="pear-status-dot"/><strong>{states[live].label}</strong></span>
       <span className="pear-launcher-hint">Pear · tap to open</span>
     </button>
+    <VoiceConversationControls conversation={props.conversation} compact/>
   </aside>;
 
   return <aside id={panelId} className={`pear-companion is-expanded ${animated ? '' : 'is-still'}`} ref={dockRef} aria-label="Pear virtual companion" style={dockStyle}>
@@ -161,6 +177,7 @@ export default function Companion(props) {
       <p className="pear-detail">{meta.detail}</p>
       <div className="pear-interaction-hint">{mode === '3d' ? 'Drag to orbit · tap to say hello' : 'Tap your companion to say hello'}</div>
       {failure && <p className="pear-fallback" role="status">3D is unavailable on this device. Pear is here in 2D.</p>}
+      <VoiceConversationControls conversation={props.conversation}/>
       <div className="pear-options"><label><input type="checkbox" checked={motion && !reduced} disabled={reduced} onChange={e => { setMotion(e.target.checked); remember('polypath-avatar-motion', e.target.checked ? 'on' : 'off'); }}/>{reduced ? 'System: reduced motion' : 'Gentle motion'}</label><button onClick={() => setPreviewOpen(!previewOpen)} aria-expanded={previewOpen}>Try expressions {previewOpen ? '−' : '+'}</button></div>
       <label className="pear-surprises"><input type="checkbox" checked={surprises} onChange={e=>{setSurprises(e.target.checked);remember('polypath-avatar-surprises',e.target.checked?'on':'off');if(!e.target.checked&&previewSource==='ambient'){clearTimeout(timer.current);setPreview(null);}}}/>Little surprises<span>Occasional playful moments</span></label>
       {previewOpen && <div className="pear-previews"><p>Animation preview · no microphone or AI request</p><div>{['idle','listening','thinking','speaking','paused','greeting','curious','playful','pout','sleepy'].map(item => <button key={item} disabled={live !== 'idle'} aria-pressed={preview === item} onClick={() => tryState(item)}>{item === 'idle' ? 'Reset' : item === 'greeting' ? 'Hello' : item[0].toUpperCase()+item.slice(1)}</button>)}</div>{live !== 'idle' && <p>Live conversation takes priority.</p>}</div>}
