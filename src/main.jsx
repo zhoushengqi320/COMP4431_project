@@ -5,9 +5,11 @@ import { requestAdvice, requestTranscript } from './advisor';
 import { createVoiceSession, speechSupport } from './voice';
 import { createSpeechPlayer, narrationFor } from './speech';
 import Companion from './avatar/Companion';
+import { createVoiceConversation } from './voice-conversation.js';
 import { AuthScreen, AuthLoading } from './Auth.jsx';
 import { apiRequest } from './auth.js';
 import { useConversations } from './useConversations.js';
+import { textChatMessages } from './conversations.js';
 import './styles.css';
 import './course-guide.css';
 
@@ -25,6 +27,7 @@ function sizeLabel(size) { return size < 1024 * 1024 ? `${Math.max(1, Math.round
 function App({ user, initialProfile, onLogout, onSignIn }) {
   const guest = !user;
   const { threads, activeId, messages, ready, historyError, saving: historySaving, conflictIds, createConversation, selectConversation, appendMessage, retrySave, flush, recoverConflict } = useConversations(user?.id || null);
+  const visibleMessages = textChatMessages(messages);
   const currentChat = useRef(activeId);
   currentChat.current = activeId;
   const [page, setPage] = useState('advisor');
@@ -52,7 +55,7 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
   const [voiceState, setVoiceState] = useState('idle');
   const [voicePreview, setVoicePreview] = useState('');
   const [voiceError, setVoiceError] = useState('');
-  const [voiceLanguage, setVoiceLanguage] = useState('zh-CN');
+  const [voiceLanguage, setVoiceLanguage] = useState('en-US');
   const voiceSession = useRef(null);
   const voiceTimer = useRef(null);
   const voiceActive = voiceState !== 'idle';
@@ -69,6 +72,41 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
   const bottom = useRef(null);
   const input = useRef(null);
   const controllers = useRef(new Map());
+  const [dialogueState, setDialogueState] = useState('off');
+  const [dialogueError, setDialogueError] = useState('');
+  const [dialogueHint, setDialogueHint] = useState('');
+  const dialogue = useRef(null), dialogueChat = useRef(null), dialogueContext = useRef({}), voiceRequest = useRef(null);
+  const dialogueActive = !['off', 'error'].includes(dialogueState);
+  dialogueContext.current = { voiceLanguage, speechVoice, speechRate, send, playVoiceAnswer };
+
+  useEffect(() => {
+    const conversation = createVoiceConversation({
+      createSession: callbacks => {
+        const session = createVoiceSession({ language: dialogueContext.current.voiceLanguage, transcribe: requestTranscript, autoStop: true,
+          onState: state => { setVoiceState(state); if (state === 'idle') voiceSession.current = null; callbacks.onState(state); },
+          onPreview: () => {},
+          onComplete: text => { voiceSession.current = null; callbacks.onComplete(text); },
+          onError: callbacks.onError,
+          onHint: setDialogueHint
+        });
+        voiceSession.current = session; return session;
+      },
+      requestReply: (text, isCurrent) => dialogueContext.current.send(text, { voice: true, isCurrent }),
+      speakReply: answer => dialogueContext.current.playVoiceAnswer(answer),
+      stopSpeech: () => speechPlayer.current?.stop(),
+      cancelReply: () => {
+        const id = dialogueChat.current, controller = voiceRequest.current; voiceRequest.current = null;
+        if (controller && controllers.current.get(id) === controller) { controllers.current.delete(id); controller.abort(); setPendingChats(previous => ({ ...previous, [id]: false })); }
+      },
+      onState: state => { setDialogueState(state); if (state === 'off' || state === 'error') { setVoiceState('idle'); setVoicePreview(''); } },
+      onError: error => setDialogueError(error)
+    });
+    dialogue.current = conversation;
+    const leave = () => conversation.stop();
+    const visibility = () => { if (document.hidden) conversation.stop(); };
+    window.addEventListener('pagehide', leave); document.addEventListener('visibilitychange', visibility);
+    return () => { conversation.stop(); window.removeEventListener('pagehide', leave); document.removeEventListener('visibilitychange', visibility); };
+  }, []);
 
   useEffect(() => {
     const synthesis = window.speechSynthesis;
@@ -81,13 +119,14 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
     window.addEventListener('pagehide', leave);
     return () => { player.stop(); synthesis?.removeEventListener('voiceschanged', refreshVoices); window.removeEventListener('pagehide', leave); };
   }, []);
-  useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [messages, loading, activeId]);
+  useEffect(() => { bottom.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }); }, [visibleMessages.length, loading && !dialogueActive, activeId]);
   useEffect(() => () => { for (const controller of controllers.current.values()) controller.abort(); controllers.current.clear(); voiceSession.current?.cancel(); clearTimeout(voiceTimer.current); }, []);
   useEffect(() => { if (!saved) return; const timer = setTimeout(() => setSaved(false), 2500); return () => clearTimeout(timer); }, [saved]);
-  useEffect(() => { const onKey = e => { if (e.key === 'Escape') { setHelp(false); setMobileNav(false); setSpeechSettings(false); speechPlayer.current?.stop(); cancelVoice(); } }; window.addEventListener('keydown', onKey); return () => window.removeEventListener('keydown', onKey); }, []);
+  useEffect(() => { const onKey = e => { if (e.key === 'Escape') { setHelp(false); setMobileNav(false); setSpeechSettings(false); endConversation(); speechPlayer.current?.stop(); cancelVoice(); } }; window.addEventListener('keydown', onKey); return () => window.removeEventListener('keydown', onKey); }, []);
 
   function addFiles(files, target, category) {
     if (guest) { onSignIn(); return; }
+    endConversation();
     const accepted = [];
     let issue = '';
     const existing = [...documents, ...attachments];
@@ -104,10 +143,29 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
     const setter = target === 'documents' ? setDocuments : setAttachments;
     setter(previous => [...previous, ...makeFiles(accepted, category)].filter((item, index, all) => all.findIndex(other => other.name === item.name && other.size === item.size && other.category === item.category) === index));
   }
+  function endConversation() { dialogue.current?.stop(); }
+  function startConversation() {
+    if (guest) { onSignIn(); return; }
+    if (!ready || loading || signingOut) return;
+    if (!voiceReady || !playbackSupported) { setDialogueError('Voice conversation needs microphone recording and speech playback. Try a current browser on HTTPS or localhost.'); return; }
+    if (draft.trim() || attachments.length) { setDialogueError('Send or clear your draft and attachments before starting voice conversation.'); return; }
+    cancelVoice(); stopPlayback(); setVoiceOpen(false); setVoiceError(''); setSpeechError(''); setDialogueError(''); setDialogueHint('');
+    dialogueChat.current = activeId; dialogue.current?.start();
+  }
+  function playVoiceAnswer(message) {
+    return new Promise((resolve, reject) => {
+      const finish = callback => value => { clearTimeout(timer); callback(value); };
+      const timer = setTimeout(() => { stopPlayback(); reject(new Error('Voice playback timed out. Please check your sound settings and try again.')); }, 90000);
+      const { voiceLanguage: selectedLanguage, speechVoice: selectedVoice, speechRate: selectedRate } = dialogueContext.current;
+      const language = /[\u3400-\u9fff]/.test(message.text) ? (selectedLanguage.startsWith('zh') ? selectedLanguage : 'zh-CN') : 'en-US';
+      speechPlayer.current.speak({ messageId: message.id, text: message.text, language, voiceURI: selectedVoice, rate: selectedRate,
+        onComplete: finish(resolve), onCancel: finish(() => reject(new Error('Playback stopped. Start voice conversation to continue.'))), onFailure: finish(reject) });
+    });
+  }
   function stopPlayback() { speechPlayer.current?.stop(); }
   function readAnswer(message) {
     if (guest) { onSignIn(); return; }
-    cancelVoice(); setVoiceOpen(false); setSpeechError('');
+    endConversation(); cancelVoice(); setVoiceOpen(false); setSpeechError('');
     const text = narrationFor(message);
     const language = /[\u3400-\u9fff]/.test(text) ? (voiceLanguage.startsWith('zh') ? voiceLanguage : 'zh-CN') : 'en-US';
     speechPlayer.current?.speak({ messageId: message.id, text, language, rate: speechRate, voiceURI: speechVoice });
@@ -119,7 +177,9 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
   }
   function startVoice() {
     if (guest) { onSignIn(); return; }
-    if (!voiceReady || voiceSession.current || loading) return;
+    if (!voiceReady || loading) return;
+    endConversation();
+    if (voiceSession.current) return;
     stopPlayback(); setSpeechError('');
     setVoiceError(''); setVoicePreview('');
     const session = createVoiceSession({ language: voiceLanguage, transcribe: requestTranscript,
@@ -140,11 +200,11 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
   }
   function navigate(next) {
     if (guest && next === 'profile') { setMobileNav(false); onSignIn(); return; }
-    if (next !== 'advisor') { cancelVoice(); stopPlayback(); setVoiceOpen(false); setSpeechSettings(false); }
+    if (next !== 'advisor') { endConversation(); cancelVoice(); stopPlayback(); setVoiceOpen(false); setSpeechSettings(false); }
     setPage(next); setMobileNav(false); setFileError('');
   }
   function resetComposer() {
-    cancelVoice(); stopPlayback(); setSpeechError(''); setVoiceOpen(false); setVoiceError('');
+    endConversation(); cancelVoice(); stopPlayback(); setSpeechError(''); setVoiceOpen(false); setVoiceError('');
     setAttachments([]); setDraft(''); setFileError(''); navigate('advisor');
   }
   function newChat() {
@@ -155,33 +215,39 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
     if (id === activeId) { navigate('advisor'); return; }
     if (selectConversation(id)) resetComposer();
   }
-  async function send(value = draft) {
+  async function send(value = draft, options = {}) {
+    if (!options.voice && dialogue.current?.isActive()) endConversation();
     const text = value.trim();
     const chatId = activeId;
     if (!text || !ready || !chatId || controllers.current.has(chatId) || voiceSession.current || signingOut) return;
     if (messages.length >= 99) { setChatErrors(previous => ({ ...previous, [chatId]: 'This conversation is full. Start a new conversation to continue; your history will be kept.' })); return; }
     stopPlayback(); setSpeechError('');
-    const currentAttachments = attachments;
-    const userMessage = { id: uid(), role: 'user', text, attachments: currentAttachments.map(({ name, size }) => ({ name, size })) };
+    const currentAttachments = options.voice ? [] : attachments;
+    const userMessage = { id: uid(), role: 'user', text, ...(options.voice ? { channel: 'voice' } : {}), attachments: currentAttachments.map(({ name, size }) => ({ name, size })) };
     if (!appendMessage(chatId, userMessage)) return;
     setDraft(''); setAttachments([]); setChatErrors(previous => ({ ...previous, [chatId]: '' }));
     setPendingChats(previous => ({ ...previous, [chatId]: true })); navigate('advisor');
     const controller = new AbortController();
     controllers.current.set(chatId, controller);
+    if (options.voice) voiceRequest.current = controller;
     const timeout = setTimeout(() => controller.abort(), 120000);
     try {
-      const result = await requestAdvice({ userId: user?.id, message: text, history: messages, profile: guest ? {} : profile, documents: guest ? [] : documents, attachments: currentAttachments, signal: controller.signal });
-      if (controllers.current.get(chatId) === controller) {
-        appendMessage(chatId, { ...result, id: uid(), role: 'assistant' });
+      const result = await requestAdvice({ userId: user?.id, message: text, history: messages, profile: guest ? {} : profile, documents: guest ? [] : documents, attachments: currentAttachments, signal: controller.signal, responseStyle: options.voice ? 'voice' : 'text' });
+      if (controllers.current.get(chatId) === controller && (!options.isCurrent || options.isCurrent())) {
+        const answer = { ...result, id: uid(), role: 'assistant', ...(options.voice ? { channel: 'voice' } : {}) };
+        if (!appendMessage(chatId, answer)) throw new Error('The answer could not be saved to this conversation.');
         if (guest && Number.isFinite(result.guestRemaining)) setAdvisorInfo(previous => ({ ...previous, guestRemaining: result.guestRemaining }));
+        return answer;
       }
     } catch (err) {
+      if (options.voice) throw err;
       if (controllers.current.get(chatId) === controller) {
         setChatErrors(previous => ({ ...previous, [chatId]: err.name === 'AbortError' ? 'The request timed out. Please send your question again.' : err.message }));
         if (currentChat.current === chatId) { setDraft(previous => previous || text); setAttachments(previous => previous.length ? previous : currentAttachments); }
       }
     } finally {
       clearTimeout(timeout);
+      if (voiceRequest.current === controller) voiceRequest.current = null;
       if (controllers.current.get(chatId) === controller) {
         controllers.current.delete(chatId);
         setPendingChats(previous => ({ ...previous, [chatId]: false }));
@@ -199,6 +265,7 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
   }
   async function signOut(skipSave = false) {
     if (signingOut) return;
+    endConversation(); cancelVoice(); stopPlayback();
     setSigningOut(true); setAccountError('');
     try {
       for (const controller of controllers.current.values()) controller.abort();
@@ -237,17 +304,19 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
       </header>
       {accountError && <div className="account-error" role="alert"><span>{accountError}</span>{allowUnsavedLogout && <><button onClick={retrySave} disabled={signingOut}>Retry saving</button><button onClick={() => signOut(true)} disabled={signingOut}>Sign out anyway</button></>}</div>}
 
-      {page === 'advisor' ? <><main className={`advisor-page ${messages.length ? 'has-messages' : ''}`}>
+      {page === 'advisor' ? <><main className={`advisor-page ${visibleMessages.length ? 'has-messages' : ''}`}>
         <div className="advisor-toolbar"><span className={`mode-badge ${advisorInfo.mode === 'llm' ? 'connected' : ''}`}><span/>{advisorInfo.mode === 'llm' ? (advisorInfo.provider === 'qwen' || String(advisorInfo.model || '').toLowerCase().includes('qwen') ? 'Qwen' : 'AI advisor') : advisorInfo.mode === 'knowledge' ? 'Knowledge assistant' : advisorInfo.mode === 'loading' ? 'Connecting…' : 'Check connection'}</span><div className="toolbar-actions"><button className="text-button" onClick={() => guest ? onSignIn() : setSpeechSettings(!speechSettings)} aria-expanded={speechSettings}><Settings2 size={15}/> Voice settings {guest && <LockKeyhole size={12}/>}</button><button className="text-button context-files" onClick={() => navigate('profile')}><Paperclip size={15}/>{documents.length} {documents.length === 1 ? 'file' : 'files'}</button></div></div>
-        {speechSettings && <section className="speech-settings" aria-label="Read-aloud settings"><div><strong><Volume2 size={16}/> Read-aloud settings</strong><p>Choose a voice and speed. Playback starts only when you click Read aloud.</p></div><div className="speech-setting-fields"><label>Voice<select value={speechVoice} disabled={playbackActive} onChange={e => setSpeechVoice(e.target.value)}><option value="">Automatic (match answer language)</option>{speechVoices.map(voice => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}</option>)}</select></label><label>Speed<select value={speechRate} disabled={playbackActive} onChange={e => setSpeechRate(Number(e.target.value))}><option value={0.8}>0.8× · Slower</option><option value={1}>1× · Normal</option><option value={1.2}>1.2× · Faster</option></select></label><button className="icon-button" aria-label="Close read-aloud settings" onClick={() => setSpeechSettings(false)}><X size={17}/></button></div><p className="speech-settings-note">{!playbackSupported ? 'Read aloud is unavailable in this browser. You can still use text chat.' : playbackActive ? 'Stop playback to change voice or speed.' : 'Available voices depend on your browser and device; some voices may use an online service.'}</p></section>}
+        {speechSettings && <section className="speech-settings" aria-label="Read-aloud settings"><div><strong><Volume2 size={16}/> Read-aloud settings</strong><p>Choose a voice and speed. Choose Read aloud, or start a voice conversation with Pear.</p></div><div className="speech-setting-fields"><label>Voice<select value={speechVoice} disabled={playbackActive} onChange={e => setSpeechVoice(e.target.value)}><option value="">Automatic (match answer language)</option>{speechVoices.map(voice => <option key={voice.voiceURI} value={voice.voiceURI}>{voice.name} · {voice.lang}</option>)}</select></label><label>Speed<select value={speechRate} disabled={playbackActive} onChange={e => setSpeechRate(Number(e.target.value))}><option value={0.8}>0.8× · Slower</option><option value={1}>1× · Normal</option><option value={1.2}>1.2× · Faster</option></select></label><button className="icon-button" aria-label="Close read-aloud settings" onClick={() => setSpeechSettings(false)}><X size={17}/></button></div><p className="speech-settings-note">{!playbackSupported ? 'Read aloud is unavailable in this browser. You can still use text chat.' : playbackActive ? 'Stop playback to change voice or speed.' : 'Available voices depend on your browser and device; some voices may use an online service.'}</p></section>}
         <div className="chat-scroll">
-          {!messages.length ? <div className="welcome">
+          {!visibleMessages.length ? <div className="welcome">
             <p className="personal-greeting">{guest ? 'Welcome to PolyPath' : `Hi, ${firstName}`}</p>
             <h1>What would you like to plan?</h1>
             <p className="hero-description">Explore courses, plan your semesters, and check requirements.</p>
-          </div> : <div className="message-list">{messages.map(message => <Message key={message.id} message={message} onFollowUp={send} disabled={loading || voiceActive || !ready || signingOut} speechState={speechState} playbackSupported={playbackSupported} guest={guest} onSignIn={onSignIn} onRead={() => readAnswer(message)} onPause={() => speechPlayer.current?.pause()} onResume={() => speechPlayer.current?.resume()} onStop={stopPlayback}/>)}{loading && <div className="loading-message" role="status"><span className="assistant-avatar"><Sparkles size={17}/></span><LoaderCircle className="spin" size={16}/> Preparing a response…</div>}<div ref={bottom}/></div>}
+          </div> : <div className="message-list">{visibleMessages.map(message => <Message key={message.id} message={message} onFollowUp={send} disabled={loading || voiceActive || !ready || signingOut} speechState={speechState} playbackSupported={playbackSupported} guest={guest} onSignIn={onSignIn} onRead={() => readAnswer(message)} onPause={() => speechPlayer.current?.pause()} onResume={() => speechPlayer.current?.resume()} onStop={stopPlayback}/>)}{loading && !dialogueActive && <div className="loading-message" role="status"><span className="assistant-avatar"><Sparkles size={17}/></span><LoaderCircle className="spin" size={16}/> Preparing a response…</div>}<div ref={bottom}/></div>}
         </div>
         <div className="composer-zone">
+          {dialogueError && <div className="error-notice" role="alert"><Mic size={16}/><span>{dialogueError}</span><button type="button" className="icon-button" aria-label="Dismiss voice conversation error" onClick={() => setDialogueError('')}><X size={14}/></button></div>}
+          {dialogueActive && <div className="voice-conversation-status" role="status"><Mic size={15}/><span>Voice conversation · {({ starting: 'Opening microphone…', listening: 'Listening — pause when you have finished', stopping: 'Transcribing…', thinking: 'Thinking…', preparing: 'Speaking…', waiting: 'Ready for your next question…' })[dialogueState]}{dialogueHint && ` · ${dialogueHint}`}</span><button type="button" onClick={endConversation}>End</button></div>}
           {historyError && <div className="history-error" role="alert"><span>{historyError}</span><button type="button" onClick={retrySave}>Retry saving</button>{threads.filter(thread => conflictIds.includes(thread.id)).map(thread => <button key={thread.id} type="button" disabled={Boolean(pendingChats[thread.id])} onClick={async () => { if (await recoverConflict(thread.id)) resetComposer(); }}>Save a copy of “{thread.title}”</button>)}</div>}
           {guest && <p className="guest-access-note">Course Q&amp;A · 20 questions / 15 min. <button onClick={onSignIn}>Sign in for saved history and more.</button></p>}
           {speechError && <div className="error-notice" role="alert"><Volume2 size={16}/>{speechError}<button className="icon-button" aria-label="Dismiss read-aloud error" onClick={() => setSpeechError('')}><X size={14}/></button></div>}{error && <div className="error-notice" role="alert"><AlertCircle size={16}/>{error}</div>}{fileError && <div className="error-notice" role="alert">{fileError}</div>}
@@ -260,15 +329,15 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
               {!voiceReady && <p className="voice-error" role="status">This browser cannot record audio. Try a current browser on localhost or HTTPS. You can still type your question.</p>}
               {voiceError && <p className="voice-error" role="alert">{voiceError}</p>}
               {voiceActive && <div className="voice-live" role="status"><span className="recording-dot"/>{voiceState === 'starting' ? 'Waiting for microphone permission…' : voiceState === 'stopping' ? 'Sending audio to Qwen…' : 'Listening… speak your question.'}</div>}
-              {voicePreview && <p className="voice-transcript" aria-live="polite">{voicePreview}</p>}
+              {voicePreview && !dialogueActive && <p className="voice-transcript" aria-live="polite">{voicePreview}</p>}
             </section>}
-            <textarea ref={input} readOnly={voiceActive || !ready || signingOut} aria-label="Message AI Advisor" placeholder="Ask about courses, your interests, or your next semester…" rows={2} maxLength={6000} value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }}/>
-            <div className="composer-bottom"><div className="composer-tools"><>{guest ? <button type="button" className="attach-button" onClick={onSignIn} title="Sign in to upload documents"><Paperclip size={18}/><span>Attach files</span><LockKeyhole size={12}/></button> : <label className="attach-button" title="Attach files to this message"><Paperclip size={18}/><span>Attach files</span><input aria-label="Attach files to your message" type="file" multiple accept=".pdf,.csv,.txt,.docx,.md" onChange={e => { addFiles(e.target.files, 'attachments'); e.target.value = ''; }}/></label>}</><span className="composer-divider"/><span className="context-status"><span className={profileComplete ? 'green-dot' : 'neutral-dot'}/>{guest ? 'Sign in for profile' : profileComplete ? 'Profile added' : 'Add your background'}</span></div><div className="composer-right"><button className={`voice-button ${voiceActive ? 'recording' : ''}`} type="button" aria-label={voiceActive ? 'Stop voice input' : 'Open voice input'} aria-expanded={voiceOpen} title={voiceActive ? 'Stop listening' : 'Voice input'} disabled={loading || voiceState === 'stopping'} onClick={() => { if (guest) { onSignIn(); return; } if (voiceActive) voiceSession.current?.stop(); else { setVoiceError(''); setVoiceOpen(!voiceOpen); } }}>{voiceActive ? <Square size={16}/> : <Mic size={19}/>}</button><button className="send-button" aria-label="Send message" disabled={!draft.trim() || loading || voiceActive || !ready || signingOut} type="submit">{loading ? <LoaderCircle size={20} className="spin"/> : <ArrowUp size={21}/>}</button></div></div>
+            <textarea ref={input} readOnly={voiceActive || dialogueActive || !ready || signingOut} aria-label="Message AI Advisor" placeholder="Ask about courses, your interests, or your next semester…" rows={2} maxLength={6000} value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); send(); } }}/>
+            <div className="composer-bottom"><div className="composer-tools"><>{guest ? <button type="button" className="attach-button" onClick={onSignIn} title="Sign in to upload documents"><Paperclip size={18}/><span>Attach files</span><LockKeyhole size={12}/></button> : <label className="attach-button" title="Attach files to this message"><Paperclip size={18}/><span>Attach files</span><input aria-label="Attach files to your message" type="file" multiple accept=".pdf,.csv,.txt,.docx,.md" onChange={e => { addFiles(e.target.files, 'attachments'); e.target.value = ''; }}/></label>}</><span className="composer-divider"/><span className="context-status"><span className={profileComplete ? 'green-dot' : 'neutral-dot'}/>{guest ? 'Sign in for profile' : profileComplete ? 'Profile added' : 'Add your background'}</span></div><div className="composer-right"><button className={`voice-button ${voiceActive ? 'recording' : ''}`} type="button" aria-label={voiceActive ? 'Stop voice input' : 'Open voice input'} aria-expanded={voiceOpen} title={voiceActive ? 'Stop listening' : 'Voice input'} disabled={loading || voiceState === 'stopping'} onClick={() => { if (guest) { onSignIn(); return; } if (voiceActive) voiceSession.current?.stop(); else { endConversation(); setVoiceError(''); setVoiceOpen(!voiceOpen); } }}>{voiceActive ? <Square size={16}/> : <Mic size={19}/>}</button><button className="send-button" aria-label="Send message" disabled={!draft.trim() || loading || voiceActive || !ready || signingOut} type="submit">{loading ? <LoaderCircle size={20} className="spin"/> : <ArrowUp size={21}/>}</button></div></div>
           </form>
-          {!messages.length && <div className="prompt-list" aria-label="Suggested questions">{prompts.map(({ icon: Icon, title, question }) => <button key={title} disabled={loading || voiceActive} onClick={() => { setDraft(question); input.current?.focus(); }}><Icon size={15}/>{title}</button>)}</div>}
+          {!visibleMessages.length && <div className="prompt-list" aria-label="Suggested questions">{prompts.map(({ icon: Icon, title, question }) => <button key={title} disabled={loading || voiceActive || dialogueActive} onClick={() => { setDraft(question); input.current?.focus(); }}><Icon size={15}/>{title}</button>)}</div>}
           <p className="composer-footnote">{advisorInfo.mode === 'llm' ? 'Qwen can make mistakes. Check the linked sources.' : 'Confirm requirements with your programme handbook.'}</p>
         </div>
-      </main><Companion loading={loading} voiceState={voiceState} speechState={speechState} error={error || (voiceOpen ? voiceError : '') || speechError}/></> : <main className="profile-page">
+      </main><Companion loading={loading} voiceState={voiceState} speechState={speechState} error={error || dialogueError || (voiceOpen ? voiceError : '') || speechError} conversation={{ state: dialogueState, active: dialogueActive, start: startConversation, end: endConversation, interrupt: () => dialogue.current?.interrupt(), finish: () => dialogue.current?.finish(), language: voiceLanguage, setLanguage: setVoiceLanguage, disabled: !ready || signingOut || loading || voiceActive, guest }}/></> : <main className="profile-page">
         <div className="page-heading"><h1>Profile & documents</h1><p>Add your academic background for more relevant advice.</p></div><div className="profile-overview"><span className="student-avatar">{initials}</span><div><strong>{user.name}</strong><span>{user.email}</span></div><span className="account-status"><Check size={14}/> Signed in</span></div>
         <form onSubmit={saveProfile} className="profile-card"><div className="section-heading"><span className="section-icon"><UserRound size={20}/></span><div><h2>My academic profile</h2><p>Your programme, year and interests.</p></div><span className="optional-label"><ShieldCheck size={13}/> Linked to your account</span></div><fieldset className="profile-fields" disabled={saving}>
           <label>Programme / Major<input placeholder="e.g. BSc (Hons) in Computing" maxLength={160} value={profile.programme} onChange={e => setProfile({ ...profile, programme: e.target.value })}/></label>

@@ -51,6 +51,7 @@ function storedCourse(item) {
 export function storedMessage(message) {
   if (!record(message) || !['user', 'assistant'].includes(message.role) || typeof message.id !== 'string' || !message.id || typeof message.text !== 'string') return null;
   const result = { id: message.id, role: message.role, text: message.text };
+  if (message.channel === 'voice') result.channel = 'voice';
   for (const field of ['mode', 'language', 'providerWarning', 'overview', 'decisionNotice', 'model', 'finishReason']) if (typeof message[field] === 'string') result[field] = message[field];
   for (const field of ['rawMode', 'observationSaved']) if (typeof message[field] === 'boolean') result[field] = message[field];
   if (Number.isFinite(message.latencyMs)) result.latencyMs = message.latencyMs;
@@ -97,9 +98,14 @@ export function storedMessage(message) {
   return result;
 }
 
+export function textChatMessages(messages) {
+  return messages.filter(message => message.channel !== 'voice');
+}
+
 export function conversationTitle(messages) {
   const first = messages.find(message => message.role === 'user' && message.text.trim());
   if (!first) return 'New chat';
+  if (first.channel === 'voice') return 'Voice conversation';
   const characters = Array.from(first.text.replace(/\s+/g, ' ').trim());
   return characters.length > 60 ? `${characters.slice(0, 59).join('')}…` : characters.join('');
 }

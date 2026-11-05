@@ -1,8 +1,9 @@
 export const API_URL = import.meta.env.VITE_ADVISOR_API_URL?.trim() || '/api/advisor';
 
-export async function requestAdvice({ userId, message, history, profile, documents, attachments, signal }) {
+export async function requestAdvice({ userId, message, history, profile, documents, attachments, signal, responseStyle = 'text' }) {
   const body = new FormData();
   body.append('message', message);
+  body.append('responseStyle', responseStyle);
   body.append('history', JSON.stringify(history));
   body.append('profile', JSON.stringify(profile));
   documents.forEach(doc => { if (doc.file) body.append('documents', doc.file); });
