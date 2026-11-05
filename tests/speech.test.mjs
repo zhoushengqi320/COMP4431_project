@@ -78,3 +78,13 @@ test('an engine that never starts times out instead of leaving controls stuck', 
   context.mock.timers.tick(15001);
   assert.equal(f.states.at(-1).status, 'idle'); assert.match(f.errors[0], /did not start/);
 });
+
+test('conversation completion waits for every spoken chunk and never fires on stop', () => {
+  const f = fixture(); let completed = 0, cancelled = 0;
+  f.player.speak({ messageId: 'voice', text: 'A short course answer. '.repeat(20), onComplete: () => completed++, onCancel: () => cancelled++ });
+  let i = 0; while (i < f.spoken.length) f.spoken[i++].onend();
+  assert.equal(completed, 1); assert.equal(cancelled, 0);
+  f.player.speak({ messageId: 'next', text: 'Next answer', onComplete: () => completed++, onCancel: () => cancelled++ });
+  const old = f.spoken.at(-1); f.player.stop(); old.onend();
+  assert.equal(completed, 1); assert.equal(cancelled, 1);
+});

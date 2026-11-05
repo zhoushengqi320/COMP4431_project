@@ -252,3 +252,17 @@ test('creating the conversations table preserves an existing legacy account and 
     } finally { db.close(); }
   } finally { service.close(); }
 });
+
+
+test('voice channel survives saving and server restart without changing legacy text messages', async t => {
+  const app = await fixture(t);
+  const account = await app.register();
+  const options = { cookie: account.cookie, expectedUser: account.user.id };
+  const id = randomUUID();
+  const messages = [{ ...message('Spoken question'), channel: 'voice' }, { id: randomUUID(), role: 'assistant', text: 'Spoken answer', channel: 'voice' }, message('Typed follow-up')];
+  const saved = await app.call('/api/conversations/' + id, { ...options, method: 'PUT', data: payload('Voice conversation', messages) });
+  assert.equal(saved.status, 201);
+  assert.deepEqual(saved.body.conversation.messages, messages);
+  await app.restart();
+  assert.deepEqual((await app.call('/api/conversations', options)).body.conversations[0].messages, messages);
+});

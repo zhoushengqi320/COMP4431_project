@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { MAX_MESSAGES, acknowledgeConversation, appendConversationMessage, blankConversation, conversationStorageKey, conversationTitle, createConversationSaveQueue, makeSnapshot, mergeConversationHistory, readSnapshot, sameConversationContent, storedMessage } from '../src/conversations.js';
+import { MAX_MESSAGES, acknowledgeConversation, appendConversationMessage, blankConversation, conversationStorageKey, conversationTitle, createConversationSaveQueue, makeSnapshot, mergeConversationHistory, readSnapshot, sameConversationContent, storedMessage, textChatMessages } from '../src/conversations.js';
 
 const ID_A = '11111111-1111-4111-8111-111111111111';
 const ID_B = '22222222-2222-4222-8222-222222222222';
@@ -226,4 +226,17 @@ test('empty conversations are never sent to the server', async () => {
   queue.enqueue(blankConversation(ID_A, T0));
   assert.equal(await queue.flush(), true);
   assert.equal(calls, 0);
+});
+
+
+test('voice turns retain context after storage but never become text chat bubbles', () => {
+  const spoken = [ { ...message('voice-user', 'Spoken question'), channel: 'voice' }, { ...message('voice-answer', 'Spoken answer', 'assistant'), channel: 'voice' } ];
+  const typed = message('typed', 'Typed question');
+  const saved = thread(ID_A, [...spoken, typed]);
+  const restored = readSnapshot(JSON.stringify(makeSnapshot(null, [saved], [], ID_A)), null).threads[0];
+  assert.deepEqual(restored.messages, [...spoken, typed]);
+  assert.deepEqual(textChatMessages(restored.messages), [typed]);
+  assert.equal(conversationTitle(spoken), 'Voice conversation');
+  assert.deepEqual(textChatMessages(spoken), []);
+  assert.deepEqual(textChatMessages([message('old')]), [message('old')], 'existing text chats stay visible');
 });
