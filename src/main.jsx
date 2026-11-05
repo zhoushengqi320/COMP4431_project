@@ -4,6 +4,7 @@ import { ArrowUp, ArrowUpRight, BookOpen, Check, ChevronDown, CircleHelp, Compas
 import { requestAdvice, requestTranscript } from './advisor';
 import { createVoiceSession, speechSupport } from './voice';
 import { createSpeechPlayer, narrationFor } from './speech';
+import Companion from './avatar/Companion';
 import { AuthScreen, AuthLoading } from './Auth.jsx';
 import { apiRequest } from './auth.js';
 import { useConversations } from './useConversations.js';
@@ -267,7 +268,7 @@ function App({ user, initialProfile, onLogout, onSignIn }) {
           {!messages.length && <div className="prompt-list" aria-label="Suggested questions">{prompts.map(({ icon: Icon, title, question }) => <button key={title} disabled={loading || voiceActive} onClick={() => { setDraft(question); input.current?.focus(); }}><Icon size={15}/>{title}</button>)}</div>}
           <p className="composer-footnote">{advisorInfo.mode === 'llm' ? 'Qwen can make mistakes. Check the linked sources.' : 'Confirm requirements with your programme handbook.'}</p>
         </div>
-      </main> : <main className="profile-page">
+      </main><Companion loading={loading} voiceState={voiceState} speechState={speechState} error={error || (voiceOpen ? voiceError : '') || speechError}/> : <main className="profile-page">
         <div className="page-heading"><h1>Profile & documents</h1><p>Add your academic background for more relevant advice.</p></div><div className="profile-overview"><span className="student-avatar">{initials}</span><div><strong>{user.name}</strong><span>{user.email}</span></div><span className="account-status"><Check size={14}/> Signed in</span></div>
         <form onSubmit={saveProfile} className="profile-card"><div className="section-heading"><span className="section-icon"><UserRound size={20}/></span><div><h2>My academic profile</h2><p>Your programme, year and interests.</p></div><span className="optional-label"><ShieldCheck size={13}/> Linked to your account</span></div><fieldset className="profile-fields" disabled={saving}>
           <label>Programme / Major<input placeholder="e.g. BSc (Hons) in Computing" maxLength={160} value={profile.programme} onChange={e => setProfile({ ...profile, programme: e.target.value })}/></label>
