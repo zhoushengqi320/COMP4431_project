@@ -62,6 +62,7 @@ export default function Companion(props) {
       <div className={`pear-stage avatar-${state}`}>
         <div className="pear-stage-grid" aria-hidden="true"/>
         {mode === '3d' ? <Avatar3D state={state} motion={animated} onFailure={failureHandler} onInteract={greet} resetRef={resetRef}/> : <button className="pear-avatar-2d-button" onClick={greet} aria-label="Say hello to Pear"><Avatar2D state={state}/></button>}
+        {['thinking','transcribing','connecting','preparing'].includes(state) && <svg className="pear-thinking-bubbles" viewBox="0 0 360 340" aria-hidden="true"><g fill="#f5fbea" stroke="currentColor" strokeWidth="1.7"><circle cx="263" cy="131" r="3"/><circle cx="279" cy="113" r="5.5"/><circle cx="299" cy="90" r="10"/></g></svg>}
         <span className="pear-stage-corner" aria-hidden="true">P / 01</span>
         {mode === '3d' && <button className="pear-reset pear-icon" aria-label="Reset 3D view" onClick={() => resetRef.current?.()}><RotateCcw size={14}/></button>}
       </div>

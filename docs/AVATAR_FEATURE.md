@@ -60,17 +60,20 @@ error state from `App`. It does not replace the advisor or voice modules.
 | Microphone permission request | Preparing/connecting display |
 | Recording (`listening`) | Shells open slightly; listening status |
 | Recording stopped / ASR pending | Transcribing status and activity dots/bars |
-| Chat request pending | Thinking display and shell movement |
+| Chat request pending | Three graduated thought bubbles at the upper right and shell movement |
 | TTS queued | Preparing audio display |
-| Actual TTS `onstart` | Speaking status and animated equalizer |
-| Playback pause | Still speaking indicator; paused eyes/status |
+| Actual TTS `onstart` | Speaking status and a small opening/closing mouth |
+| Playback pause | Mouth hidden; paused eyes/status |
 | Resume / stop / completion | Resume speaking / return to idle |
 | Visible request or speech error | Recoverable error expression |
-| Tap / keyboard greeting | Short wink and shell expansion |
+| Tap / keyboard greeting | Two happy caret eyes (^ ^), a brief gentle jiggle and shell expansion |
 
-Because this robot has no mouth, speaking uses a visual equalizer and shell motion.
-It follows playback events, not phoneme timing or measured audio amplitude. It does
-not claim lip sync. While motion is disabled, states still change but remain still.
+Speaking uses a small mouth that opens and closes while the actual browser playback
+is active. It follows playback events, not phoneme timing or measured audio
+amplitude, so it does not claim precise lip sync. Thinking uses three graduated
+comic-style bubbles at the upper right in both modes. A greeting displays two
+happy caret-shaped eyes (^ ^) and a brief, decaying jiggle. While motion is disabled,
+expressions still change but remain still.
 
 Navigation away from Advisor unmounts the companion. Three.js animation loops,
 observers, listeners, geometry, materials, textures and renderer resources are
