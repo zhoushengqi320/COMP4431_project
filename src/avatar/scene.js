@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { states } from './state';
+import { drawFace, faceFrame, motionFrame } from './expressions';
 
 // Three curved, closed shell pieces built locally; no remote model or texture assets.
 function shellGeometry() {
@@ -67,26 +68,24 @@ export function createAvatarScene(host, { onFailure, onInteract, initialState = 
   const metal = new THREE.MeshPhysicalMaterial({ color: 0xd2d8dc, metalness: .92, roughness: .28, clearcoat: .3, side: THREE.DoubleSide });
   const glass = new THREE.MeshPhysicalMaterial({ color: 0x07100c, metalness: .05, roughness: .28, clearcoat: .35, clearcoatRoughness: .3, envMapIntensity: .2 });
   const core = new THREE.Mesh(new THREE.SphereGeometry(.93, 64, 40), glass); robot.add(core);
-  const eyeMaterial = new THREE.MeshBasicMaterial({ color: states.idle.color, toneMapped: false });
   const lamp = new THREE.MeshStandardMaterial({ color: '#b9ef88', emissive: '#b9ef88', emissiveIntensity: 1.3, roughness: .4 });
-  const eyeGroups = [];
-  const happyEyes = [];
-  [-1, 1].forEach(side => {
-    const eye = new THREE.Group();
-    eye.position.set(side * .29, .09, .94);
-    eye.rotation.y = side * .28;
-    [-1,1].forEach(y => [-1,1].forEach(x => {
-      const pixel = new THREE.Mesh(new THREE.BoxGeometry(.105, .105, .018), eyeMaterial);
-      pixel.position.set(x * .068, y * .068, 0); eye.add(pixel);
-    }));
-    robot.add(eye); eyeGroups.push(eye);
-    const happy = new THREE.Group(); happy.position.copy(eye.position); happy.rotation.copy(eye.rotation);
-    const points = [new THREE.Vector3(-.12,-.035,0),new THREE.Vector3(0,.085,0),new THREE.Vector3(.12,-.035,0)];
-    for (let i=0;i<2;i++) happy.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.LineCurve3(points[i],points[i+1]),1,.018,8,false),eyeMaterial));
-    happy.visible = false; robot.add(happy); happyEyes.push(happy);
-  });
-  const mouth = new THREE.Mesh(new THREE.TorusGeometry(.068,.014,8,32),eyeMaterial);
-  mouth.position.set(0,-.27,.925); mouth.visible=false; robot.add(mouth);
+  const faceCanvas = document.createElement('canvas'); faceCanvas.width=600; faceCanvas.height=420;
+  const faceContext = faceCanvas.getContext('2d');
+  const faceTexture = new THREE.CanvasTexture(faceCanvas);
+  faceTexture.colorSpace = THREE.SRGBColorSpace;
+  const facePositions=[], faceUV=[], faceIndices=[], segments=32;
+  for(let row=0;row<=segments;row++)for(let col=0;col<=segments;col++){
+    const u=col/segments,v=row/segments,x=(u-.5)*1.34,y=(.5-v)*.94;
+    facePositions.push(x,y,Math.sqrt(.946*.946-x*x-y*y)); faceUV.push(u,1-v);
+  }
+  for(let row=0;row<segments;row++)for(let col=0;col<segments;col++){
+    const a=row*(segments+1)+col,b=a+segments+1;faceIndices.push(a,b,a+1,b,b+1,a+1);
+  }
+  const faceGeometry=new THREE.BufferGeometry();
+  faceGeometry.setAttribute('position',new THREE.Float32BufferAttribute(facePositions,3));
+  faceGeometry.setAttribute('uv',new THREE.Float32BufferAttribute(faceUV,2));faceGeometry.setIndex(faceIndices);faceGeometry.computeVertexNormals();
+  const faceMaterial=new THREE.MeshBasicMaterial({map:faceTexture,transparent:true,depthWrite:false,toneMapped:false,side:THREE.DoubleSide});
+  const faceSurface=new THREE.Mesh(faceGeometry,faceMaterial);robot.add(faceSurface);
   const petals = [];
   const geometry = shellGeometry();
   [Math.PI / 2 + .15, Math.PI * 7/6 + .15, -Math.PI/6 + .15].forEach((angle, index) => {
@@ -129,27 +128,25 @@ export function createAvatarScene(host, { onFailure, onInteract, initialState = 
   const key=e=>{if(!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Enter',' '].includes(e.key))return;e.preventDefault();if(e.key==='ArrowLeft')yaw-=.12;else if(e.key==='ArrowRight')yaw+=.12;else if(e.key==='ArrowUp')pitch=Math.max(-.5,pitch-.1);else if(e.key==='ArrowDown')pitch=Math.min(.5,pitch+.1);else onInteract?.();render();};
   const lost=e=>{e.preventDefault();stopLoop();onFailure?.();};
   canvas.addEventListener('pointerdown',down);canvas.addEventListener('pointermove',move);canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',cancel);canvas.addEventListener('keydown',key);canvas.addEventListener('webglcontextlost',lost);
-  let start = performance.now();
-  let stateStarted = start;
+  const start = performance.now();
+  let stateStarted = start, gaze = {}, activityKey = 0, lastFaceDraw = -Infinity, forceFace = true;
   function render(now=performance.now()) {
     if(disposed)return;
-    const t=animate?(now-start)/1000:0;
-    const elapsed = Math.max(0,(now-stateStarted)/1000);
-    const greeting = state === 'greeting';
-    const jiggle = animate && greeting && elapsed < .65 ? Math.sin(elapsed*32)*.045*(1-elapsed/.65) : 0;
+    const clock=(now-start)/1000, elapsed=Math.max(0,(now-stateStarted)/1000);
+    const pose=motionFrame(state,elapsed,clock,gaze,animate);
+    const color=states[state]?.color || states.idle.color;
+    lamp.color.set(color);lamp.emissive.set(color);
+    robot.position.set(pose.x,pose.y,0);
+    robot.rotation.set(pitch+pose.nod,yaw+pose.yaw,pose.roll);
+    if(forceFace || now-lastFaceDraw>65){
+      drawFace(faceContext,faceFrame({state,elapsed,clock,motion:animate,gaze}),color);
+      faceTexture.needsUpdate=true;lastFaceDraw=now;forceFace=false;
+    }
     const isThinking=['thinking','transcribing','connecting','preparing'].includes(state);
-    const color=states[state]?.color || states.idle.color; eyeMaterial.color.set(color);lamp.color.set(color);lamp.emissive.set(color);
-    robot.position.y=animate?Math.sin(t*1.7)*.065:0;
-    robot.rotation.set(pitch+(animate?Math.sin(t*.7)*.025:0),yaw+(jiggle*.3),(animate?Math.sin(t*.8)*.025:0)+jiggle);
-    const blink=animate && t%4.7>4.52 ? .12:1;
-    eyeGroups.forEach((eye,i)=>{eye.visible=!greeting;eye.scale.y=blink*(state==='paused'?.4:1);eye.rotation.z=state==='error'?(i===0?-.2:.2):0;eye.position.y=.09+(isThinking&&animate?Math.sin(t*2.4+i*.7)*.04:0);});
-    happyEyes.forEach(eye=>{eye.visible=greeting;});
-    mouth.visible=state==='speaking';
-    mouth.scale.y=animate?.3+Math.abs(Math.sin(elapsed*9))*.9:.8;
     petals.forEach(({pivot,angle},i)=>{
-      const spread=(state==='listening'?.1:state==='greeting'?.14:state==='speaking'?.04:0)+(animate?Math.sin(t*1.3+i*2.1)*.015:0);
+      const spread=pose.spread+(animate?Math.sin(clock*1.1+i*2.1)*.009:0);
       pivot.position.set(Math.cos(angle)*spread,Math.sin(angle)*spread,0);
-      pivot.rotation.z=angle+(isThinking&&animate?Math.sin(t*1.2)*.09:0);
+      pivot.rotation.z=angle+(isThinking&&animate?Math.sin(clock*1.1)*.045:0);
     });
     renderer.render(scene,camera);
   }
@@ -161,11 +158,16 @@ export function createAvatarScene(host, { onFailure, onInteract, initialState = 
   const redraw=()=>{if(!animate)render();};canvas.addEventListener('pointermove',redraw);
   canDraw = true; updateLoop();
   return {
-    update(nextState,nextMotion){if(nextState!==state)stateStarted=performance.now();state=nextState;animate=nextMotion;updateLoop();},
+    update(nextState,nextMotion,nextGaze={},nextActivityKey=0){
+      if(nextState!==state || nextActivityKey!==activityKey)stateStarted=performance.now();
+      const loopChanged=animate!==nextMotion;
+      state=nextState;animate=nextMotion;gaze=nextGaze;activityKey=nextActivityKey;forceFace=true;
+      if(loopChanged)updateLoop();else if(!animate&&visible&&!document.hidden)render();
+    },
     reset(){yaw=-.15;pitch=.08;render();},
     dispose(){disposed=true;stopLoop();observer.disconnect();intersection.disconnect();document.removeEventListener('visibilitychange',pageVisibility);
       canvas.removeEventListener('pointerdown',down);canvas.removeEventListener('pointermove',move);canvas.removeEventListener('pointermove',redraw);canvas.removeEventListener('pointerup',up);canvas.removeEventListener('pointercancel',cancel);canvas.removeEventListener('keydown',key);canvas.removeEventListener('webglcontextlost',lost);
-      const geometries=new Set(),materials=new Set();scene.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);if(obj.material)materials.add(obj.material);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());shadowTexture.dispose();environment.dispose();renderer.dispose();canvas.remove();
+      const geometries=new Set(),materials=new Set();scene.traverse(obj=>{if(obj.geometry)geometries.add(obj.geometry);if(obj.material)materials.add(obj.material);});geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());shadowTexture.dispose();faceTexture.dispose();environment.dispose();renderer.dispose();canvas.remove();
     }
   };
 }

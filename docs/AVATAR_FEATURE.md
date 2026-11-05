@@ -1,7 +1,7 @@
 # Pear: integrated 2D / 3D virtual companion
 
 Pear is an original floating electronic companion for PolyPath: a black glass core,
-three silver shell petals, green pixel eyes and a small gold-edged pear badge.
+three silver shell petals, expressive green screen eyes and a small gold-edged pear badge.
 The selected visual concept was developed with AI-assisted image generation;
 the interactive SVG and Three.js geometry are implemented in source code.
 The 3D model is procedural, not an image displayed on a rotating rectangle.
@@ -56,24 +56,45 @@ error state from `App`. It does not replace the advisor or voice modules.
 
 | Trigger | Companion behavior |
 | --- | --- |
-| Idle | Gentle float, blinking pixel eyes, slight shell drift |
+| Idle | Gentle float, soft rounded eyes, natural double blinks, slight shell drift |
 | Microphone permission request | Preparing/connecting display |
 | Recording (`listening`) | Shells open slightly; listening status |
 | Recording stopped / ASR pending | Transcribing status and activity dots/bars |
 | Chat request pending | Three graduated thought bubbles at the upper right and shell movement |
 | TTS queued | Preparing audio display |
-| Actual TTS `onstart` | Speaking status and a small opening/closing mouth |
-| Playback pause | Mouth hidden; paused eyes/status |
+| Actual TTS `onstart` | Coordinated eyes and several small mouth shapes with phrase-like rests |
+| Playback pause | Closed short mouth; paused eyes/status |
 | Resume / stop / completion | Resume speaking / return to idle |
 | Visible request or speech error | Recoverable error expression |
-| Tap / keyboard greeting | Two happy caret eyes (^ ^), a brief gentle jiggle and shell expansion |
+| Tap / keyboard greeting | Happy caret eyes (^ ^), a small kaomoji mouth, brief jiggle and shell expansion |
 
-Speaking uses a small mouth that opens and closes while the actual browser playback
-is active. It follows playback events, not phoneme timing or measured audio
-amplitude, so it does not claim precise lip sync. Thinking uses three graduated
-comic-style bubbles at the upper right in both modes. A greeting displays two
-happy caret-shaped eyes (^ ^) and a brief, decaying jiggle. While motion is disabled,
-expressions still change but remain still.
+A shared face rig defines eye and mouth paths in a small local coordinate space.
+The SVG renderer draws those paths directly. The WebGL renderer draws the same
+paths to a CanvasTexture on a curved surface just above the black glass core.
+This supports rounded eyes, happy carets, playful squints, half-lidded side-eye,
+natural double blinks and coordinated small kaomoji mouths in both modes.
+Speaking cycles through several smile/open shapes and short rests with subtle
+head movement. These are stylized playback gestures, not phoneme or audio-amplitude
+analysis; precise lip sync is not claimed. Pause/stop immediately removes the
+speaking pattern. Thinking retains the three upper-right thought bubbles.
+
+### Optional personality and interaction
+
+- Moving a mouse/pen over the companion gently shifts its gaze and orientation.
+  This uses local pointer position, not a camera or tracking service.
+- One tap shows happy caret eyes. A second nearby tap produces a playful squint;
+  a third produces a brief pretend pout. After a gap, the sequence resets.
+- With **Little surprises** and **Gentle motion** enabled, a visible idle companion
+  may briefly glance around, play or stretch. The first moment occurs after about
+  9–14 seconds; later moments are spaced about 22–34 seconds apart and last less
+  than three seconds. They do not produce audio, notifications or AI requests.
+- Busy conversation, recording and playback take priority over personality.
+  Ambient moments are suspended while hidden/offscreen/collapsed and with reduced
+  motion. **Little surprises** is independently switchable and saved locally.
+- **Try expressions** includes Curious, Playful, Pout and Sleepy for immediate
+  inspection. These are explicitly previews, not inferred user/AI emotions.
+- With motion disabled, eye/mouth expressions remain still; modes and lifecycle
+  labels continue to work.
 
 Navigation away from Advisor unmounts the companion. Three.js animation loops,
 observers, listeners, geometry, materials, textures and renderer resources are
@@ -85,10 +106,11 @@ disposed. Hidden/background or offscreen scenes stop continuous rendering.
 | --- | --- |
 | `src/avatar/Companion.jsx` | Panel, preferences, previews, integration and fallback |
 | `src/avatar/state.js` | Shared lifecycle state resolution and status text |
-| `src/avatar/Avatar2D.jsx` | Original SVG illustration and independently animated parts |
-| `src/avatar/scene.js` | Procedural 3D shell meshes, materials, pixel eyes, badge and motion |
+| `src/avatar/Avatar2D.jsx` / `Face2D.jsx` | SVG illustration and locally animated shared face rig |
+| `src/avatar/expressions.js` | Shared eye/mouth paths, timed gestures and tap reactions |
+| `src/avatar/scene.js` | Procedural 3D shell meshes, materials, curved face texture, badge and motion |
 | `src/avatar/avatar.css` | Responsive layout, SVG animations and reduced motion |
-| `tests/avatar.test.mjs` | Activity precedence, playback states and recovery |
+| `tests/avatar.test.mjs` / `tests/expressions.test.mjs` | Activity priority, recovery, face timing, tap reactions and reduced motion |
 
 ## Suggested live demonstration (about one minute)
 

@@ -21,5 +21,9 @@ export const states = {
   speaking: { label: 'Speaking', detail: 'Playing the answer you selected.', color: '#b5ee77' },
   paused: { label: 'Playback paused', detail: 'Take your time. I’ll wait.', color: '#b7c2c8' },
   error: { label: 'Let’s try again', detail: 'Check the message below the chat.', color: '#f0b17d' },
-  greeting: { label: 'Oh, hello there.', detail: 'Tiny core. Big plans.', color: '#b5ee77' }
+  greeting: { label: 'Oh, hello there.', detail: 'Tiny core. Big plans.', color: '#b5ee77' },
+  curious: { label: 'What’s over there?', detail: 'A quick peek. Then back to your plans.', color: '#b5ee77' },
+  playful: { label: 'You found my ticklish spot.', detail: 'Okay, okay. You have my attention.', color: '#b5ee77' },
+  pout: { label: 'Hey. One boop at a time.', detail: 'Just pretending to be offended.', color: '#b5ee77' },
+  sleepy: { label: 'A tiny stretch.', detail: 'Still here, whenever you need me.', color: '#b5ee77' }
 };
