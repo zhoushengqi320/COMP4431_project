@@ -35,12 +35,21 @@ fallbacks are used if offline.
 
 ## Controls
 
-- The companion appears beside the chat on desktop. On smaller screens it starts
-  collapsed above the chat; expand it to reveal the compact controls.
+- The companion starts as a small floating character near the bottom-right on all
+  screen sizes. It docks above the actual composer so text entry, send and voice
+  controls remain accessible, including when recording controls grow.
+- Click **Open Pear companion** to open the settings panel. Click its close button,
+  press Escape, or click outside to return to the small companion. Escape/close
+  returns keyboard focus to the launcher; an outside click keeps its natural focus.
+  The panel overlays content without reserving a permanent chat column.
+- The mini companion uses the lightweight animated SVG face and continues to show
+  real chat, listening and speaking states. Open the panel to inspect and interact
+  with the full 2D/3D renderers.
 - Select **2D** for the SVG illustration or **3D** for the WebGL model.
 - In 3D, drag horizontally/vertically to rotate, or focus the canvas and use arrow
-  keys. **Reset 3D view** restores the front view. Tap or press Enter to greet Pear.
-- In 2D, tap the character to greet it.
+  keys. **Reset 3D view** restores the front view. Tap or press Enter to greet Pear in the expanded panel.
+- In the expanded 2D view, tap the character to greet it. The small floating
+  character is the entry point for opening the panel.
 - **Gentle motion** disables continuous motion in both renderers. The operating
   system's reduced-motion setting takes priority. Mode and motion preferences
   are saved locally; storage failure does not block the app.
@@ -89,8 +98,8 @@ speaking pattern. Thinking retains the three upper-right thought bubbles.
   9–14 seconds; later moments are spaced about 22–34 seconds apart and last less
   than three seconds. They do not produce audio, notifications or AI requests.
 - Busy conversation, recording and playback take priority over personality.
-  Ambient moments are suspended while hidden/offscreen/collapsed and with reduced
-  motion. **Little surprises** is independently switchable and saved locally.
+  Ambient moments are suspended while hidden/offscreen and with reduced
+  motion. The small floating companion can still have occasional idle moments. **Little surprises** is independently switchable and saved locally.
 - **Try expressions** includes Curious, Playful, Pout and Sleepy for immediate
   inspection. These are explicitly previews, not inferred user/AI emotions.
 - With motion disabled, eye/mouth expressions remain still; modes and lifecycle
@@ -114,7 +123,7 @@ disposed. Hidden/background or offscreen scenes stop continuous rendering.
 
 ## Suggested live demonstration (about one minute)
 
-1. Show the 3D character, rotate it and point out its independent shell pieces and
+1. Open the small floating companion, select 3D, rotate it and point out its shell pieces and
    pear badge. Switch to 2D to show the matching visual identity.
 2. Ask a course-planning question. With a connected advisor, Pear thinks while the
    real request is pending. The offline demo response is immediate and explicitly
@@ -123,7 +132,8 @@ disposed. Hidden/background or offscreen scenes stop continuous rendering.
    states. Available languages/voices depend on the device and browser.
 4. If the advisor and microphone are configured, dictate a question and stop the
    recording. Show listening, transcribing, then the draft for review.
-5. Briefly show motion off, collapse, and the mobile arrangement if useful.
+5. Close the settings panel to show that the small companion still follows live
+   conversation states. Briefly show motion off and the mobile arrangement if useful.
 
 ## Validation and limits
 
@@ -136,3 +146,8 @@ TTS start/pause/resume/stop without calling paid services. Live Qwen responses,
 physical microphone input and installed system voices still need a final check on
 the group's presentation computer. The procedural model approximates the approved
 concept; it is not a pixel-identical reconstruction of the concept render.
+
+Floating-layout validation also checked default launcher mode, composer avoidance
+at 1440/1024/768/390/320 pixels, unchanged chat width when opening the panel,
+Escape focus restoration, outside-click dismissal, and live recording/playback
+state updates while minimized. Controlled adapters were used for live-service events.

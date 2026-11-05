@@ -79,7 +79,8 @@ Call-level request/response details: [docs/AI_INTEGRATION.md](docs/AI_INTEGRATIO
 
 ### 2D / 3D avatar integration
 
-Pear is the floating silver-and-glass companion beside the advisor. Switch between
+Pear is the small floating silver-and-glass companion above the chat composer.
+Open it to switch between
 an animated SVG character and an interactive procedural Three.js model. It follows
 chat, recording, transcription and read-aloud states, with reduced-motion support
 and an automatic 2D fallback if WebGL fails. No additional avatar service is needed.

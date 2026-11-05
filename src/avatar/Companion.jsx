@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, ChevronDown, ChevronUp, RotateCcw, Sparkles } from 'lucide-react';
+import React, { useEffect, useId, useRef, useState } from 'react';
+import { Box, X, RotateCcw, Sparkles } from 'lucide-react';
 import Avatar2D from './Avatar2D';
 import { createAvatarScene } from './scene';
 import { companionState, states } from './state';
@@ -8,6 +8,10 @@ import './avatar.css';
 
 function preference(key, fallback) { try { return localStorage.getItem(key) || fallback; } catch { return fallback; } }
 function remember(key, value) { try { localStorage.setItem(key, value); } catch { /* Preferences are optional. */ } }
+
+function ThoughtBubbles() {
+  return <svg className="pear-thinking-bubbles" viewBox="0 0 360 340" aria-hidden="true"><g fill="#f5fbea" stroke="currentColor" strokeWidth="1.7"><circle cx="263" cy="131" r="3"/><circle cx="279" cy="113" r="5.5"/><circle cx="299" cy="90" r="10"/></g></svg>;
+}
 
 function Avatar3D({ state, motion, gaze, activityKey, onFailure, onInteract, resetRef }) {
   const host = useRef(null), scene = useRef(null);
@@ -29,7 +33,8 @@ function Avatar3D({ state, motion, gaze, activityKey, onFailure, onInteract, res
 
 export default function Companion(props) {
   const [mode, setMode] = useState(() => preference('polypath-avatar-mode', '3d') === '2d' ? '2d' : '3d');
-  const [collapsed, setCollapsed] = useState(() => window.matchMedia('(max-width: 1199px)').matches);
+  const [collapsed, setCollapsed] = useState(true);
+  const [dockBottom,setDockBottom]=useState(180);
   const [motion, setMotion] = useState(() => preference('polypath-avatar-motion', 'on') !== 'off');
   const [reduced, setReduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [failure, setFailure] = useState(false);
@@ -43,6 +48,8 @@ export default function Companion(props) {
   const [previewSource, setPreviewSource] = useState('preview');
   const timer = useRef(null), resetRef = useRef(null);
   const stageRef=useRef(null), clicks=useRef(), ambientCount=useRef(0);
+  const dockRef=useRef(null), launcherRef=useRef(null), closeRef=useRef(null);
+  const panelId=useId();
   const live = companionState(props);
   const state = live === 'idle' && preview ? preview : live;
   const animated = motion && !reduced;
@@ -63,12 +70,47 @@ export default function Companion(props) {
   }, []);
   useEffect(() => { setPreview(null); clearTimeout(timer.current); }, [live]);
   useEffect(() => {
+    // Dock above the actual composer, including its recording/error panels.
+    // ResizeObserver handles content growth; viewport/scroll events handle zoom
+    // and mobile keyboard changes without reserving a permanent chat column.
+    let frame;
+    const measure=()=>{
+      cancelAnimationFrame(frame);
+      frame=requestAnimationFrame(()=>{
+        const viewport=window.visualViewport;
+        const keyboardInset=Math.max(0,window.innerHeight-(viewport?viewport.height+viewport.offsetTop:window.innerHeight));
+        const composer=document.querySelector('.composer-zone');
+        const rect=composer?.getBoundingClientRect();
+        const aboveComposer=rect&&rect.top<window.innerHeight&&rect.bottom>0?window.innerHeight-rect.top+12:20;
+        setDockBottom(Math.round(Math.max(20+keyboardInset,aboveComposer)));
+      });
+    };
+    const observer=new ResizeObserver(measure);
+    const composer=document.querySelector('.composer-zone');if(composer)observer.observe(composer);
+    window.addEventListener('resize',measure);window.addEventListener('scroll',measure,true);
+    window.visualViewport?.addEventListener('resize',measure);window.visualViewport?.addEventListener('scroll',measure);
+    measure();
+    return()=>{cancelAnimationFrame(frame);observer.disconnect();window.removeEventListener('resize',measure);window.removeEventListener('scroll',measure,true);window.visualViewport?.removeEventListener('resize',measure);window.visualViewport?.removeEventListener('scroll',measure);};
+  },[]);
+  useEffect(()=>{
+    if(collapsed){
+      if(previewSource==='preview'){clearTimeout(timer.current);setPreview(null);}
+      return;
+    }
+    closeRef.current?.focus({preventScroll:true});
+    const outside=event=>{if(!dockRef.current?.contains(event.target))setCollapsed(true);};
+    const escape=event=>{if(event.key==='Escape'){setCollapsed(true);requestAnimationFrame(()=>launcherRef.current?.focus({preventScroll:true}));}};
+    document.addEventListener('pointerdown',outside);document.addEventListener('keydown',escape);
+    return()=>{document.removeEventListener('pointerdown',outside);document.removeEventListener('keydown',escape);};
+    // Only opening/closing controls focus and the outside-click listener.
+  },[collapsed]);
+  useEffect(() => {
     if(!stageRef.current)return;
     const observer=new IntersectionObserver(entries=>setOnscreen(entries[0].isIntersecting));
     observer.observe(stageRef.current);return()=>observer.disconnect();
   }, [collapsed]);
   useEffect(() => {
-    if(live!=='idle'||preview||collapsed||!surprises||!animated||!onscreen||!pageActive)return;
+    if(live!=='idle'||preview||!surprises||!animated||!onscreen||!pageActive)return;
     const delay=ambientCount.current===0?9000+Math.random()*5000:22000+Math.random()*12000;
     const timeout=setTimeout(()=>{
       if(document.hidden)return;
@@ -86,10 +128,23 @@ export default function Companion(props) {
     const x=(event.clientX-bounds.left)/bounds.width*2-1,y=(event.clientY-bounds.top)/bounds.height*2-1;
     setGaze({x,y});
   }
+  function closePanel(){setCollapsed(true);requestAnimationFrame(()=>launcherRef.current?.focus({preventScroll:true}));}
+  const thinking=['thinking','transcribing','connecting','preparing'].includes(state);
+  const dockStyle={'--avatar-color':meta.color,'--companion-bottom':`${dockBottom}px`};
 
-  return <aside className={`pear-companion ${collapsed ? 'is-collapsed' : ''} ${animated ? '' : 'is-still'}`} aria-label="Pear virtual companion" style={{ '--avatar-color': meta.color }}>
-    <div className="pear-companion-heading"><div><span className="pear-overline">YOUR LITTLE CO-PILOT</span><h2>Pear<span> / 派尔</span></h2></div><button className="pear-icon" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? 'Expand companion' : 'Collapse companion'} aria-expanded={!collapsed}>{collapsed ? <ChevronDown size={17}/> : <ChevronUp size={17}/>}</button></div>
-    {collapsed ? <button className="pear-collapsed-status" onClick={() => setCollapsed(false)}><span/>{states[live].label}<ChevronDown size={14}/></button> : <>
+  if(collapsed)return <aside className={`pear-companion is-collapsed ${animated?'':'is-still'}`} ref={dockRef} aria-label="Pear virtual companion" style={dockStyle}>
+    <button className="pear-launcher" ref={launcherRef} onClick={()=>setCollapsed(false)} aria-label="Open Pear companion" aria-expanded={false} aria-controls={panelId}>
+      <span className={`pear-launcher-stage avatar-${state}`} ref={stageRef} onPointerMove={followPointer} onPointerLeave={()=>setGaze({x:0,y:0})}>
+        <Avatar2D state={state} motion={animated&&onscreen&&pageActive} gaze={gaze} activityKey={activityKey}/>
+        {thinking&&<ThoughtBubbles/>}
+      </span>
+      <span className="pear-launcher-status" role="status" aria-live="polite"><span className="pear-status-dot"/><strong>{states[live].label}</strong></span>
+      <span className="pear-launcher-hint">Pear · tap to open</span>
+    </button>
+  </aside>;
+
+  return <aside id={panelId} className={`pear-companion is-expanded ${animated ? '' : 'is-still'}`} ref={dockRef} aria-label="Pear virtual companion" style={dockStyle}>
+    <div className="pear-companion-heading"><div><span className="pear-overline">YOUR LITTLE CO-PILOT</span><h2>Pear<span> / 派尔</span></h2></div><button className="pear-icon" ref={closeRef} onClick={closePanel} aria-label="Close Pear companion" aria-expanded={true}><X size={17}/></button></div>
       <div className="pear-view-tabs" role="group" aria-label="Avatar display mode">
         <button aria-pressed={mode === '2d'} onClick={() => changeMode('2d')}><Sparkles size={13}/>2D</button>
         <button aria-pressed={mode === '3d'} onClick={() => changeMode('3d')} disabled={failure}><Box size={13}/>3D</button>
@@ -98,7 +153,7 @@ export default function Companion(props) {
       <div className={`pear-stage avatar-${state}`} ref={stageRef} onPointerMove={followPointer} onPointerLeave={()=>setGaze({x:0,y:0})}>
         <div className="pear-stage-grid" aria-hidden="true"/>
         {mode === '3d' ? <Avatar3D state={state} motion={animated && onscreen && pageActive} gaze={gaze} activityKey={activityKey} onFailure={failureHandler} onInteract={greet} resetRef={resetRef}/> : <button className="pear-avatar-2d-button" onClick={greet} aria-label="Say hello to Pear"><Avatar2D state={state} motion={animated && onscreen && pageActive} gaze={gaze} activityKey={activityKey}/></button>}
-        {['thinking','transcribing','connecting','preparing'].includes(state) && <svg className="pear-thinking-bubbles" viewBox="0 0 360 340" aria-hidden="true"><g fill="#f5fbea" stroke="currentColor" strokeWidth="1.7"><circle cx="263" cy="131" r="3"/><circle cx="279" cy="113" r="5.5"/><circle cx="299" cy="90" r="10"/></g></svg>}
+        {thinking && <ThoughtBubbles/>}
         <span className="pear-stage-corner" aria-hidden="true">P / 01</span>
         {mode === '3d' && <button className="pear-reset pear-icon" aria-label="Reset 3D view" onClick={() => resetRef.current?.()}><RotateCcw size={14}/></button>}
       </div>
@@ -110,6 +165,5 @@ export default function Companion(props) {
       <label className="pear-surprises"><input type="checkbox" checked={surprises} onChange={e=>{setSurprises(e.target.checked);remember('polypath-avatar-surprises',e.target.checked?'on':'off');if(!e.target.checked&&previewSource==='ambient'){clearTimeout(timer.current);setPreview(null);}}}/>Little surprises<span>Occasional playful moments</span></label>
       {previewOpen && <div className="pear-previews"><p>Animation preview · no microphone or AI request</p><div>{['idle','listening','thinking','speaking','paused','greeting','curious','playful','pout','sleepy'].map(item => <button key={item} disabled={live !== 'idle'} aria-pressed={preview === item} onClick={() => tryState(item)}>{item === 'idle' ? 'Reset' : item === 'greeting' ? 'Hello' : item[0].toUpperCase()+item.slice(1)}</button>)}</div>{live !== 'idle' && <p>Live conversation takes priority.</p>}</div>}
       <div className="pear-footer"><span className="pear-footer-symbol">✧</span><p>A small spark for<br/><strong>your next big step.</strong></p></div>
-    </>}
   </aside>;
 }
