@@ -151,6 +151,10 @@ function conversationMessages(value) {
     ids.add(id);
     if (!['user', 'assistant'].includes(item.role)) throw fail(400, 'Message roles must be user or assistant.');
     const message = { id, role: item.role, text: textField(item.text, `${label}.text`, 50000, true) };
+    if (item.channel !== undefined) {
+      if (item.channel !== 'voice') throw fail(400, 'Message channel must be voice when specified.');
+      message.channel = 'voice';
+    }
     const strings = { mode: 32, language: 32, providerWarning: 4000 };
     for (const [key, max] of Object.entries(strings)) {
       if (item[key] !== undefined) message[key] = textField(item[key], `${label}.${key}`, max);

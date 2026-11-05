@@ -1,3 +1,5 @@
+import { voiceHistory, voiceSearchQuestion, voiceFallbackQuestion } from './voice-context.mjs';
+import { VOICE_PROMPT, responseStyle, voiceReply } from './voice-reply.mjs';
 import { formatCatalogue, getCourses, hasNoPrerequisite, retrieveCourses, searchCourses } from './course-knowledge.mjs';
 import { planCourseSearch } from './course-search.mjs';
 import { normalizeCourseResponse, recommendationContext } from './course-response.mjs';
@@ -170,12 +172,14 @@ export async function handleAdvisorRequest(req, res, env, options = {}) {
     let profile = {};
     let documents = [];
     let attachments = [];
+    let style = 'text';
     const contentType = req.headers['content-type'] || '';
 
     if (contentType.includes('multipart/form-data')) {
       let formData;
       try { formData = await request.formData(); } catch { throw new RequestError(400, 'Invalid multipart request.'); }
       message = formData.get('message');
+      style = responseStyle(formData.get('responseStyle'));
       history = parseJsonField(formData.get('history'), []);
       profile = parseJsonField(formData.get('profile'), {});
       documents = await describeFiles(formData, 'documents');
@@ -183,6 +187,7 @@ export async function handleAdvisorRequest(req, res, env, options = {}) {
     } else if (contentType.includes('application/json')) {
       const data = parseJsonObject(body);
       message = data.message;
+      style = responseStyle(data.responseStyle);
       history = data.history === undefined ? [] : data.history;
       profile = data.profile === undefined ? {} : data.profile;
     } else {
@@ -190,17 +195,19 @@ export async function handleAdvisorRequest(req, res, env, options = {}) {
     }
     ({ message, history, profile } = validateChatFields({ message, history, profile }));
 
-    if (env.QWEN_ADVISOR_MODE?.trim() === 'finetune-only') {
+    if (style !== 'voice' && env.QWEN_ADVISOR_MODE?.trim() === 'finetune-only') {
       reply(200, await observeFinetunedModel(message, env, res));
       return;
     }
 
     const baseUrl = (env.QWEN_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1').replace(/\/$/, '');
-    const model = env.QWEN_MODEL?.trim() || 'qwen-plus';
+    const model = style === 'voice'
+      ? env.QWEN_VOICE_MODEL?.trim() || env.QWEN_PLANNER_MODEL?.trim() || 'qwen-plus'
+      : env.QWEN_MODEL?.trim() || 'qwen-plus';
     const followUp = /这门|那门|这些课|它|该课|this course|that course|these courses|\bit\b/i.test(message);
     const previousQuestion = followUp ? [...history].reverse().find(item => item.role === 'user')?.text || '' : '';
     const context = recommendationContext(message, history);
-    if (context.more && !context.hasPrevious) {
+    if (style !== 'voice' && context.more && !context.hasPrevious) {
       reply(200, { text: /\p{Script=Han}/u.test(message) ? '请先告诉我你想学习的方向，或提供之前推荐的课程，我再为你寻找更多相关课程。' : 'Please tell me your learning interest or the courses already recommended so I can find more options.' });
       return;
     }
@@ -210,11 +217,11 @@ export async function handleAdvisorRequest(req, res, env, options = {}) {
     } catch {
       throw new RequestError(503, 'Could not load the live course catalogue from the database. Check SUPABASE_URL and SUPABASE_ANON_KEY, then retry.');
     }
-    const searchQuery = context.more ? context.query : `${previousQuestion}\n${message}`.trim();
-    const excludeCodes = context.more ? context.seenCodes : [];
+    const searchQuery = style === 'voice' ? voiceFallbackQuestion(message, history) : context.more ? context.query : `${previousQuestion}\n${message}`.trim();
+    const excludeCodes = style !== 'voice' && context.more ? context.seenCodes : [];
     let plan = null;
     try {
-      plan = await planCourseSearch({ message: searchQuery, profile, env, apiKey, res });
+      plan = await planCourseSearch({ message: style === 'voice' ? voiceSearchQuestion(message, history) : searchQuery, profile, env, apiKey, res });
       console.info('[search] Qwen plan', plan);
     } catch (error) {
       console.warn('[search] Qwen plan unavailable, using local fallback:', error instanceof RequestError ? error.message : error.message);
@@ -224,7 +231,7 @@ export async function handleAdvisorRequest(req, res, env, options = {}) {
       catalogueRows = retrieveCourses(catalogue, { message: searchQuery, profile, excludeCodes });
       if (plan?.noPrerequisite) catalogueRows = catalogueRows.filter(hasNoPrerequisite);
     }
-    if (context.more && !catalogueRows.length) {
+    if (style !== 'voice' && context.more && !catalogueRows.length) {
       reply(200, { text: /\p{Script=Han}/u.test(message) ? '目前没有检索到更多尚未介绍的相关课程，你可以换一个学习方向继续探索。' : 'No more unseen related courses were found. Try exploring a different learning interest.' });
       return;
     }
@@ -232,12 +239,12 @@ export async function handleAdvisorRequest(req, res, env, options = {}) {
     const payload = {
       model,
       stream: false,
-      max_tokens: 8192,
+      max_tokens: style === 'voice' ? 700 : 8192,
       enable_thinking: false,
       response_format: { type: 'json_object' },
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        ...historyMessages(history),
+        { role: 'system', content: style === 'voice' ? VOICE_PROMPT : SYSTEM_PROMPT },
+        ...(style === 'voice' ? voiceHistory(history) : historyMessages(history)),
         { role: 'user', content: buildUserContent({ message, profile, documents, attachments, catalogue: catalogueText, recommendation: context }) }
       ]
     };
@@ -246,7 +253,7 @@ export async function handleAdvisorRequest(req, res, env, options = {}) {
     if (options.revalidateMember && !options.revalidateMember()) return;
     if (completion.choices?.[0]?.finish_reason === 'length') throw new RequestError(502, 'The answer exceeded its length limit. Please narrow the question and try again.');
     const content = completion.choices?.[0]?.message?.content;
-    reply(200, normalizeCourseResponse(parseAdvisorPayload(content), catalogueRows, message, history));
+    reply(200, style === 'voice' ? voiceReply(parseAdvisorPayload(content)) : normalizeCourseResponse(parseAdvisorPayload(content), catalogueRows, message, history));
   } catch (error) {
     reply(error instanceof RequestError ? error.status : 500, { error: error instanceof RequestError ? error.message : 'The advisor could not respond. Please try again.' });
   }
