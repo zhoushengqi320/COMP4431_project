@@ -7,7 +7,8 @@ A red-and-white React app for the COMP4431 chatbot project. Students chat with a
 
 Replies come from **Qwen** (`qwen-plus`) on Alibaba Cloud Model Studio. They are grounded in the team’s PolyU **course catalogue** (Supabase `public.courses`, 2659 rows), not from a fine-tuned model.
 <HTML>
-   <h2>
+   <h2>  下面是配置node.js的方法 </h2>
+</HTML>
       推荐通过版本管理工具安装 **Node.js LTS（长期支持版）及其随附的 npm**，方便以后切换项目所需版本。已有项目应优先使用项目指定的 Node.js 版本。[npm 官方安装建议](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm/)
 
 | 系统 | 推荐工具 | 使用的终端 |
@@ -159,8 +160,7 @@ Replies come from **Qwen** (`qwen-plus`) on Alibaba Cloud Model Studio. They are
    | 团队协作 | 将 `package.json` 和 `package-lock.json` 一起提交 |
 
    `npm ci` 要求已经存在与 `package.json` 一致的锁文件；它会先移除现有 `node_modules`，再按照锁文件安装，不会自动更新锁文件。[npm ci 说明](https://docs.npmjs.com/cli/v11/commands/npm-ci/)
-   </h2>
-</HTML>
+
 ## Run
 
 Need Node.js 22.12+ (or 24 LTS).
