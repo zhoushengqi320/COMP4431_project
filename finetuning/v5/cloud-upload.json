@@ -1,0 +1,23 @@
+{
+  "recordedAt": "2026-11-03T14:36:18.224Z",
+  "host": "dashscope.aliyuncs.com",
+  "httpStatus": 400,
+  "uploadedFiles": [],
+  "failedFiles": [],
+  "errorCode": "BadRequest.InvalidDescriptions",
+  "releaseFiles": {
+    "train": {
+      "samples": 1168,
+      "sha256": "b222c13588cc33f75d9734f3332e6e4bd117ace152e5c1ce654ae054c15d9afd",
+      "bytes": 11299532
+    },
+    "validation": {
+      "samples": 160,
+      "sha256": "e9fd681a1d1e970eb6a4d614e2b716eae0a6e2a8abb330149479a2d2045d2653",
+      "bytes": 1480683
+    }
+  },
+  "trainingCreated": false,
+  "paidTrainingAuthorized": false,
+  "testSetUploaded": false
+}

@@ -4,3 +4,10 @@ dist/
 .env.*
 !.env.example
 .DS_Store
+data/
+artifacts/
+deliverables/
+.artifacts-build/
+.venv-finetuning/
+finetuning/tokenizer-cache/
+finetuning/observations/

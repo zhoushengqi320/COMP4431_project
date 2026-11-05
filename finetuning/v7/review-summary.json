@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-11-03T15:45:53.130Z",
+  "reviewer": "Codex local source/rule audit (automated; not human semantic approval)",
+  "sourceHash": "bc1beb48663f3cab9c0a7934f40befb410c691a89a65e461c05905f25d93eef7",
+  "reviewScope": "Automated source/rule review for a limited pilot, not full human semantic review",
+  "paidTrainingAuthorized": false,
+  "humanApprovals": 0,
+  "counts": {
+    "train": {
+      "total": 1199,
+      "rulesCheckedCandidate": 1151,
+      "excluded": 48
+    },
+    "validation": {
+      "total": 163,
+      "rulesCheckedCandidate": 160,
+      "excluded": 3
+    },
+    "test": {
+      "total": 188,
+      "rulesCheckedCandidate": 175,
+      "excluded": 13
+    }
+  },
+  "issueCounts": {
+    "ambiguous_source_xr_translation": 4,
+    "mechanical_rewrite_fragment": 13,
+    "overlong_learning_outcome": 12,
+    "too_few_learning_outcomes": 38,
+    "topic_fragment_in_outcome": 4
+  }
+}

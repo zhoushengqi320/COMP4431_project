@@ -1,7 +1,16 @@
-// Read-aloud uses the browser's speech service. No DeepSeek key or audio backend is needed.
+// Read-aloud uses the browser's speech service. No Qwen key or audio backend is needed.
 export function narrationFor(message) {
   const parts = [message.text];
   for (const course of message.courses || []) {
+    if (course.format === 'course-introduction-v1') {
+      const zh = course.language === 'zh';
+      parts.push(`${course.code}. ${course.title}. ${course.credits ?? ''} credits.`,
+        `${zh ? '目标' : 'Objectives'}: ${course.objectives}`,
+        `${zh ? '评价' : 'Rating'}: ${Number(course.rating).toFixed(1)}/5. ${course.ratingSource === 'simulated' ? (zh ? '模拟评分，非真实学生评价' : 'Simulated, not student reviews') : ''}`,
+        course.summary, `${zh ? '必要先修' : 'Required prerequisites'}: ${course.requiredPrerequisites}`,
+        `${zh ? '建议先修' : 'Recommended prerequisites'}: ${course.recommendedPrerequisites}`);
+      continue;
+    }
     parts.push(`${course.code || ''}. ${course.title || ''}. ${course.credits ?? ''} credits.`, course.reason);
     if (course.prerequisite) parts.push(`Prerequisites: ${course.prerequisite}`);
   }

@@ -1,0 +1,249 @@
+{
+  "jobId": "ft-202611040019-7fc7",
+  "nextOffset": 48,
+  "entries": [
+    {
+      "index": 0,
+      "observedAt": "2026-11-03T16:23:11.245Z",
+      "value": "2026-11-04 00:22:21,627 - INFO - data process succeeded, start to fine-tune"
+    },
+    {
+      "index": 1,
+      "observedAt": "2026-11-03T16:35:19.909Z",
+      "value": "2026-11-04 00:34:33,598 - INFO - data process succeeded, start to fine-tune"
+    },
+    {
+      "index": 2,
+      "observedAt": "2026-11-03T16:36:21.208Z",
+      "value": " Fine-tune started"
+    },
+    {
+      "index": 3,
+      "observedAt": "2026-11-03T16:36:21.208Z",
+      "value": " dataset info: {'train_dataset': {'total': 2730176, 'mean': 2372.003475238923, 'std': 478.10615747540675, 'min': 1752, 'max': 5653, 'size': 1151}, 'val_dataset': {'total': 366619, 'mean': 2291.36875, 'std': 333.6766140643325, 'min': 1752, 'max': 4281, 'size': 160}, 'final_dataset': {'total': 2730176, 'mean': 2372.003475238923, 'std': 478.10615747540675, 'min': 1752, 'max': 5653, 'size': 1151}, 'total_token': 2730176}"
+    },
+    {
+      "index": 4,
+      "observedAt": "2026-11-03T16:36:21.208Z",
+      "value": "{'loss': 1.124551773071289, 'grad_norm': 3.0778703689575195, 'learning_rate': 0.0002994292047137618, 'epoch': 0.027874564459930314, 'consumed_train_tokens': 73702, 'step': 1}"
+    },
+    {
+      "index": 5,
+      "observedAt": "2026-11-03T16:37:22.141Z",
+      "value": "{'loss': 0.8741534948348999, 'grad_norm': 0.990820050239563, 'learning_rate': 0.0002977211629518312, 'epoch': 0.05574912891986063, 'consumed_train_tokens': 148654, 'step': 2}"
+    },
+    {
+      "index": 6,
+      "observedAt": "2026-11-03T16:37:22.141Z",
+      "value": "{'loss': 0.5851620435714722, 'grad_norm': 0.585246205329895, 'learning_rate': 0.0002948888739433602, 'epoch': 0.08362369337979095, 'consumed_train_tokens': 224574, 'step': 3}"
+    },
+    {
+      "index": 7,
+      "observedAt": "2026-11-03T16:37:22.141Z",
+      "value": "{'loss': 0.4399970769882202, 'grad_norm': 0.5756806135177612, 'learning_rate': 0.0002909538931178862, 'epoch': 0.11149825783972125, 'consumed_train_tokens': 303075, 'step': 4}"
+    },
+    {
+      "index": 8,
+      "observedAt": "2026-11-03T16:37:22.141Z",
+      "value": "{'loss': 0.40755560994148254, 'grad_norm': 0.5297827124595642, 'learning_rate': 0.0002859461680554975, 'epoch': 0.13937282229965156, 'consumed_train_tokens': 379044, 'step': 5}"
+    },
+    {
+      "index": 9,
+      "observedAt": "2026-11-03T16:37:22.141Z",
+      "value": "{'loss': 0.3215847313404083, 'grad_norm': 0.4894936978816986, 'learning_rate': 0.0002799038105676658, 'epoch': 0.1672473867595819, 'consumed_train_tokens': 453845, 'step': 6}"
+    },
+    {
+      "index": 10,
+      "observedAt": "2026-11-03T16:38:23.372Z",
+      "value": "{'loss': 0.2421899139881134, 'grad_norm': 0.5930254459381104, 'learning_rate': 0.00027287280664334875, 'epoch': 0.1951219512195122, 'consumed_train_tokens': 525477, 'step': 7}"
+    },
+    {
+      "index": 11,
+      "observedAt": "2026-11-03T16:38:23.372Z",
+      "value": "{'loss': 0.17173835635185242, 'grad_norm': 0.4367722272872925, 'learning_rate': 0.00026490666646784665, 'epoch': 0.2229965156794425, 'consumed_train_tokens': 601681, 'step': 8}"
+    },
+    {
+      "index": 12,
+      "observedAt": "2026-11-03T16:38:23.372Z",
+      "value": "{'loss': 0.12346534430980682, 'grad_norm': 0.40924012660980225, 'learning_rate': 0.00025606601717798207, 'epoch': 0.2508710801393728, 'consumed_train_tokens': 676550, 'step': 9}"
+    },
+    {
+      "index": 13,
+      "observedAt": "2026-11-03T16:38:23.372Z",
+      "value": "{'loss': 0.21275265514850616, 'grad_norm': 0.4475916624069214, 'learning_rate': 0.0002464181414529809, 'epoch': 0.2787456445993031, 'consumed_train_tokens': 754863, 'step': 10}"
+    },
+    {
+      "index": 14,
+      "observedAt": "2026-11-03T16:38:23.372Z",
+      "value": "{'loss': 0.126501202583313, 'grad_norm': 0.30166035890579224, 'learning_rate': 0.00023603646545265687, 'epoch': 0.30662020905923343, 'consumed_train_tokens': 831223, 'step': 11}"
+    },
+    {
+      "index": 15,
+      "observedAt": "2026-11-03T16:38:23.372Z",
+      "value": "{'loss': 0.17052388191223145, 'grad_norm': 0.285930871963501, 'learning_rate': 0.000225, 'epoch': 0.3344947735191638, 'consumed_train_tokens': 909892, 'step': 12}"
+    },
+    {
+      "index": 16,
+      "observedAt": "2026-11-03T16:38:23.372Z",
+      "value": "{'loss': 0.10426431894302368, 'grad_norm': 0.1764257401227951, 'learning_rate': 0.0002133927392611049, 'epoch': 0.3623693379790941, 'consumed_train_tokens': 984258, 'step': 13}"
+    },
+    {
+      "index": 17,
+      "observedAt": "2026-11-03T16:39:24.344Z",
+      "value": "{'loss': 0.13555321097373962, 'grad_norm': 0.2125818282365799, 'learning_rate': 0.00020130302149885031, 'epoch': 0.3902439024390244, 'consumed_train_tokens': 1060390, 'step': 14}"
+    },
+    {
+      "index": 18,
+      "observedAt": "2026-11-03T16:39:24.344Z",
+      "value": "{'loss': 0.128842294216156, 'grad_norm': 0.22995525598526, 'learning_rate': 0.0001888228567653781, 'epoch': 0.4181184668989547, 'consumed_train_tokens': 1134942, 'step': 15}"
+    },
+    {
+      "index": 19,
+      "observedAt": "2026-11-03T16:39:24.344Z",
+      "value": "{'loss': 0.08414803445339203, 'grad_norm': 0.17856450378894806, 'learning_rate': 0.00017604722665003956, 'epoch': 0.445993031358885, 'consumed_train_tokens': 1207605, 'step': 16}"
+    },
+    {
+      "index": 20,
+      "observedAt": "2026-11-03T16:39:24.344Z",
+      "value": "{'loss': 0.192427396774292, 'grad_norm': 0.3119378685951233, 'learning_rate': 0.00016307336141214873, 'epoch': 0.4738675958188153, 'consumed_train_tokens': 1295318, 'step': 17}"
+    },
+    {
+      "index": 21,
+      "observedAt": "2026-11-03T16:39:24.344Z",
+      "value": "{'loss': 0.069247305393219, 'grad_norm': 0.34809112548828125, 'learning_rate': 0.00015, 'epoch': 0.5017421602787456, 'consumed_train_tokens': 1367232, 'step': 18}"
+    },
+    {
+      "index": 22,
+      "observedAt": "2026-11-03T16:39:24.344Z",
+      "value": "{'loss': 0.10931192338466644, 'grad_norm': 0.19279757142066956, 'learning_rate': 0.00013692663858785124, 'epoch': 0.5296167247386759, 'consumed_train_tokens': 1443180, 'step': 19}"
+    },
+    {
+      "index": 23,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.047973524779081345, 'grad_norm': 0.13560326397418976, 'learning_rate': 0.00012395277334996044, 'epoch': 0.5574912891986062, 'consumed_train_tokens': 1518241, 'step': 20}"
+    },
+    {
+      "index": 24,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.08689165115356445, 'grad_norm': 0.16707542538642883, 'learning_rate': 0.00011117714323462186, 'epoch': 0.5853658536585366, 'consumed_train_tokens': 1595019, 'step': 21}"
+    },
+    {
+      "index": 25,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.055310431867837906, 'grad_norm': 0.1458176076412201, 'learning_rate': 9.869697850114969e-05, 'epoch': 0.6132404181184669, 'consumed_train_tokens': 1668983, 'step': 22}"
+    },
+    {
+      "index": 26,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.06601925939321518, 'grad_norm': 0.14847128093242645, 'learning_rate': 8.660726073889511e-05, 'epoch': 0.6411149825783972, 'consumed_train_tokens': 1744052, 'step': 23}"
+    },
+    {
+      "index": 27,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.0842292308807373, 'grad_norm': 0.20582541823387146, 'learning_rate': 7.500000000000002e-05, 'epoch': 0.6689895470383276, 'consumed_train_tokens': 1826585, 'step': 24}"
+    },
+    {
+      "index": 28,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.05719444528222084, 'grad_norm': 0.23307320475578308, 'learning_rate': 6.396353454734311e-05, 'epoch': 0.6968641114982579, 'consumed_train_tokens': 1899217, 'step': 25}"
+    },
+    {
+      "index": 29,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.06774706393480301, 'grad_norm': 0.14066746830940247, 'learning_rate': 5.358185854701909e-05, 'epoch': 0.7247386759581882, 'consumed_train_tokens': 1976352, 'step': 26}"
+    },
+    {
+      "index": 30,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.0636340081691742, 'grad_norm': 0.1914532482624054, 'learning_rate': 4.3933982822017876e-05, 'epoch': 0.7526132404181185, 'consumed_train_tokens': 2050563, 'step': 27}"
+    },
+    {
+      "index": 31,
+      "observedAt": "2026-11-03T16:40:24.924Z",
+      "value": "{'loss': 0.11023157835006714, 'grad_norm': 0.15048962831497192, 'learning_rate': 3.509333353215331e-05, 'epoch': 0.7804878048780488, 'consumed_train_tokens': 2130916, 'step': 28}"
+    },
+    {
+      "index": 32,
+      "observedAt": "2026-11-03T16:41:25.557Z",
+      "value": "{'loss': 0.09055592864751816, 'grad_norm': 0.20554077625274658, 'learning_rate': 2.7127193356651213e-05, 'epoch': 0.8083623693379791, 'consumed_train_tokens': 2206012, 'step': 29}"
+    },
+    {
+      "index": 33,
+      "observedAt": "2026-11-03T16:41:25.557Z",
+      "value": "{'loss': 0.03324019908905029, 'grad_norm': 0.13503628969192505, 'learning_rate': 2.009618943233419e-05, 'epoch': 0.8362369337979094, 'consumed_train_tokens': 2283636, 'step': 30}"
+    },
+    {
+      "index": 34,
+      "observedAt": "2026-11-03T16:41:25.557Z",
+      "value": "{'loss': 0.035059090703725815, 'grad_norm': 0.13100692629814148, 'learning_rate': 1.4053831944502508e-05, 'epoch': 0.8641114982578397, 'consumed_train_tokens': 2360253, 'step': 31}"
+    },
+    {
+      "index": 35,
+      "observedAt": "2026-11-03T16:41:25.557Z",
+      "value": "{'loss': 0.027257351204752922, 'grad_norm': 0.1225442886352539, 'learning_rate': 9.046106882113751e-06, 'epoch': 0.89198606271777, 'consumed_train_tokens': 2433718, 'step': 32}"
+    },
+    {
+      "index": 36,
+      "observedAt": "2026-11-03T16:41:25.557Z",
+      "value": "{'loss': 0.03063935413956642, 'grad_norm': 0.12284699827432632, 'learning_rate': 5.11112605663977e-06, 'epoch': 0.9198606271777003, 'consumed_train_tokens': 2506493, 'step': 33}"
+    },
+    {
+      "index": 37,
+      "observedAt": "2026-11-03T16:41:25.557Z",
+      "value": "{'loss': 0.0940844714641571, 'grad_norm': 0.12953557074069977, 'learning_rate': 2.2788370481687965e-06, 'epoch': 0.9477351916376306, 'consumed_train_tokens': 2583967, 'step': 34}"
+    },
+    {
+      "index": 38,
+      "observedAt": "2026-11-03T16:42:26.423Z",
+      "value": "{'loss': 0.05728092044591904, 'grad_norm': 0.1883804351091385, 'learning_rate': 5.707952862381681e-07, 'epoch': 0.975609756097561, 'consumed_train_tokens': 2657582, 'step': 35}"
+    },
+    {
+      "index": 39,
+      "observedAt": "2026-11-03T16:42:26.423Z",
+      "value": "{'loss': 0.07873635739088058, 'grad_norm': 0.14967882633209229, 'learning_rate': 0.0, 'epoch': 1.0, 'consumed_train_tokens': 2724362, 'step': 36}"
+    },
+    {
+      "index": 40,
+      "observedAt": "2026-11-03T16:42:26.423Z",
+      "value": "{'eval_loss': 0.1269068419933319, 'eval_runtime': 10.949, 'eval_samples_per_second': 14.613, 'eval_steps_per_second': 3.653, 'epoch': 1.0, 'eval_acc': 0.9805679331347061, 'step': 36}"
+    },
+    {
+      "index": 41,
+      "observedAt": "2026-11-03T16:42:26.423Z",
+      "value": "{'eval_loss': 0.1269068419933319, 'eval_runtime': 11.1358, 'eval_samples_per_second': 14.368, 'eval_steps_per_second': 3.592, 'epoch': 1.0, 'eval_acc': 0.9805679331347061, 'step': 36}"
+    },
+    {
+      "index": 42,
+      "observedAt": "2026-11-03T16:42:26.423Z",
+      "value": "{'train_runtime': 346.7403, 'train_samples_per_second': 3.319, 'train_steps_per_second': 0.104, 'train_loss': 0.186390428752121, 'epoch': 1.0, 'consumed_train_tokens': 2724362, 'step': 36}"
+    },
+    {
+      "index": 43,
+      "observedAt": "2026-11-03T16:42:26.423Z",
+      "value": " Actual number of consumed tokens is 2724362!"
+    },
+    {
+      "index": 44,
+      "observedAt": "2026-11-03T16:42:26.423Z",
+      "value": " Fine-tune succeeded!"
+    },
+    {
+      "index": 45,
+      "observedAt": "2026-11-03T17:01:40.150Z",
+      "value": "2026-11-04 01:01:22,750 - INFO - training usage 2724362"
+    },
+    {
+      "index": 46,
+      "observedAt": "2026-11-03T17:01:40.150Z",
+      "value": "2026-11-04 01:01:22,151 - INFO - finetune-job succeeded"
+    },
+    {
+      "index": 47,
+      "observedAt": "2026-11-03T17:01:40.150Z",
+      "value": "2026-11-04 01:01:22,764 - INFO - ##FT_COMPLETE##"
+    }
+  ],
+  "providerTotal": 48,
+  "lastCheckedAt": "2026-11-03T23:34:41.600Z",
+  "lastError": null
+}

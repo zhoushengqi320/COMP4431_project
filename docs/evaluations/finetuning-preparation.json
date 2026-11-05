@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-03",
+  "stage": "fine_tuning_data_preparation_only",
+  "currentVersion": "v3",
+  "samples": {
+    "train": 1153,
+    "validation": 161,
+    "test": 188
+  },
+  "sourceCourses": 354,
+  "softwareTestsPassed": 43,
+  "buildPassed": true,
+  "structuralAuditPassed": true,
+  "humanApproved": 0,
+  "teacherApiCalls": 0,
+  "trainingApiCalls": 0,
+  "cloudUploads": 0,
+  "trainedModelCreated": false,
+  "artifacts": [
+    "finetuning/v3/manifest.json",
+    "finetuning/v3/validation-report.json",
+    "finetuning/v3/token-estimate.json",
+    "finetuning/README.md"
+  ],
+  "cautions": [
+    "Draft template/extractive data, not reviewed gold",
+    "No real pre/post-training improvement measured",
+    "Readability and task balance need improvement",
+    "Token/cost report is an estimate, excluding deployment"
+  ]
+}

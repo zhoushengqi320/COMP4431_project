@@ -1,0 +1,126 @@
+{
+  "recordedAt": "2026-11-03T13:33:01.192Z",
+  "stage": "after",
+  "model": "qwen-plus",
+  "catalogue": "local snapshot",
+  "results": [
+    {
+      "message": "请问Comp4431是什么课",
+      "status": 200,
+      "latencyMs": 10011,
+      "answer": {
+        "text": "COMP4431 是一门面向高年级本科生的人工智能导论课，聚焦基础概念、核心算法与实际编程实践。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4431",
+            "title": "Artificial Intelligence",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍人工智能的基本概念\n2. 使学生掌握人工智能技术的编程知识和技能\n3. 掌握问题建模和典型智能算法\n4. 了解人工智能的技术发展\n5. 使学生意识到与人工智能相关的伦理问题。",
+            "rating": 4,
+            "ratingSource": "simulated",
+            "summary": "这门课带你从零认识人工智能：什么是AI、它怎么思考（代理与知识表示）、如何解决问题（搜索与优化）、怎样从数据中学习（监督/无监督/通过尝试和反馈学习），以及AI用在哪里、带来什么社会影响。课堂结合讲解、练习、实验和项目，强调动手编程与实际理解，不只讲理论。",
+            "learningOutcomes": [
+              "能解释人工智能的基本定义、发展脉络及典型问题范围，例如搜索、推理和学习任务。",
+              "能使用常见搜索策略（如优先尝试更有希望的解决方案、模仿生物进化来寻找更好方案的方法）建模并解决实际问题。",
+              "能实现和比较基本机器学习方法（如通过一连串问题作判断的方法、根据数据特征区分类别的方法、通过多层计算从例子中学习的模型）在分类或回归任务中的应用。",
+              "能识别人工智能技术在现实场景中的典型应用，并讨论其带来的伦理影响和社会利弊。"
+            ],
+            "requiredPrerequisites": "COMP2011/COMP2013/DSAI2201",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "COMP2011",
+                  "COMP2013",
+                  "DSAI2201"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程：COMP2011/COMP2013/DSAI2201",
+            "reason": "这门课带你从零认识人工智能：什么是AI、它怎么思考（代理与知识表示）、如何解决问题（搜索与优化）、怎样从数据中学习（监督/无监督/通过尝试和反馈学习），以及AI用在哪里、带来什么社会影响。课堂结合讲解、练习、实验和项目，强调动手编程与实际理解，不只讲理论。"
+          }
+        ],
+        "followUps": [
+          "COMP4431 需要先修哪些课？COMP2011 和 COMP2013 有什么区别？",
+          "这门课的编程作业主要用 Python 还是其他语言？会教 TensorFlow 或 PyTorch 吗？",
+          "学完 COMP4431 后，适合接着修哪门进阶 AI 或机器学习课程？"
+        ]
+      }
+    },
+    {
+      "message": "请介绍DSAI2201，包括必要先修和建议先修",
+      "status": 200,
+      "latencyMs": 13202,
+      "answer": {
+        "text": "DSAI2201 是数据结构与算法的入门课程，重点培养学生用编程解决实际计算问题的能力。课程包含线性与树形数据结构、经典排序与搜索算法、图算法及算法设计技术（如分治、贪心、动态规划）。教学结合讲座、辅导与编程实验，强调分析能力与动手实现。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "DSAI2201",
+            "title": "Data Structures and Algorithms",
+            "department": "dsai",
+            "level": "2",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "向学生介绍数据结构和算法，并教授如何使用它们解决计算问题。",
+            "rating": 4.4,
+            "ratingSource": "simulated",
+            "summary": "这门课教学生如何组织和管理数据（如用链表存信息、用堆处理优先任务），以及如何设计步骤（算法）高效解决问题（如快速排序名单、在地图中找最短路径）。所有内容都通过编程练习落实，帮助你打下计算机科学的核心基础。",
+            "learningOutcomes": [
+              "能分析算法的时间与空间效率，使用渐近符号（如O记号）描述性能",
+              "能用编程实现链表、栈、队列、二叉树和堆等基本数据结构",
+              "能编写并比较不同排序（如快速排序、归并排序）与搜索（如DFS、BFS）算法",
+              "能运用分治、贪心或保存已经算过的结果，避免重复计算的方法策略设计简单算法解决实际问题"
+            ],
+            "requiredPrerequisites": "COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 1,
+                "courses": [
+                  "COMP1011",
+                  "COMP1012",
+                  "AMA1110",
+                  "AMA1501",
+                  "AMA1751"
+                ]
+              },
+              {
+                "level": 2,
+                "courses": [
+                  "ENG2002",
+                  "AMA2634",
+                  "AMA2111"
+                ]
+              },
+              {
+                "level": 3,
+                "courses": [
+                  "LGT3109"
+                ]
+              }
+            ],
+            "prerequisite": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "reason": "这门课教学生如何组织和管理数据（如用链表存信息、用堆处理优先任务），以及如何设计步骤（算法）高效解决问题（如快速排序名单、在地图中找最短路径）。所有内容都通过编程练习落实，帮助你打下计算机科学的核心基础。"
+          }
+        ],
+        "followUps": [
+          "DSAI2201 的编程作业主要用什么语言？",
+          "如果我只修过 COMP1011，没学过 AMA1110，是否符合先修要求？",
+          "学完 DSAI2201 后，适合接哪门人工智能相关课程？"
+        ]
+      }
+    }
+  ]
+}
