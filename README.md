@@ -31,7 +31,20 @@ QWEN_ASR_MODEL=qwen3-asr-flash
 SUPABASE_URL=https://fmumzuwcuysvrxzamdre.supabase.co
 SUPABASE_ANON_KEY=sb_publishable_ZBbmS-VaXfXqxIQb39h2Ug_YJ8LrvGH
 ```
+<HTML>
+   <h2>
+      下面是配置.env.local的方法
+   </h2>
+</HTML>
+Edit `.env.local` (never commit this file):
 
+```dotenv
+# Local deployment selection; credentials remain in .env.
+QWEN_MODEL=qwen3-8b-01fa13690bf1
+VITE_ADVISOR_API_URL=/api/advisor
+# Full advisor: system prompt, course retrieval and course-card formatting.
+QWEN_ADVISOR_MODE=integrated
+```
 Then:
 
 ```sh
