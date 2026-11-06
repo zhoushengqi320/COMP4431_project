@@ -95,6 +95,24 @@ function courseFollowUps(generated, course, language, allowedCodes) {
   return [...new Set([...contextual, ...fallback])].slice(0, 3);
 }
 
+function requestsEnglishCourseOptions(text) {
+  // Accept natural requests (including singular "some course") while leaving
+  // requests for an existing course's details on the introduction path.
+  const detailWords = /\b(?:details?|information|info|summar(?:y|ies)|objectives?|outcomes?|syllab(?:us|i)|prerequisites?|requirements?|ratings?|reviews?|content|assessments?|grades?|timetable|schedule)\b/i;
+  const requests = /\b(?:give|show|find|list)\s+(?:me\s+)?((?:[\p{L}\p{N}-]+\s+){0,8})courses?\b/giu;
+  for (const match of text.matchAll(requests)) {
+    const prefix = match[1];
+    if (detailWords.test(prefix) || /\b(?:this|that|these|those|my|completed|passed)\b/i.test(prefix) || extractCourseCodes(prefix).length) continue;
+    const suffix = text.slice(match.index + match[0].length).replace(/^['’]s\b/i, '').trimStart();
+    if (detailWords.test(suffix.split(/\s+/)[0] || '')) continue;
+    const suffixStart = suffix.replace(/^[:：–—-]\s*/, '').replace(/\s/g, '').toUpperCase();
+    if (extractCourseCodes(suffix).some(code => suffixStart.startsWith(code))) continue;
+    if (/(?:\bnot|\bnever|\bdon['’]t|\bno need to)\s*$/i.test(text.slice(0, match.index))) continue;
+    return true;
+  }
+  return false;
+}
+
 export function recommendationContext(message, history = []) {
   const text = String(message || '');
   const continuation = !containsPreparationInfo(text) && /更多.*课|再.*推荐|继续推荐|其他.*课|再来.*[门课]|还有.*课|more\s+.*courses|recommend.*more/i.test(text);
@@ -107,7 +125,7 @@ export function recommendationContext(message, history = []) {
   const more = continuation && (!goal || matchesOldGoal) && !/换个?方向|换成|改为|改成|switch|instead/i.test(text);
   const previous = more ? prior : null;
   return {
-    active: continuation || /推荐|推介|选什么课|有哪些.*课|学哪些|recommend|suggest|which courses|what courses/i.test(text),
+    active: continuation || /推荐|推介|选什么课|有哪些.*课|学哪些|recommend|suggest|which courses|what courses/i.test(text) || requestsEnglishCourseOptions(text),
     more, hasPrevious: !!previous, query: typeof previous?.query === 'string' ? previous.query.slice(0, 6000) : text,
     seenCodes: strings(previous?.seenCodes, 500).map(codeKey),
     reserveCodes: strings(previous?.reserveCodes, 100).map(codeKey)
@@ -136,7 +154,7 @@ function safeExtras(answer) {
     ...(strings(answer.followUps, 3).length ? { followUps: strings(answer.followUps, 3) } : {}) };
 }
 
-export function normalizeCourseResponse(answer, rows, message, history = []) {
+export function normalizeCourseResponse(answer, rows, message, history = [], { relatedCourseCodes = [] } = {}) {
   answer = object(answer) ? answer : {};
   rows = (Array.isArray(rows) ? rows : []).filter(row => object(row) && typeof row.code === 'string' && row.code);
   message = String(message || '');
@@ -211,7 +229,10 @@ export function normalizeCourseResponse(answer, rows, message, history = []) {
     && candidates.length <= codes.length && referencesOnlyCourses(answer.overview, codes);
   const overview = overviewMatches ? answer.overview : fallbackOverview;
   const additional = Array.isArray(answer.moreCourseCodes) ? answer.moreCourseCodes.filter(code => typeof code === 'string').map(canonicalCode) : [];
-  const reserveCodes = [...new Set([...candidates.slice(codes.length), ...additional, ...context.reserveCodes.map(canonicalCode)])]
+  // Only the retrieval caller can provide these extras; rows may otherwise be
+  // an unfiltered catalogue. Do not depend on the model naming every extra.
+  const related = context.active ? strings(relatedCourseCodes).map(canonicalCode) : [];
+  const reserveCodes = [...new Set([...candidates.slice(codes.length), ...additional, ...context.reserveCodes.map(canonicalCode), ...related])]
     .filter(code => byCode.has(code) && !isSeen(code) && !completed.has(code) && !codes.includes(code));
   const allowedFollowUps = new Set([...rows.flatMap(row => courseCodeAliases(row.code)), ...courses.flatMap(course => extractCourseCodes(course.preparation.sourceText))]);
   return {

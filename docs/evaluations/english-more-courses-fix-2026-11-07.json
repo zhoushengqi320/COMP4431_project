@@ -1,0 +1,311 @@
+{
+  "testedAt": "2026-11-06T17:15:08.370Z",
+  "question": "give me some course about history",
+  "automated": {
+    "passed": 241,
+    "failed": 0,
+    "build": "passed"
+  },
+  "results": [
+    {
+      "name": "initial_english_recommendation",
+      "status": 200,
+      "durationMs": 28753,
+      "response": {
+        "text": "This recommendation includes AMA1D01C, APSS1CN33, and CHC131P.",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "en",
+            "code": "AMA1D01C",
+            "title": "The History of Ancient Chinese and World Mathematics",
+            "department": "ama",
+            "level": "1",
+            "credits": 3,
+            "faculty": "Faculty of Science",
+            "schoolId": "polyu",
+            "id": "Not provided",
+            "objectives": "Introduces the historical development of ancient Chinese mathematics and world mathematics, broadening students’ knowledge beyond their disciplinary fields so they can address professional and global challenges from interdisciplinary and holistic perspectives.\nEnables students to deepen their understanding of Chinese history through ancient Chinese mathematics (CSR).\nDevelops students’ holistic cultural appreciation through the study of mathematics in the ancient world.\nEnhances students’ Chinese writing (CW) skills through project-based writing and assignments, delivered by CBS faculty.\nDevelops students’ Chinese reading (CR) skills through project-based writing, enabling them to demonstrate comprehension of selected ancient Chinese mathematical texts.",
+            "rating": 4.7,
+            "ratingSource": "simulated",
+            "summary": "The course emphasizes: introducing the historical development of ancient Chinese mathematics and world mathematics, broadening students’ knowledge beyond their disciplinary fields so they can address professional and global challenges from interdisciplinary and holistic perspectives. Teaching method: primarily traditional lecture/tutoring.",
+            "learningOutcomes": [
+              "Understand the historical development of ancient Chinese mathematics and world mathematics, broadening students’ knowledge beyond their disciplinary fields so they can address professional and global challenges from interdisciplinary and holistic perspectives.",
+              "Enables students to deepen their understanding of Chinese history through ancient Chinese mathematics (CSR).",
+              "Develops students’ holistic cultural appreciation through the study of mathematics in the ancient world.",
+              "Enhances students’ Chinese writing (CW) skills through project-based writing and assignments, delivered by CBS faculty."
+            ],
+            "requiredPrerequisites": "None (catalogue)",
+            "recommendedPrerequisites": "Not provided; verification needed",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "The course emphasizes: introducing the historical development of ancient Chinese mathematics and world mathematics, broadening students’ knowledge beyond their disciplinary fields so they can address professional and global challenges from interdisciplinary and holistic perspectives. Teaching method: primarily traditional lecture/tutoring.",
+            "preparation": {
+              "levels": [],
+              "description": "None.",
+              "note": "Use these courses as preparation references. Please check the official course description for actual enrolment requirements.",
+              "sourceText": "无"
+            }
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "en",
+            "code": "APSS1CN33",
+            "title": "History of Hong Kong",
+            "department": "apss",
+            "level": "1",
+            "credits": 3,
+            "faculty": "Faculty of Health and Social Sciences",
+            "schoolId": "polyu",
+            "id": "Not provided",
+            "objectives": "This course focuses on Hong Kong’s history from 1841 to 1997, covering issues in culture, politics, society, and economics. It aims to show how history explains the present while conveying the idea that historical interpretations continually evolve. Students will be encouraged to observe how interpretations of historical events stem from observers’ preconceptions and historical positions, and that historical facts acquire meaning only in relation to historical questions.",
+            "rating": 4.2,
+            "ratingSource": "simulated",
+            "summary": "The course emphasizes: focusing on Hong Kong’s history from 1842 to 1997, covering issues in culture, politics, society, and economics. Teaching mode: primarily lecture-based, closely following assigned readings; students must complete pre-class reading assignments.",
+            "learningOutcomes": [
+              "Understand that this course focuses on Hong Kong’s history from 1842 to 1997, covering issues in culture, politics, society, and economics.",
+              "Understand that this course not only addresses what happened in the past but also cultivates relevant competencies by teaching the following topics analytically and critically, using diverse sources to express varied perspectives.",
+              "Understand: 1. Introduction; 2. The opium trade during the early colonial period; 3. Establishment of the colonial system; 4. Rise of the Chinese elite; 5. Daily life in the pre-war period; 6. Hong Kong’s fall and Japanese occupation; 7. Post-war social and economic transformation: trading port, manufacturing hub, and financial center; 8. East-West convergence: the world of Soo Wong; 9. Reunification with the motherland.",
+              "Understand the teaching mode: primarily lecture-based, closely following assigned readings; students must complete pre-class reading assignments."
+            ],
+            "requiredPrerequisites": "Exclusion: APSS1C33 / APSS1C33C / APSS1CN33C / GEC1C23 / GEC1C23C",
+            "recommendedPrerequisites": "Not provided; verification needed",
+            "prerequisiteLevels": [],
+            "prerequisite": "互斥科目：APSS1C33／APSS1C33C／APSS1CN33C／GEC1C23／GEC1C23C",
+            "reason": "The course emphasizes: focusing on Hong Kong’s history from 1842 to 1997, covering issues in culture, politics, society, and economics. Teaching mode: primarily lecture-based, closely following assigned readings; students must complete pre-class reading assignments.",
+            "preparation": {
+              "levels": [],
+              "description": "Not provided; verification needed",
+              "note": "Use these courses as preparation references. Please check the official course description for actual enrolment requirements.",
+              "sourceText": "互斥科目：APSS1C33／APSS1C33C／APSS1CN33C／GEC1C23／GEC1C23C"
+            }
+          }
+        ],
+        "overview": "For your learning interests, consider these 2 courses: AMA1D01C (The History of Ancient Chinese and World Mathematics), APSS1CN33 (History of Hong Kong). Below are their learning goals, content and suggested preparation to help you compare.",
+        "followUps": [
+          "AMA1D01C: What are the respective emphases of these history courses?",
+          "AMA1D01C: How should students prepare before studying history?",
+          "What is the main focus of AMA1D01C?"
+        ],
+        "recommendationContext": {
+          "query": "give me some course about history",
+          "seenCodes": [
+            "AMA1D01C",
+            "APSS1CN33"
+          ],
+          "reserveCodes": [
+            "APSS1M42",
+            "CHC305P",
+            "CHC318",
+            "CHC322",
+            "CHC327",
+            "CHC331P",
+            "CHC337",
+            "CHC337P",
+            "CHC408P",
+            "CHC422P",
+            "CHC425P",
+            "CHC5116",
+            "APSS1C33",
+            "APSS1CN33C",
+            "CHC131P",
+            "CHC5315"
+          ]
+        },
+        "moreCourses": {
+          "available": true,
+          "prompt": "Recommend more related courses, excluding those already introduced."
+        },
+        "replyLanguage": "en-US",
+        "mode": "llm",
+        "access": "guest",
+        "guestRemaining": 19
+      },
+      "checks": {
+        "replyLanguage": "en-US",
+        "courseCodes": [
+          "AMA1D01C",
+          "APSS1CN33"
+        ],
+        "atMostThree": true,
+        "hasMorePrompt": true,
+        "reserveCount": 16,
+        "originalQuestion": "give me some course about history"
+      }
+    },
+    {
+      "name": "continue_english_recommendation",
+      "status": 200,
+      "durationMs": 25496,
+      "response": {
+        "text": "This recommendation includes CHC131P, CHC305P, and CHC322.",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "en",
+            "code": "CHC131P",
+            "title": "Major Trends in Chinese History",
+            "department": "chc",
+            "level": "1",
+            "credits": 3,
+            "faculty": "Faculty of Humanities",
+            "schoolId": "polyu",
+            "id": "Not provided",
+            "objectives": "This course provides an overview of the development of Chinese civilization from its origins to the modern and contemporary periods, with special attention to influential twentieth-century trends such as state formation, ethnic composition, urbanization, political ideology, and foreign relations. This course lays a solid foundation for in-depth study of specific periods and aspects of Chinese history and culture.",
+            "rating": 4.8,
+            "ratingSource": "simulated",
+            "summary": "This course provides an overview of the development of Chinese civilization from its origins to the modern and contemporary periods. It particularly focuses on the important trends of the 20th century, such as state formation, ethnic composition, urbanization, political ideology, and foreign relations. This course lays a solid foundation for further study of specific periods and aspects of Chinese history and culture. Learning methods: This course adopts a thematic teaching method to study Chin…",
+            "learningOutcomes": [
+              "Understand the development of Chinese civilization from its origins to the modern and contemporary periods.",
+              "Focus especially on influential twentieth-century trends such as state formation, ethnic composition, urbanization, political ideology, and foreign relations.",
+              "Lays a solid foundation for in-depth study of specific periods and aspects of Chinese history and culture.",
+              "Provides an overview of the development of Chinese civilization from its origins to the modern and contemporary periods."
+            ],
+            "requiredPrerequisites": "None (catalogue)",
+            "recommendedPrerequisites": "Not provided; verification needed",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "This course provides an overview of the development of Chinese civilization from its origins to the modern and contemporary periods. It particularly focuses on the important trends of the 20th century, such as state formation, ethnic composition, urbanization, political ideology, and foreign relations. This course lays a solid foundation for further study of specific periods and aspects of Chinese history and culture. Learning methods: This course adopts a thematic teaching method to study Chin…",
+            "preparation": {
+              "levels": [],
+              "description": "None",
+              "note": "Use these courses as preparation references. Please check the official course description for actual enrolment requirements.",
+              "sourceText": "无"
+            }
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "en",
+            "code": "CHC305P",
+            "title": "Modern and Contemporary Chinese History and Culture",
+            "department": "chc",
+            "level": "3",
+            "credits": 3,
+            "faculty": "Faculty of Humanities",
+            "schoolId": "polyu",
+            "id": "Not provided",
+            "objectives": "This course aims to provide new perspectives on the relationship between cultural texts and concrete historical issues, situating them within a global context. Through interdisciplinary and multimedia approaches, the course seeks to present emotional, aesthetic, and sensory experiences of twentieth-century China, covering multiple genres and media to enable students to gain diverse experiences of modern Chinese history. Thus, this course will help students develop a deeper understanding of modern Chinese history and culture and enrich their ways of experiencing the world.",
+            "rating": 4.7,
+            "ratingSource": "simulated",
+            "summary": "This course introduces important themes from the early 20th century to the present, covering China's position in war, Mao Zedong's revolutionary culture and the Cultural Revolution, the reform and opening-up policy and its impact on daily life, the rise of the middle class culture, and issues related to migrant workers and developmentalism. You will learn to look at cultural texts and specific historical issues through new perspectives and place them in a global context. Learning methods: This …",
+            "learningOutcomes": [
+              "Provide new perspectives on the relationship between cultural texts and concrete historical issues, situating them within a global context.",
+              "Through interdisciplinary and multimedia approaches, the course seeks to present emotional, aesthetic, and sensory experiences of twentieth-century China, covering multiple genres and media to enable students to gain diverse experiences of modern Chinese history.",
+              "Thus, this course will help students develop a deeper understanding of modern Chinese history and culture and enrich their ways of experiencing the world.",
+              "Introduce key themes from the early twentieth century to the present, including China’s role in wartime, Mao Zedong’s revolutionary culture and the Cultural Revolution, reform and opening-up on the Chinese mainland and its impact on daily life, the rise of middle-class culture, and issues concerning migrant workers and developmentalism."
+            ],
+            "requiredPrerequisites": "None (catalogue)",
+            "recommendedPrerequisites": "Not provided; verification needed",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "This course introduces important themes from the early 20th century to the present, covering China's position in war, Mao Zedong's revolutionary culture and the Cultural Revolution, the reform and opening-up policy and its impact on daily life, the rise of the middle class culture, and issues related to migrant workers and developmentalism. You will learn to look at cultural texts and specific historical issues through new perspectives and place them in a global context. Learning methods: This …",
+            "preparation": {
+              "levels": [],
+              "description": "None",
+              "note": "Use these courses as preparation references. Please check the official course description for actual enrolment requirements.",
+              "sourceText": "无"
+            }
+          },
+          {
+            "format": "course-introduction-v1",
+            "language": "en",
+            "code": "CHC322",
+            "title": "History of Chinese Art",
+            "department": "chc",
+            "level": "3",
+            "credits": 3,
+            "faculty": "Faculty of Humanities",
+            "schoolId": "polyu",
+            "id": "Not provided",
+            "objectives": "a) Understand the trajectory of artistic development from the late Neolithic period to the Qing dynasty;\\nb) Develop foundational skills in visual analysis of art forms;\\nc) Articulate relationships between art forms and their historical and cultural contexts;\\nd) Conduct historical research based on self-selected artworks.",
+            "rating": 4.3,
+            "ratingSource": "simulated",
+            "summary": "This course provides an overview of the development of Chinese art from the late Neolithic period to the Qing Dynasty. It covers a wide range of artistic media—pottery, jade, bronze, funerary art, religious art, calligraphy, painting, architecture, and gardens, each specific to the historical period and theme they cover. Learning methods: This course is mainly conducted in lecture format. Each lecture will use carefully selected images of Chinese artworks to introduce the relevant historical ba…",
+            "learningOutcomes": [
+              "Understand the trajectory of artistic development from the late Neolithic period to the Qing dynasty.",
+              "Develop foundational skills in visual analysis of art forms.",
+              "Articulate relationships between art forms and their historical and cultural contexts.",
+              "Conduct historical research based on self-selected artworks."
+            ],
+            "requiredPrerequisites": "None (catalogue)",
+            "recommendedPrerequisites": "Not provided; verification needed",
+            "prerequisiteLevels": [],
+            "prerequisite": "无",
+            "reason": "This course provides an overview of the development of Chinese art from the late Neolithic period to the Qing Dynasty. It covers a wide range of artistic media—pottery, jade, bronze, funerary art, religious art, calligraphy, painting, architecture, and gardens, each specific to the historical period and theme they cover. Learning methods: This course is mainly conducted in lecture format. Each lecture will use carefully selected images of Chinese artworks to introduce the relevant historical ba…",
+            "preparation": {
+              "levels": [],
+              "description": "None",
+              "note": "Use these courses as preparation references. Please check the official course description for actual enrolment requirements.",
+              "sourceText": "无"
+            }
+          }
+        ],
+        "overview": "These three courses provide a comprehensive overview of Chinese history. CHC131P focuses on major trends in Chinese history, CHC305P on modern and contemporary Chinese history and culture, and CHC322 on the history of Chinese art. Each course has its own emphasis, so you might want to start with CHC131P and then move to CHC305P or CHC322.",
+        "followUps": [
+          "CHC131P: What are the respective emphases of these courses?",
+          "CHC131P: How should the content of these three courses be understood?",
+          "CHC131P: How should students prepare in advance for these three courses?"
+        ],
+        "recommendationContext": {
+          "query": "give me some course about history",
+          "seenCodes": [
+            "AMA1D01C",
+            "APSS1CN33",
+            "CHC131P",
+            "CHC305P",
+            "CHC322"
+          ],
+          "reserveCodes": [
+            "APSS1C33",
+            "CHC318",
+            "CHC327",
+            "CHC331P",
+            "CHC337",
+            "CHC337P",
+            "CHC408P",
+            "CHC422P",
+            "CHC425P",
+            "CLC2M01",
+            "CLC2M01M",
+            "APSS1M42",
+            "CHC5116",
+            "APSS1CN33C",
+            "CHC5315"
+          ]
+        },
+        "moreCourses": {
+          "available": true,
+          "prompt": "Recommend more related courses, excluding those already introduced."
+        },
+        "replyLanguage": "en-US",
+        "mode": "llm",
+        "access": "guest",
+        "guestRemaining": 18
+      },
+      "checks": {
+        "replyLanguage": "en-US",
+        "courseCodes": [
+          "CHC131P",
+          "CHC305P",
+          "CHC322"
+        ],
+        "atMostThree": true,
+        "hasMorePrompt": true,
+        "reserveCount": 15,
+        "originalQuestion": "give me some course about history"
+      }
+    }
+  ],
+  "before": {
+    "status": 200,
+    "courseCodes": [
+      "AMA1D01C",
+      "APSS1C33"
+    ],
+    "hasMorePrompt": false,
+    "hasRecommendationContext": false
+  },
+  "model": "qwen3-8b-01fa13690bf1",
+  "noRepeatedCourses": true,
+  "passed": true
+}

@@ -63,6 +63,72 @@ test('more-course requests retain the learning goal, avoid duplicates and end wh
   assert.equal(recommendationContext('推荐旅游相关课程', history).seenCodes.length, 0);
 });
 
+test('natural English course requests activate recommendations without turning course-detail questions into recommendations', () => {
+  for (const message of [
+    'give me some course about history',
+    'Give me some courses about history',
+    'Can you show me a few world history courses?',
+    'Find history courses for me.',
+    'Please list some courses on machine learning.',
+    'Give me history courses without prerequisites',
+    'Show me courses related to COMP4431'
+  ]) {
+    const context = recommendationContext(message);
+    assert.equal(context.active, true, message);
+    assert.equal(context.more, false, message);
+    assert.equal(context.query, message);
+  }
+  for (const message of [
+    'Give me course details for COMP4431',
+    'Show me the prerequisites of this course',
+    'Give me a summary of the history course',
+    'Show me this course',
+    'List the learning objectives of this course',
+    'Give me the history course syllabus',
+    'Give me details about COMP4431 course',
+    'Show me course COMP4431',
+    'Give me the course DSAI2201',
+    'Show me course: COMP 4431',
+    "Don't give me history courses",
+    'Tell me about DSAI2201'
+  ]) assert.equal(recommendationContext(message).active, false, message);
+});
+
+test('English recommendations offer retrieved extras even when the model omits moreCourseCodes', () => {
+  const sample = rows.filter(row => /\bhistory\b/i.test(row.name)).slice(0, 5);
+  assert.equal(sample.length, 5);
+  const message = 'give me some course about history';
+  const options = { relatedCourseCodes: [...sample.map(row => row.code), 'FAKE9999'] };
+  const first = normalizeCourseResponse({ text: 'Here are two courses.', courses: sample.slice(0, 2) }, [...sample, dsai], message, [], options);
+  assert.equal(first.courses.length, 2);
+  assert.match(first.overview, /2 courses/);
+  assert.equal(first.moreCourses.available, true);
+  assert.match(first.moreCourses.prompt, /Recommend more related courses/);
+  assert.deepEqual(first.recommendationContext.reserveCodes, sample.slice(2).map(row => row.code));
+  const history = [{ role: 'user', text: message }, { ...first, role: 'assistant' }];
+  // Even if the model repeats the first batch, the next cards come from unseen reserves.
+  const next = normalizeCourseResponse({ text: 'More courses.', courses: sample.slice(0, 2) }, sample, first.moreCourses.prompt, history, options);
+  assert.deepEqual(next.courses.map(row => row.code), sample.slice(2).map(row => row.code));
+  assert.equal(next.recommendationContext.query, message);
+  assert.equal(next.moreCourses, undefined);
+});
+
+test('retrieved extras exclude completed courses and do not add a more-courses button to a direct lookup', () => {
+  const previous = rows.find(row => row.code === 'COMP1011');
+  const sample = [previous, dsai];
+  const options = { relatedCourseCodes: sample.map(row => row.code) };
+  const recommendation = normalizeCourseResponse({ text: 'A course.', courses: [dsai] }, sample,
+    'I completed COMP1011; give me some courses about data structures', [], options);
+  assert.equal(recommendation.moreCourses, undefined);
+  assert.deepEqual(recommendation.recommendationContext.reserveCodes, []);
+  const lookup = normalizeCourseResponse({ text: 'Course details.', courses: [dsai] }, sample, 'Tell me about DSAI2201', [], options);
+  assert.equal(lookup.moreCourses, undefined);
+  assert.equal(lookup.recommendationContext, undefined);
+  const unknown = normalizeCourseResponse({ text: 'Course details.', courses: [dsai] }, sample, 'Show me course FAKE9999', [], options);
+  assert.deepEqual(unknown.courses, []);
+  assert.match(unknown.text, /FAKE9999/);
+});
+
 test('retrieval excludes prior recommendations before limiting the new batch', () => {
   const sample = rows.slice(0, 7).map(c => ({ ...c, name: 'Machine learning' }));
   const hits = retrieveCourses(sample, { message: 'machine learning', limit: 3, excludeCodes: sample.slice(0, 3).map(c => c.code) });

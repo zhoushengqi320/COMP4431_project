@@ -272,7 +272,9 @@ export async function handleAdvisorRequest(req, res, env, options = {}) {
     if (options.revalidateMember && !options.revalidateMember()) return;
     if (completion.choices?.[0]?.finish_reason === 'length') throw new RequestError(502, 'The answer exceeded its length limit. Please narrow the question and try again.');
     const content = completion.choices?.[0]?.message?.content;
-    await respond(style === 'voice' ? parseVoicePayload(content) : normalizeCourseResponse(parseAdvisorPayload(content), catalogueRows, message, history));
+    await respond(style === 'voice' ? parseVoicePayload(content) : normalizeCourseResponse(parseAdvisorPayload(content), catalogueRows, message, history, {
+      relatedCourseCodes: catalogueRows.map(row => row.code)
+    }));
   } catch (error) {
     reply(error instanceof RequestError ? error.status : 500, { error: error instanceof RequestError ? error.message : 'The advisor could not respond. Please try again.' });
   }
