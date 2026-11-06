@@ -1,16 +1,20 @@
+import { voiceHistory, voiceSearchQuestion, voiceFallbackQuestion } from './voice-context.mjs';
+import { VOICE_PROMPT, responseStyle, voiceReply, parseVoicePayload } from './voice-reply.mjs';
 import { formatCatalogue, getCourses, hasNoPrerequisite, retrieveCourses, searchCourses } from './course-knowledge.mjs';
 import { planCourseSearch } from './course-search.mjs';
 import { normalizeCourseResponse, recommendationContext } from './course-response.mjs';
 import { RequestError, assertLocalOrigin, readRequestBody, parseJsonObject, validateChatFields, upstreamRequest } from './request-safety.mjs';
 import { observeFinetunedModel } from './finetune-only.mjs';
+import { extractDocuments } from './documents.mjs';
+import { resolveResponseLanguage, responseLanguageInstruction } from './response-language.mjs';
+import { localizeResponse } from './localize-response.mjs';
 
-const TEXT_EXTENSIONS = new Set(['txt', 'csv', 'md', 'json']);
 const FILE_CHAR_LIMIT = 6000;
 const HISTORY_LIMIT = 12;
 
 export const SYSTEM_PROMPT = `You are PolyPath, an academic planning advisor for students at The Hong Kong Polytechnic University (PolyU).
 Ground factual answers in the retrieved subset of the team's PolyU course catalogue (Supabase table public.courses). Do not invent course facts or official eligibility decisions.
-Reply in the same language as the student's latest question.
+Honor an explicit request for a response language; otherwise reply in the language of the student's latest question. The language of catalogue evidence and old assistant messages must not determine the response language.
 Return a single JSON object only (no markdown fences) with this shape:
 {
   "text": "Required nonempty explanation. Be specific, cautious, and useful.",
@@ -55,33 +59,21 @@ function json(res, status, payload) {
   res.end(JSON.stringify(payload));
 }
 
-function extensionOf(name = '') {
-  return name.split('.').pop()?.toLowerCase() || '';
-}
-
 function clip(text, limit = FILE_CHAR_LIMIT) {
   const value = String(text || '').trim();
   if (value.length <= limit) return value;
   return `${value.slice(0, limit)}\n[truncated]`;
 }
 
-async function describeFiles(formData, field) {
-  const items = [];
+async function describeFiles(formData, field, documentWarnings) {
   if (formData.getAll(field).length > 8) throw new RequestError(400, 'Please attach no more than 8 files per field.');
-  for (const entry of formData.getAll(field)) {
-    if (typeof entry === 'string' || !entry) continue;
+  const files = formData.getAll(field).filter(entry => typeof entry !== 'string' && entry);
+  for (const entry of files) {
     if (entry.size > 10 * 1024 * 1024) throw new RequestError(413, 'Each document must be 10 MB or smaller.');
-    const name = entry.name || 'file';
-    if (TEXT_EXTENSIONS.has(extensionOf(name))) {
-      items.push({ name, text: clip(await entry.text()) });
-    } else {
-      items.push({
-        name,
-        text: `[Binary file not parsed in this demo. Filename and size only: ${name}, ${entry.size || 0} bytes.]`
-      });
-    }
   }
-  return items;
+  const extracted = await extractDocuments(files);
+  documentWarnings.push(...extracted.warnings);
+  return extracted.documents.map(({ name, text }) => ({ name, text: clip(text) }));
 }
 
 function parseJsonField(value, fallback) {
@@ -125,7 +117,7 @@ function parseAdvisorPayload(content) {
   return { text: trimmed };
 }
 
-export function buildUserContent({ message, profile = {}, documents = [], attachments = [], catalogue, recommendation }) {
+export function buildUserContent({ message, profile = {}, documents = [], attachments = [], catalogue, recommendation, documentWarnings = [] }) {
   const parts = [`Student question:\n${message}`];
   parts.push(`Student profile:\n${JSON.stringify(profile || {}, null, 2)}`);
   if (recommendation?.more) {
@@ -140,15 +132,26 @@ export function buildUserContent({ message, profile = {}, documents = [], attach
   if (attachments.length) {
     parts.push('Message attachments:\n' + attachments.map(file => `### ${file.name}\n${file.text}`).join('\n\n'));
   }
+  if (documentWarnings.length) parts.push('Document extraction warnings:\n' + documentWarnings.join('\n'));
   return parts.join('\n\n');
 }
 
-export async function handleAdvisorRequest(req, res, env) {
+export async function handleAdvisorRequest(req, res, env, options = {}) {
+  res.advisorDeadline = Date.now() + 55000;
+  const documentWarnings = [];
+  const extras = {
+    mode: 'llm',
+    ...(options.access ? { access: options.access } : {}),
+    ...(options.access === 'guest' && Number.isFinite(options.guestRemaining) ? { guestRemaining: options.guestRemaining } : {})
+  };
+  const reply = (status, payload) => json(res, status, {
+    ...payload, ...extras, ...(documentWarnings.length ? { warnings: documentWarnings } : {})
+  });
   try {
     assertLocalOrigin(req);
     const apiKey = env.QWEN_API_KEY?.trim() || env.DASHSCOPE_API_KEY?.trim();
     if (!apiKey) {
-      json(res, 503, { error: 'Missing QWEN_API_KEY in .env. Copy .env.example to .env and add your key.' });
+      reply(503, { error: 'Missing QWEN_API_KEY in .env. Copy .env.example to .env and add your key.' });
       return;
     }
 
@@ -164,19 +167,30 @@ export async function handleAdvisorRequest(req, res, env) {
     let profile = {};
     let documents = [];
     let attachments = [];
+    let style = 'text';
     const contentType = req.headers['content-type'] || '';
 
     if (contentType.includes('multipart/form-data')) {
       let formData;
       try { formData = await request.formData(); } catch { throw new RequestError(400, 'Invalid multipart request.'); }
+      if (options.access === 'guest' && [...formData.values()].some(value => typeof value !== 'string')) {
+        throw new RequestError(403, 'Sign in to upload documents. Guest access supports text questions only.');
+      }
       message = formData.get('message');
+      style = responseStyle(formData.get('responseStyle'));
       history = parseJsonField(formData.get('history'), []);
       profile = parseJsonField(formData.get('profile'), {});
-      documents = await describeFiles(formData, 'documents');
-      attachments = await describeFiles(formData, 'attachments');
+      documents = await describeFiles(formData, 'documents', documentWarnings);
+      attachments = await describeFiles(formData, 'attachments', documentWarnings);
     } else if (contentType.includes('application/json')) {
       const data = parseJsonObject(body);
+      const hasFiles = ['documents', 'attachments', 'files'].some(field =>
+        Array.isArray(data[field]) ? data[field].length > 0 : Boolean(data[field]));
+      if (options.access === 'guest' && hasFiles) {
+        throw new RequestError(403, 'Sign in to upload documents. Guest access supports text questions only.');
+      }
       message = data.message;
+      style = responseStyle(data.responseStyle);
       history = data.history === undefined ? [] : data.history;
       profile = data.profile === undefined ? {} : data.profile;
     } else {
@@ -184,31 +198,49 @@ export async function handleAdvisorRequest(req, res, env) {
     }
     ({ message, history, profile } = validateChatFields({ message, history, profile }));
 
-    if (env.QWEN_ADVISOR_MODE?.trim() === 'finetune-only') {
-      json(res, 200, await observeFinetunedModel(message, env, res));
+    if (options.access === 'guest') {
+      if (Object.values(profile).some(value => value !== '' && value !== null && value !== undefined)) {
+        throw new RequestError(403, 'Sign in to use an academic profile. Guest access supports text questions only.');
+      }
+      profile = {};
+    }
+    // Uploads can outlive the session that authorized them. Recheck before retrieval or paid work.
+    if (options.revalidateMember && !options.revalidateMember()) return;
+
+    if (style !== 'voice' && env.QWEN_ADVISOR_MODE?.trim() === 'finetune-only') {
+      reply(200, await observeFinetunedModel(message, env, res));
       return;
     }
 
     const baseUrl = (env.QWEN_BASE_URL || 'https://dashscope.aliyuncs.com/compatible-mode/v1').replace(/\/$/, '');
-    const model = env.QWEN_MODEL?.trim() || 'qwen-plus';
+    const model = style === 'voice'
+      ? env.QWEN_VOICE_MODEL?.trim() || env.QWEN_PLANNER_MODEL?.trim() || 'qwen-plus'
+      : env.QWEN_MODEL?.trim() || 'qwen-plus';
+    const language = resolveResponseLanguage(message, history);
+    let catalogue = [];
+    const locales = { en: 'en-US', zh: 'zh-CN', 'zh-Hant': 'zh-TW', yue: 'zh-HK', ja: 'ja-JP', ko: 'ko-KR', fr: 'fr-FR', es: 'es-ES', de: 'de-DE', ru: 'ru-RU', ar: 'ar-SA', pt: 'pt-PT', it: 'it-IT', hi: 'hi-IN', th: 'th-TH', el: 'el-GR' };
+    const respond = async answer => {
+      const localized = await localizeResponse(answer, language, { env, apiKey, res, catalogue });
+      if (options.revalidateMember && !options.revalidateMember()) return;
+      reply(200, { ...(style === 'voice' ? voiceReply(localized) : localized), replyLanguage: locales[language.code] || language.code });
+    };
     const followUp = /这门|那门|这些课|它|该课|this course|that course|these courses|\bit\b/i.test(message);
     const previousQuestion = followUp ? [...history].reverse().find(item => item.role === 'user')?.text || '' : '';
     const context = recommendationContext(message, history);
-    if (context.more && !context.hasPrevious) {
-      json(res, 200, { text: /\p{Script=Han}/u.test(message) ? '请先告诉我你想学习的方向，或提供之前推荐的课程，我再为你寻找更多相关课程。' : 'Please tell me your learning interest or the courses already recommended so I can find more options.' });
+    if (style !== 'voice' && context.more && !context.hasPrevious) {
+      await respond({ text: language.code.startsWith('zh') ? '请先告诉我你想学习的方向，或提供之前推荐的课程，我再为你寻找更多相关课程。' : 'Please tell me your learning interest or the courses already recommended so I can find more options.' });
       return;
     }
-    let catalogue;
     try {
       catalogue = await getCourses(env);
     } catch {
       throw new RequestError(503, 'Could not load the live course catalogue from the database. Check SUPABASE_URL and SUPABASE_ANON_KEY, then retry.');
     }
-    const searchQuery = context.more ? context.query : `${previousQuestion}\n${message}`.trim();
-    const excludeCodes = context.more ? context.seenCodes : [];
+    const searchQuery = style === 'voice' ? voiceFallbackQuestion(message, history) : context.more ? context.query : `${previousQuestion}\n${message}`.trim();
+    const excludeCodes = style !== 'voice' && context.more ? context.seenCodes : [];
     let plan = null;
     try {
-      plan = await planCourseSearch({ message: searchQuery, profile, env, apiKey, res });
+      plan = await planCourseSearch({ message: style === 'voice' ? voiceSearchQuestion(message, history) : searchQuery, profile, env, apiKey, res });
       console.info('[search] Qwen plan', plan);
     } catch (error) {
       console.warn('[search] Qwen plan unavailable, using local fallback:', error instanceof RequestError ? error.message : error.message);
@@ -218,34 +250,35 @@ export async function handleAdvisorRequest(req, res, env) {
       catalogueRows = retrieveCourses(catalogue, { message: searchQuery, profile, excludeCodes });
       if (plan?.noPrerequisite) catalogueRows = catalogueRows.filter(hasNoPrerequisite);
     }
-    if (context.more && !catalogueRows.length) {
-      json(res, 200, { text: /\p{Script=Han}/u.test(message) ? '目前没有检索到更多尚未介绍的相关课程，你可以换一个学习方向继续探索。' : 'No more unseen related courses were found. Try exploring a different learning interest.' });
+    if (style !== 'voice' && context.more && !catalogueRows.length) {
+      await respond({ text: language.code.startsWith('zh') ? '目前没有检索到更多尚未介绍的相关课程，你可以换一个学习方向继续探索。' : 'No more unseen related courses were found. Try exploring a different learning interest.' });
       return;
     }
     const catalogueText = formatCatalogue(catalogueRows);
     const payload = {
       model,
       stream: false,
-      max_tokens: 8192,
+      max_tokens: style === 'voice' ? 700 : 8192,
       enable_thinking: false,
-      response_format: { type: 'json_object' },
+      ...(style === 'voice' ? {} : { response_format: { type: 'json_object' } }),
       messages: [
-        { role: 'system', content: SYSTEM_PROMPT },
-        ...historyMessages(history),
-        { role: 'user', content: buildUserContent({ message, profile, documents, attachments, catalogue: catalogueText, recommendation: context }) }
+        { role: 'system', content: `${style === 'voice' ? VOICE_PROMPT : SYSTEM_PROMPT}\n\n${responseLanguageInstruction(language)}` },
+        ...(style === 'voice' ? voiceHistory(history) : historyMessages(history)),
+        { role: 'user', content: buildUserContent({ message, profile, documents, attachments, catalogue: catalogueText, recommendation: context, documentWarnings }) }
       ]
     };
 
     const completion = await upstreamRequest(`${baseUrl}/chat/completions`, apiKey, payload, res);
+    if (options.revalidateMember && !options.revalidateMember()) return;
     if (completion.choices?.[0]?.finish_reason === 'length') throw new RequestError(502, 'The answer exceeded its length limit. Please narrow the question and try again.');
     const content = completion.choices?.[0]?.message?.content;
-    json(res, 200, normalizeCourseResponse(parseAdvisorPayload(content), catalogueRows, message, history));
+    await respond(style === 'voice' ? parseVoicePayload(content) : normalizeCourseResponse(parseAdvisorPayload(content), catalogueRows, message, history));
   } catch (error) {
-    json(res, error instanceof RequestError ? error.status : 500, { error: error instanceof RequestError ? error.message : 'The advisor could not respond. Please try again.' });
+    reply(error instanceof RequestError ? error.status : 500, { error: error instanceof RequestError ? error.message : 'The advisor could not respond. Please try again.' });
   }
 }
 
-const ASR_LANGUAGE = { 'zh-CN': 'zh', 'zh-HK': 'yue', 'en-US': 'en' };
+const ASR_LANGUAGE = { auto: null, 'zh-CN': 'zh', 'zh-HK': 'yue', 'en-US': 'en' };
 
 function transcriptText(content) {
   if (typeof content === 'string') return content.trim();
@@ -273,8 +306,8 @@ export async function handleTranscribeRequest(req, res, env) {
     let formData;
     try { formData = await request.formData(); } catch { throw new RequestError(400, 'Invalid audio upload.'); }
     const audio = formData.get('audio');
-    const language = String(formData.get('language') || 'zh-CN');
-    if (!Object.hasOwn(ASR_LANGUAGE, language)) throw new RequestError(400, 'Choose Mandarin, Cantonese or English for voice input.');
+    const language = String(formData.get('language') || 'auto');
+    if (!Object.hasOwn(ASR_LANGUAGE, language)) throw new RequestError(400, 'Choose Automatic, Mandarin, Cantonese or English for voice input.');
     if (!audio || typeof audio === 'string') {
       json(res, 400, { error: 'An audio recording is required.' });
       return;

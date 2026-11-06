@@ -55,6 +55,13 @@ export function validateChatFields({ message, history, profile }) {
 }
 
 export async function upstreamRequest(url, apiKey, payload, res, { timeoutMs = 55000, fetchImpl = fetch } = {}) {
+  if (res.destroyed || res.writableEnded) {
+    throw new RequestError(504, 'The AI request timed out or was cancelled. Please try again.');
+  }
+  if (Number.isFinite(res.advisorDeadline)) {
+    timeoutMs = Math.min(timeoutMs, res.advisorDeadline - Date.now());
+    if (timeoutMs <= 0) throw new RequestError(504, 'The AI request timed out. Please try again.');
+  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   const disconnect = () => { if (!res.writableEnded) controller.abort(); };

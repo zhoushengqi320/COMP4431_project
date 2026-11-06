@@ -1,0 +1,38 @@
+{
+  "date": "2026-11-06T12:20:39.685Z",
+  "project": "yucan",
+  "responseStyle": "voice",
+  "results": [
+    {
+      "question": "Can you recommend a history course for me?",
+      "status": 200,
+      "elapsedMs": 10014,
+      "replyLanguage": "en-US",
+      "wordCount": 59,
+      "characters": 399,
+      "hasCourseCards": false,
+      "answer": {
+        "text": "I’d recommend APSS1C33 — History of Hong Kong. It’s a Level 1 course with no prerequisites, focuses on 1842–1997, and covers culture, politics, society, and economics through engaging methods like documentaries, cultural field trips, and guided writing. It’s especially relevant if you’re studying at PolyU and want to deepen your understanding of local history in an accessible, well-supported way.",
+        "replyLanguage": "en-US",
+        "mode": "llm",
+        "access": "member"
+      }
+    },
+    {
+      "question": "你好，请简单介绍一下你能帮我做什么。",
+      "status": 200,
+      "elapsedMs": 4417,
+      "replyLanguage": "zh-CN",
+      "wordCount": 1,
+      "characters": 133,
+      "hasCourseCards": false,
+      "answer": {
+        "text": "你好！我是Pear，PolyU专属的口语化学术顾问，专为同学提供课程选择、学习路径和毕业规划的实时帮助。我可以帮你了解课程内容、学分要求、先修条件，或者推荐适合你专业的入门课。有什么具体问题，比如想选哪类课、担心难度，或不确定怎么安排学期计划？我很乐意马上帮你解答！",
+        "replyLanguage": "zh-CN",
+        "mode": "llm",
+        "access": "member"
+      }
+    }
+  ],
+  "physicalAudioTested": false
+}

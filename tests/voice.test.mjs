@@ -84,3 +84,40 @@ test('a near-empty recording is treated as no speech', async () => {
   assert.match(f.errors[0], /No speech was detected/);
   assert.deepEqual(f.completed, []);
 });
+
+test('conversation recording stops on detected silence and transcribes exactly once', async () => {
+  let detector, calls = 0, disposed = 0;
+  const f = fixture({ transcribe: async () => { calls++; return 'A short question'; } });
+  // Use a separate session with an injected monitor so no microphone is accessed.
+  const tracks = [{ stop() {} }];
+  class Recorder { constructor() { this.state = 'inactive'; } start() { this.state = 'recording'; } stop() { if (this.state === 'inactive') return; this.state = 'inactive'; this.ondataavailable({ data: new Blob(['a'.repeat(400)]) }); this.onstop(); } }
+  const completed = [];
+  const session = createVoiceSession({ MediaRecorder: Recorder, getUserMedia: async () => ({ getTracks: () => tracks }), autoStop: true,
+    silenceMonitor: (_, callbacks) => { detector = callbacks; return () => disposed++; }, transcribe: async () => { calls++; return 'A short question'; },
+    onState() {}, onPreview() {}, onError: assert.fail, onComplete: text => completed.push(text) });
+  session.start(); await flush(); detector.onFinish(); session.stop(); await flush();
+  assert.equal(calls, 1); assert.deepEqual(completed, ['A short question']); assert.ok(disposed > 0);
+  f.session.cancel();
+});
+
+test('late microphone permission after cancellation closes the stream without recording', async () => {
+  let allow, closed = 0, recorded = 0;
+  class Recorder { constructor() { recorded++; } }
+  const session = createVoiceSession({ MediaRecorder: Recorder, getUserMedia: () => new Promise(resolve => { allow = resolve; }),
+    transcribe: assert.fail, onState() {}, onPreview() {}, onComplete: assert.fail, onError: assert.fail });
+  session.start(); session.cancel(); allow({ getTracks: () => [{ stop() { closed++; } }] }); await flush();
+  assert.equal(recorded, 0); assert.equal(closed, 1);
+});
+
+test('repeated start while permission is pending opens only one recording session', async () => {
+  let allow, requests = 0, stopped = 0;
+  const f = fixture({ getUserMedia: () => { requests++; return new Promise(resolve => { allow = resolve; }); } });
+  f.session.start();
+  f.session.start();
+  assert.equal(requests, 1);
+  f.session.cancel();
+  allow({ getTracks: () => [{ stop() { stopped++; } }] });
+  await flush();
+  assert.equal(stopped, 1);
+  assert.equal(f.states.filter(state => state === 'idle').length, 1);
+});

@@ -1,0 +1,112 @@
+{
+  "verifiedAt": "2026-11-03",
+  "scope": "Selected PolyU Department of Computing subjects and advising facts. This is a dated, partial reference set, not a programme handbook or live enrolment service.",
+  "entries": [
+    {
+      "id": "course-comp2011", "kind": "course", "code": "COMP2011", "title": "Data Structures", "titleZh": "数据结构", "credits": 3, "level": 2,
+      "summary": "Develops ways to organise data using lists, queues, trees and heaps, then apply sorting, searching and hashing in programs.",
+      "summaryZh": "学习用链表、队列、树和堆组织数据，并在程序中应用排序、搜索和哈希。",
+      "prerequisite": "One of COMP1011, COMP1012 or ENG2002. Exclusions: COMP2013 and DSAI2201.",
+      "prerequisiteZh": "先修课程为 COMP1011、COMP1012 或 ENG2002 其中之一；排斥课程为 COMP2013 和 DSAI2201。",
+      "prerequisiteAny": ["COMP1011", "COMP1012", "ENG2002"], "topics": ["data_structures", "algorithms"],
+      "aliases": ["data structures", "sorting", "hashing", "trees", "数据结构", "資料結構", "排序"],
+      "version": "Jul 2025", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP2011.pdf"
+    },
+    {
+      "id": "course-comp2021", "kind": "course", "code": "COMP2021", "title": "Object-oriented Programming", "titleZh": "面向对象程序设计", "credits": 3, "level": 2,
+      "summary": "Builds object-oriented software through classes, encapsulation, inheritance and polymorphism, with interfaces, exceptions, generic programming, concurrency and UML modelling.",
+      "summaryZh": "学习类、封装、继承与多态，并涉及接口、异常、泛型、并发和 UML 建模。",
+      "prerequisite": "One of COMP1011, COMP1012 or ENG2002.", "prerequisiteZh": "先修课程为 COMP1011、COMP1012 或 ENG2002 其中之一。",
+      "prerequisiteAny": ["COMP1011", "COMP1012", "ENG2002"], "topics": ["oop", "software"],
+      "aliases": ["object oriented", "oop", "java", "classes", "inheritance", "面向对象", "物件導向", "软件开发"],
+      "version": "Jul 2025", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP2021.pdf"
+    },
+    {
+      "id": "course-comp2322", "kind": "course", "code": "COMP2322", "title": "Computer Networking", "titleZh": "计算机网络", "credits": 3, "level": 2,
+      "summary": "Explores network layers, routing and addressing, TCP/UDP communication and socket programming, connecting networking principles to working applications.",
+      "summaryZh": "学习网络分层、路由与寻址、TCP/UDP 通信和套接字编程，并将网络原理应用于实际程序。",
+      "prerequisite": "One of COMP1011, COMP1012 or ENG2002.", "prerequisiteZh": "先修课程为 COMP1011、COMP1012 或 ENG2002 其中之一。",
+      "prerequisiteAny": ["COMP1011", "COMP1012", "ENG2002"], "topics": ["network"],
+      "aliases": ["networking", "networks", "tcp", "udp", "socket", "routing", "网络", "網絡", "網路"],
+      "version": "Jul 2025", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP2322.pdf"
+    },
+    {
+      "id": "course-comp2411", "kind": "course", "code": "COMP2411", "title": "Database Systems", "titleZh": "数据库系统", "credits": 3, "level": 2,
+      "summary": "Covers relational data modelling, SQL, normalisation and indexing, plus query processing, transactions and recovery for database applications.",
+      "summaryZh": "学习关系数据建模、SQL、规范化与索引，以及数据库应用中的查询处理、事务和恢复。",
+      "prerequisite": "One of COMP1011, COMP1012 or ENG2002.", "prerequisiteZh": "先修课程为 COMP1011、COMP1012 或 ENG2002 其中之一。",
+      "prerequisiteAny": ["COMP1011", "COMP1012", "ENG2002"], "topics": ["database"],
+      "aliases": ["database", "sql", "dbms", "normalization", "normalisation", "transactions", "数据库", "資料庫"],
+      "version": "Jul 2025", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP2411.pdf"
+    },
+    {
+      "id": "course-comp3011", "kind": "course", "code": "COMP3011", "title": "Design and Analysis of Algorithms", "titleZh": "算法设计与分析", "credits": 3, "level": 3,
+      "summary": "Studies algorithm efficiency and design, including divide-and-conquer, dynamic programming, greedy methods, geometric problems and computational complexity.",
+      "summaryZh": "学习算法效率与设计方法，包括分治、动态规划、贪心策略、几何问题和计算复杂性。",
+      "prerequisite": "One of COMP2011, COMP2013, DSAI2201 or EIE3320, or an equivalent subject.",
+      "prerequisiteZh": "先修课程为 COMP2011、COMP2013、DSAI2201 或 EIE3320 其中之一，或获认可的同等课程。",
+      "prerequisiteAny": ["COMP2011", "COMP2013", "DSAI2201", "EIE3320"], "topics": ["algorithms"],
+      "aliases": ["algorithms", "algorithm design", "dynamic programming", "complexity", "算法", "演算法", "动态规划", "動態規劃"],
+      "version": "Jul 2025", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP3011.pdf"
+    },
+    {
+      "id": "course-comp3421", "kind": "course", "code": "COMP3421", "title": "Web Application Design and Development", "titleZh": "Web 应用设计与开发", "credits": 3, "level": 3,
+      "summary": "Builds interactive web applications with client/server architecture, APIs and databases. The syllabus includes JavaScript/TypeScript, modern frameworks and cloud deployment.",
+      "summaryZh": "通过客户端与服务器架构、API 和数据库开发交互式网页应用，内容涉及 JavaScript/TypeScript、现代框架和云部署。",
+      "prerequisite": "One of COMP1011, COMP1012 or ENG2002.", "prerequisiteZh": "先修课程为 COMP1011、COMP1012 或 ENG2002 其中之一。",
+      "prerequisiteAny": ["COMP1011", "COMP1012", "ENG2002"], "topics": ["web", "software"],
+      "aliases": ["web", "website", "frontend", "backend", "react", "javascript", "full stack", "网页", "網頁", "网站", "前端", "后端", "全栈"],
+      "version": "Jul 2025", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP3421.pdf"
+    },
+    {
+      "id": "course-comp4423", "kind": "course", "code": "COMP4423", "title": "Computer Vision", "titleZh": "计算机视觉", "credits": 3, "level": 4,
+      "summary": "Applies machine learning and deep neural models to images: enhancement, feature extraction, classification, detection, segmentation and generation.",
+      "summaryZh": "将机器学习和深度神经网络用于图像增强、特征提取、分类、检测、分割与生成。",
+      "prerequisite": "COMP1011 or COMP1012; ENG2002 is also listed for EEE students.",
+      "prerequisiteZh": "先修课程为 COMP1011 或 COMP1012；EEE 学生也可按说明使用 ENG2002。",
+      "prerequisiteAny": ["COMP1011", "COMP1012"], "topics": ["vision", "machine_learning"],
+      "aliases": ["computer vision", "image", "images", "cnn", "deep learning", "object detection", "计算机视觉", "電腦視覺", "深度学习", "深度學習", "图像"],
+      "version": "Jul 2025", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP4423.pdf"
+    },
+    {
+      "id": "course-comp4431", "kind": "course", "code": "COMP4431", "title": "Artificial Intelligence", "titleZh": "人工智能", "credits": 3, "level": 4,
+      "summary": "Introduces intelligent agents, knowledge representation, search and reasoning, along with learning methods and ethical questions in AI applications.",
+      "summaryZh": "介绍智能体、知识表示、搜索与推理，同时涉及机器学习方法和人工智能应用中的伦理问题。",
+      "prerequisite": "One of COMP2011, COMP2013 or DSAI2201.", "prerequisiteZh": "先修课程为 COMP2011、COMP2013 或 DSAI2201 其中之一。",
+      "prerequisiteAny": ["COMP2011", "COMP2013", "DSAI2201"], "topics": ["artificial_intelligence", "machine_learning"],
+      "aliases": ["artificial intelligence", "ai", "agents", "search", "reasoning", "machine learning", "人工智能", "人工智慧", "智能体", "推理"],
+      "version": "Jul 2025", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP4431.pdf"
+    },
+    {
+      "id": "course-comp4432", "kind": "course", "code": "COMP4432", "title": "Machine Learning", "titleZh": "机器学习", "credits": 3, "level": 4,
+      "summary": "Studies predictive and unsupervised models, model evaluation and dimensionality reduction, with applications such as recognition and tracking.",
+      "summaryZh": "学习预测模型、无监督模型、模型评估和降维，并应用于识别与跟踪等任务。",
+      "prerequisite": "The July 2021 description lists no formal prerequisite. Prior AI/data analytics exposure and basic linear algebra and probability are recommended preparation, not compulsory prerequisite courses.",
+      "prerequisiteZh": "2021 年 7 月说明没有列出正式先修课程；建议具备人工智能或数据分析基础，以及线性代数和概率知识。这些是建议准备，并非必修先修课。",
+      "prerequisiteAny": [], "topics": ["machine_learning"],
+      "aliases": ["machine learning", "ml", "neural networks", "regression", "clustering", "model evaluation", "机器学习", "機器學習", "神经网络", "回归", "聚类"],
+      "version": "Jul 2021", "url": "https://www.polyu.edu.hk/comp/docdrive/ug/subject/COMP4432.pdf"
+    },
+    {
+      "id": "policy-graduation", "kind": "policy", "title": "Computing & AI scheme: credit requirements", "titleZh": "Computing & AI 学科组合：学分要求",
+      "summary": "The scheme FAQ gives 120 credits for a major, including discipline-specific, university and elective components. A student's actual award requirements depend on their programme, cohort, entry route and approved credit transfers; a total alone does not establish graduation eligibility.",
+      "summaryZh": "学科组合 FAQ 列出主修的总要求为 120 学分，包含专业、大学通识及选修部分。个人毕业要求仍须按专业、入学年级、入学途径及获批学分转移核对；总学分不能单独证明毕业资格。",
+      "aliases": ["graduation", "graduate", "credits", "major", "degree", "requirements", "毕业", "畢業", "学分", "學分", "主修"], "topics": ["graduation"],
+      "version": "Live FAQ checked 2026-11-03", "url": "https://www.polyu.edu.hk/comp/study/ug-programmes/scheme-in-computing-and-ai/jupas-faq/"
+    },
+    {
+      "id": "policy-wie", "kind": "policy", "title": "Computing: Work-Integrated Education", "titleZh": "Computing：工作综合教育（WIE）",
+      "summary": "The department FAQ states that full-time Computing undergraduates must complete at least 312 hours of WIE. WIE is assessed as pass/fail and does not contribute to GPA. Confirm the rules applying to your own cohort.",
+      "summaryZh": "系内 FAQ 说明全日制 Computing 本科生须完成至少 312 小时 WIE，以通过或不通过评核，不计入 GPA。请核对适用于本人入学年级的具体规定。",
+      "aliases": ["wie", "internship", "work integrated education", "working hours", "实习", "實習", "工作综合教育", "工作綜合教育"], "topics": ["wie"],
+      "version": "Live FAQ checked 2026-11-03", "url": "https://www.polyu.edu.hk/comp/study/ug-programmes/scheme-in-computing-and-ai/jupas-faq/"
+    },
+    {
+      "id": "policy-subject-directory", "kind": "policy", "title": "Computing & AI subject directory", "titleZh": "Computing & AI 课程目录",
+      "summary": "The official directory groups subjects by level and links their descriptions. It distinguishes some subjects by admission year. Being listed in the directory does not confirm a particular semester's offering or a student's eligibility.",
+      "summaryZh": "官方目录按级别列出课程并提供课程说明链接，部分课程按入学年区分。目录中的课程不代表某学期一定开设，也不代表个人已符合选课资格。",
+      "aliases": ["subjects", "offerings", "semester", "timetable", "enrolment", "plan", "schedule", "学期", "學期", "开课", "開課", "排课", "选课", "選課"], "topics": ["planning"],
+      "version": "Live directory checked 2026-11-03", "url": "https://www.polyu.edu.hk/comp/study/ug-programmes/scheme-in-computing-and-ai/subjects/"
+    }
+  ]
+}

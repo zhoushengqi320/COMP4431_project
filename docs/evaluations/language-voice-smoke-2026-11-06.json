@@ -1,0 +1,325 @@
+{
+  "date": "2026-11-06T11:05:20.646Z",
+  "project": "yucan",
+  "results": [
+    {
+      "id": "english_after_chinese",
+      "status": 502,
+      "elapsedMs": 5390,
+      "hanFields": 0,
+      "error": "Qwen request failed (400): <400> InternalError.Algo.InvalidParameter: 'messages' must contain the word 'json' in some form, to use 'response_format' of type 'json_object'.",
+      "question": "What is COMP4431? Please introduce this course.",
+      "answer": {
+        "error": "Qwen request failed (400): <400> InternalError.Algo.InvalidParameter: 'messages' must contain the word 'json' in some form, to use 'response_format' of type 'json_object'.",
+        "mode": "llm",
+        "access": "guest",
+        "guestRemaining": 19
+      }
+    },
+    {
+      "id": "explicit_english",
+      "status": 502,
+      "elapsedMs": 5701,
+      "hanFields": 0,
+      "error": "Qwen request failed (400): <400> InternalError.Algo.InvalidParameter: 'messages' must contain the word 'json' in some form, to use 'response_format' of type 'json_object'.",
+      "question": "请介绍 DSAI2201，用英文回答。",
+      "answer": {
+        "error": "Qwen request failed (400): <400> InternalError.Algo.InvalidParameter: 'messages' must contain the word 'json' in some form, to use 'response_format' of type 'json_object'.",
+        "mode": "llm",
+        "access": "guest",
+        "guestRemaining": 18
+      }
+    },
+    {
+      "id": "explicit_chinese",
+      "status": 200,
+      "elapsedMs": 4756,
+      "replyLanguage": "zh-CN",
+      "courses": [
+        "COMP4431"
+      ],
+      "followUps": 3,
+      "hanFields": 14,
+      "words": 1,
+      "question": "Tell me about COMP4431. Please reply in Chinese.",
+      "answer": {
+        "text": "下面介绍COMP4431。",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "zh",
+            "code": "COMP4431",
+            "title": "Artificial Intelligence",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "资料未提供",
+            "objectives": "1. 介绍人工智能的基本概念\n2. 使学生掌握人工智能技术的编程知识和技能\n3. 掌握问题建模和典型智能算法\n4. 了解人工智能的技术发展\n5. 使学生意识到与人工智能相关的伦理问题。",
+            "rating": 4.6,
+            "ratingSource": "simulated",
+            "summary": "这门课的学习重点是：介绍人工智能的基本概念；使学生掌握人工智能技术的编程知识和技能。学习方式：在课堂上，学生将接触到人工智能的概念、算法和应用，并通过练习、实验室和项目进行补充。",
+            "learningOutcomes": [
+              "了解人工智能的基本概念。",
+              "使学生掌握人工智能技术的编程知识和技能。",
+              "掌握问题建模和典型智能算法。",
+              "了解人工智能的技术发展。"
+            ],
+            "requiredPrerequisites": "COMP2011/COMP2013/DSAI2201",
+            "recommendedPrerequisites": "资料未提供，需核实",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "COMP2011",
+                  "COMP2013",
+                  "DSAI2201"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程：COMP2011/COMP2013/DSAI2201",
+            "reason": "这门课的学习重点是：介绍人工智能的基本概念；使学生掌握人工智能技术的编程知识和技能。学习方式：在课堂上，学生将接触到人工智能的概念、算法和应用，并通过练习、实验室和项目进行补充。",
+            "preparation": {
+              "levels": [
+                {
+                  "level": 2,
+                  "courses": [
+                    "COMP2011",
+                    "COMP2013",
+                    "DSAI2201"
+                  ]
+                }
+              ],
+              "description": "先修课程：COMP2011/COMP2013/DSAI2201",
+              "note": "以上课程可作为提前学习的参考，实际选课要求请以官方课程说明为准。",
+              "sourceText": "先修课程：COMP2011/COMP2013/DSAI2201"
+            }
+          }
+        ],
+        "followUps": [
+          "学习COMP4431前可以怎样预习？",
+          "COMP4431的主要内容有哪些实际用途？",
+          "COMP4431的先修课程分别讲什么？"
+        ],
+        "replyLanguage": "zh-CN",
+        "mode": "llm",
+        "access": "guest",
+        "guestRemaining": 17
+      }
+    },
+    {
+      "id": "voice_english",
+      "status": 200,
+      "elapsedMs": 5520,
+      "replyLanguage": "en-US",
+      "hanFields": 0,
+      "words": 48,
+      "question": "What will I learn in COMP4431?",
+      "answer": {
+        "text": "In COMP4431, you’ll learn AI fundamentals—like intelligent agents, problem-solving search strategies, knowledge representation, and reasoning under uncertainty. You’ll also study machine learning techniques including decision trees, neural networks, and SVMs, plus real-world applications and key ethical issues in AI. The course balances theory with hands-on labs and projects.",
+        "replyLanguage": "en-US",
+        "mode": "llm",
+        "access": "guest",
+        "guestRemaining": 16
+      }
+    },
+    {
+      "id": "english_after_chinese_retry",
+      "status": 200,
+      "elapsedMs": 11645,
+      "replyLanguage": "en-US",
+      "courses": [
+        "COMP4431"
+      ],
+      "hanFields": 0,
+      "followUps": 3,
+      "question": "What is COMP4431? Please introduce this course.",
+      "answer": {
+        "text": "The following introduces COMP4431.",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "en",
+            "code": "COMP4431",
+            "title": "Artificial Intelligence",
+            "department": "comp",
+            "level": "4",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "Not provided",
+            "objectives": "1. Introduce fundamental concepts of artificial intelligence.\n2. Equip students with programming knowledge and skills for AI technologies.\n3. Master problem modeling and typical intelligent algorithms.\n4. Understand technological developments in artificial intelligence.\n5. Raise students’ awareness of ethical issues related to artificial intelligence.",
+            "rating": 4.1,
+            "ratingSource": "simulated",
+            "summary": "The key learning objectives of this course are: introducing fundamental concepts of artificial intelligence; equipping students with programming knowledge and skills for AI technologies. Learning approach: In class, students will be exposed to AI concepts, algorithms, and applications, supplemented by exercises, labs, and projects.",
+            "learningOutcomes": [
+              "Understand fundamental concepts of artificial intelligence.",
+              "Understand how students acquire programming knowledge and skills for AI technologies.",
+              "Understand problem modeling and typical intelligent algorithms.",
+              "Understand ethical issues related to artificial intelligence."
+            ],
+            "requiredPrerequisites": "COMP2011/COMP2013/DSAI2201",
+            "recommendedPrerequisites": "Not provided; verification needed",
+            "prerequisiteLevels": [
+              {
+                "level": 2,
+                "courses": [
+                  "COMP2011",
+                  "COMP2013",
+                  "DSAI2201"
+                ]
+              }
+            ],
+            "prerequisite": "先修课程：COMP2011/COMP2013/DSAI2201",
+            "reason": "The key learning objectives of this course are: introducing fundamental concepts of artificial intelligence; equipping students with programming knowledge and skills for AI technologies. Learning approach: In class, students will be exposed to AI concepts, algorithms, and applications, supplemented by exercises, labs, and projects.",
+            "preparation": {
+              "levels": [
+                {
+                  "level": 2,
+                  "courses": [
+                    "COMP2011",
+                    "COMP2013",
+                    "DSAI2201"
+                  ]
+                }
+              ],
+              "description": "Prerequisite courses: COMP2011/COMP2013/DSAI2201",
+              "note": "Use these courses as preparation references. Please check the official course description for actual enrolment requirements.",
+              "sourceText": "先修课程：COMP2011/COMP2013/DSAI2201"
+            }
+          }
+        ],
+        "followUps": [
+          "How can one prepare in advance for COMP4431?",
+          "What are the practical applications of the main content of COMP4431?",
+          "What do the prerequisite courses for COMP4431 cover?"
+        ],
+        "replyLanguage": "en-US",
+        "mode": "llm",
+        "access": "guest",
+        "guestRemaining": 19
+      }
+    },
+    {
+      "id": "explicit_english_retry",
+      "status": 200,
+      "elapsedMs": 18894,
+      "replyLanguage": "en-US",
+      "courses": [
+        "DSAI2201"
+      ],
+      "hanFields": 0,
+      "followUps": 3,
+      "question": "请介绍 DSAI2201，用英文回答。",
+      "answer": {
+        "text": "The following introduces DSAI2201.",
+        "courses": [
+          {
+            "format": "course-introduction-v1",
+            "language": "en",
+            "code": "DSAI2201",
+            "title": "Data Structures and Algorithms",
+            "department": "dsai",
+            "level": "2",
+            "credits": 3,
+            "faculty": "Faculty of Engineering",
+            "schoolId": "polyu",
+            "id": "Not provided",
+            "objectives": "Introduce data structures and algorithms to students and teach them how to use them to solve computational problems.",
+            "rating": 4.9,
+            "ratingSource": "simulated",
+            "summary": "The course’s learning focus is: introducing data structures and algorithms to students and teaching them how to use them to solve computational problems; course content will be delivered through a combination of large lectures, small supervised tutorials, and laboratory sessions. Learning mode: course content will be delivered through a combination of large lectures, small supervised tutorials, and laboratory sessions.",
+            "learningOutcomes": [
+              "Understand data structures and algorithms and learn how to use them to solve computational problems.",
+              "Understand algorithm analysis (comparing how fast different methods solve problems and how much memory they consume).",
+              "Understand efficiency analysis.",
+              "Understand data structures."
+            ],
+            "requiredPrerequisites": "COMP1011/COMP1012/ENG2002/LGT3109, and AMA1110/AMA1501/AMA2634, and AMA1751/AMA2111",
+            "recommendedPrerequisites": "Not provided; verification needed",
+            "prerequisiteLevels": [
+              {
+                "level": 1,
+                "courses": [
+                  "COMP1011",
+                  "COMP1012",
+                  "AMA1110",
+                  "AMA1501",
+                  "AMA1751"
+                ]
+              },
+              {
+                "level": 2,
+                "courses": [
+                  "ENG2002",
+                  "AMA2634",
+                  "AMA2111"
+                ]
+              },
+              {
+                "level": 3,
+                "courses": [
+                  "LGT3109"
+                ]
+              }
+            ],
+            "prerequisite": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111",
+            "reason": "The course’s learning focus is: introducing data structures and algorithms to students and teaching them how to use them to solve computational problems; course content will be delivered through a combination of large lectures, small supervised tutorials, and laboratory sessions. Learning mode: course content will be delivered through a combination of large lectures, small supervised tutorials, and laboratory sessions.",
+            "preparation": {
+              "levels": [
+                {
+                  "level": 1,
+                  "courses": [
+                    "COMP1011",
+                    "COMP1012",
+                    "AMA1110",
+                    "AMA1501",
+                    "AMA1751"
+                  ]
+                },
+                {
+                  "level": 2,
+                  "courses": [
+                    "ENG2002",
+                    "AMA2634",
+                    "AMA2111"
+                  ]
+                },
+                {
+                  "level": 3,
+                  "courses": [
+                    "LGT3109"
+                  ]
+                }
+              ],
+              "description": "Prerequisites: COMP1011/COMP1012/ENG2002/LGT3109, and AMA1110/AMA1501/AMA2634, and AMA1751/AMA2111",
+              "note": "Use these courses as preparation references. Please check the official course description for actual enrolment requirements.",
+              "sourceText": "先修：COMP1011／COMP1012／ENG2002／LGT3109，以及 AMA1110／AMA1501／AMA2634，以及 AMA1751／AMA2111"
+            }
+          }
+        ],
+        "followUps": [
+          "DSAI2201: What are the respective focuses of these courses?",
+          "How should one prepare in advance for DSAI2201?",
+          "What are the practical applications of the main content of DSAI2201?"
+        ],
+        "replyLanguage": "en-US",
+        "mode": "llm",
+        "access": "guest",
+        "guestRemaining": 18
+      }
+    }
+  ],
+  "validation": {
+    "unitAndIntegrationTestsPassed": 227,
+    "unitAndIntegrationTestsFailed": 0,
+    "realMicrophoneAndSpeakerTested": false,
+    "tokenUsageCollected": false,
+    "courseData": "local snapshot: 2659 courses",
+    "textModel": "qwen3-8b-01fa13690bf1",
+    "voiceModel": "qwen-plus",
+    "languageCorrectionModel": "qwen-plus",
+    "note": "First two English requests failed on a missing JSON keyword in the translation prompt; retry records show the corrected implementation. Raw response content and request latency are recorded; no claim of measured semantic accuracy."
+  }
+}

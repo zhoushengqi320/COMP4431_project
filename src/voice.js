@@ -1,3 +1,4 @@
+import { monitorSilence } from './silence.js';
 const MIME_CANDIDATES = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg'];
 
 export function speechSupport(browser = globalThis) {
@@ -28,19 +29,27 @@ export function createVoiceSession({
   onState,
   onPreview,
   onComplete,
-  onError
+  onError,
+  autoStop = false,
+  silenceMonitor = monitorSilence,
+  onHint = () => {}
 }) {
   const requestMic = getUserMedia || (constraints => globalThis.navigator.mediaDevices.getUserMedia(constraints));
   const RecorderClass = Recorder || globalThis.MediaRecorder;
   let closed = false;
+  let started = false;
   let stopping = false;
   let stream;
   let recorder;
   let chunks = [];
   let abort;
+  let stopMonitor;
+  let deadline;
 
   function finishIdle() {
+    if (closed) return;
     closed = true;
+    clearTimeout(deadline); stopMonitor?.();
     abort?.abort();
     recorder = null;
     stream?.getTracks().forEach(track => track.stop());
@@ -49,10 +58,12 @@ export function createVoiceSession({
     onState('idle');
   }
 
-  return {
+  const session = {
     start() {
-      if (closed) return;
+      if (closed || started) return;
+      started = true;
       onState('starting');
+      deadline = setTimeout(() => { if (!closed) { onError('Microphone input timed out. Start again when you are ready.'); session.cancel(); } }, 75000);
       onPreview('');
       requestMic({ audio: true }).then(media => {
         if (closed) {
@@ -70,6 +81,7 @@ export function createVoiceSession({
           finishIdle();
         };
         recorder.onstop = async () => {
+          stopMonitor?.();
           stream?.getTracks().forEach(track => track.stop());
           stream = null;
           if (closed || !stopping) return;
@@ -100,6 +112,11 @@ export function createVoiceSession({
         };
         recorder.start(200);
         onState('listening');
+        if (autoStop) stopMonitor = silenceMonitor(stream, {
+          onFinish: () => session.stop(),
+          onEmpty: () => { if (!closed) { onError('No speech detected. Start voice conversation again when you are ready.'); session.cancel(); } },
+          onUnavailable: () => onHint('Automatic end detection is unavailable. Click Done speaking after your question.')
+        });
       }).catch(error => {
         if (closed) return;
         onError(permissionMessage(error));
@@ -110,6 +127,7 @@ export function createVoiceSession({
       if (closed || stopping) return;
       stopping = true;
       onState('stopping');
+      stopMonitor?.();
       try {
         if (recorder && recorder.state !== 'inactive') recorder.stop();
         else finishIdle();
@@ -125,4 +143,5 @@ export function createVoiceSession({
       finishIdle();
     }
   };
+  return session;
 }

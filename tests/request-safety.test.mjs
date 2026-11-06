@@ -32,6 +32,24 @@ test('upstream timeouts/disconnects cancel work and redact key-bearing errors', 
   await assert.rejects(upstreamRequest('http://test.invalid', 'sk-audit-only', {}, res, { fetchImpl: failingFetch }), error => error instanceof RequestError && error.status === 502 && !error.message.includes('sk-audit-only'));
 });
 
+test('closed responses and exhausted total request budgets never start another upstream call', async () => {
+  let calls = 0;
+  const fetchImpl = async () => { calls++; return Response.json({}); };
+  for (const state of [{ destroyed: true }, { writableEnded: true }, { advisorDeadline: Date.now() - 1 }]) {
+    const res = Object.assign(new EventEmitter(), state);
+    await assert.rejects(upstreamRequest('http://test.invalid', 'mock-key', {}, res, { fetchImpl }), error => error.status === 504);
+  }
+  assert.equal(calls, 0);
+});
+
+test('remaining total request budget bounds an upstream phase', { timeout: 500 }, async () => {
+  const res = Object.assign(new EventEmitter(), { advisorDeadline: Date.now() + 20 });
+  const fetchImpl = (_url, { signal }) => new Promise((resolve, reject) => {
+    signal.addEventListener('abort', () => reject(new Error('aborted')), { once: true });
+  });
+  await assert.rejects(upstreamRequest('http://test.invalid', 'mock-key', {}, res, { timeoutMs: 5000, fetchImpl }), error => error.status === 504);
+});
+
 test('HTTP integration accepts valid chat and rejects malformed/cross-origin requests without paid calls', async () => {
   let calls = 0, mode = 'valid';
   const mock = createServer((req, res) => {

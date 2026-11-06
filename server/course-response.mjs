@@ -1,4 +1,5 @@
 import { randomInt } from 'node:crypto';
+import { resolveResponseLanguage } from './response-language.mjs';
 import { extractCourseCodes } from './course-knowledge.mjs';
 import { courseCodeAliases, referencesOnlyCourses } from './course-codes.mjs';
 import { coursePreparation, prerequisiteLevels, containsPreparationInfo, overviewWithoutPreparation } from './course-preparation.mjs';
@@ -139,7 +140,7 @@ export function normalizeCourseResponse(answer, rows, message, history = []) {
   answer = object(answer) ? answer : {};
   rows = (Array.isArray(rows) ? rows : []).filter(row => object(row) && typeof row.code === 'string' && row.code);
   message = String(message || '');
-  const language = /\p{Script=Han}/u.test(message) ? 'zh' : 'en';
+  const language = resolveResponseLanguage(message, history).code.startsWith('zh') ? 'zh' : 'en';
   const missing = language === 'zh' ? '资料未提供' : 'Not provided';
   const byCode = new Map(rows.map(row => [codeKey(row.code), row]));
   for (const row of rows) for (const alias of courseCodeAliases(row.code)) if (!byCode.has(alias)) byCode.set(alias, row);

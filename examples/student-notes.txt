@@ -1,0 +1,10 @@
+FICTIONAL DEMONSTRATION DATA - NOT AN OFFICIAL TRANSCRIPT
+
+Student: Demo Student
+Programme: Computing
+Year: Year 2
+Academic interest: Artificial intelligence
+
+According to this student's own notes, completed courses are COMP1011 and COMP2011.
+The student wants to explore COMP4431 and understand its prerequisites.
+This note does not prove official grades, credit transfer, eligibility or semester availability.

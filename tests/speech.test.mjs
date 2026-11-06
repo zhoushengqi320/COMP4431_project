@@ -78,3 +78,46 @@ test('an engine that never starts times out instead of leaving controls stuck', 
   context.mock.timers.tick(15001);
   assert.equal(f.states.at(-1).status, 'idle'); assert.match(f.errors[0], /did not start/);
 });
+
+test('pausing before speech starts does not disable the timeout after resume', context => {
+  context.mock.timers.enable({ apis: ['setTimeout'] });
+  const f = fixture();
+  f.player.speak({ messageId: 'a', text: 'Hello' });
+  f.player.pause();
+  context.mock.timers.tick(20000);
+  assert.deepEqual(f.errors, []);
+  f.player.resume();
+  context.mock.timers.tick(15001);
+  assert.equal(f.states.at(-1).status, 'idle');
+  assert.match(f.errors[0], /did not start/);
+});
+
+test('automatic voice conversation follows the reply language despite an earlier voice preference', () => {
+  const f = fixture();
+  f.player.speak({ messageId: 'en', text: 'Hello', language: 'en-US', voiceURI: 'cantonese', matchLanguage: true });
+  assert.equal(f.spoken.at(-1).lang, 'en-US');
+  f.player.speak({ messageId: 'zh', text: '你好', language: 'zh-HK', voiceURI: 'english', matchLanguage: true });
+  assert.equal(f.spoken.at(-1).lang, 'zh-HK');
+  f.player.stop();
+});
+
+test('automatic voice selection prefers the requested locale over another default dialect', () => {
+  const f = fixture();
+  f.engine.getVoices = () => [
+    { voiceURI: 'mandarin', lang: 'zh-CN', default: true },
+    { voiceURI: 'cantonese', lang: 'zh-HK' }
+  ];
+  f.player.speak({ messageId: 'zh', text: '你好', language: 'zh-HK' });
+  assert.equal(f.spoken[0].voice.voiceURI, 'cantonese');
+  f.player.stop();
+});
+
+test('conversation completion waits for every spoken chunk and never fires on stop', () => {
+  const f = fixture(); let completed = 0, cancelled = 0;
+  f.player.speak({ messageId: 'voice', text: 'A short course answer. '.repeat(20), onComplete: () => completed++, onCancel: () => cancelled++ });
+  let i = 0; while (i < f.spoken.length) f.spoken[i++].onend();
+  assert.equal(completed, 1); assert.equal(cancelled, 0);
+  f.player.speak({ messageId: 'next', text: 'Next answer', onComplete: () => completed++, onCancel: () => cancelled++ });
+  const old = f.spoken.at(-1); f.player.stop(); old.onend();
+  assert.equal(completed, 1); assert.equal(cancelled, 1);
+});

@@ -50,37 +50,47 @@ export function createSpeechPlayer({ synthesis, Utterance, onState, onError }) {
   function stop() {
     generation += 1;
     clearTimeout(startTimer);
-    current = null;
+    const previous = current; current = null;
+    previous?.onCancel?.();
     // Invalidate before cancel: browsers may immediately dispatch an interrupted error.
     synthesis?.cancel();
     idle();
   }
-  function fail(message) { stop(); onError(message); }
+  function fail(message) { const failure = current?.onFailure; if (current) current.onCancel = null; stop(); failure?.(new Error(message)); onError(message); }
   return {
-    speak({ messageId, text, language = 'en-US', rate = 1, voiceURI = '' }) {
+    speak({ messageId, text, language = 'en-US', rate = 1, voiceURI = '', matchLanguage = false, onComplete, onCancel, onFailure }) {
       stop();
-      if (!synthesis || !Utterance) { onError('Read aloud is not supported in this browser. Please read the text or try another browser.'); return; }
+      if (!synthesis || !Utterance) { onFailure?.(new Error('Read aloud is unavailable.')); onError('Read aloud is not supported in this browser. Please read the text or try another browser.'); return; }
       const chunks = speechChunks(text);
-      if (!chunks.length) return;
+      if (!chunks.length) { onComplete?.(); return; }
       const token = generation;
       const voices = synthesis.getVoices();
-      const voice = voices.find(item => item.voiceURI === voiceURI)
-        || voices.find(item => item.default && item.lang.toLowerCase().startsWith(language.slice(0, 2).toLowerCase()))
+      const matchesLanguage = item => item.lang.split('-')[0].toLowerCase() === language.split('-')[0].toLowerCase();
+      const voice = voices.find(item => item.voiceURI === voiceURI && (!matchLanguage || matchesLanguage(item)))
         || voices.find(item => item.lang.toLowerCase() === language.toLowerCase())
-        || voices.find(item => item.lang.toLowerCase().startsWith(language.slice(0, 2).toLowerCase()));
-      const active = { messageId, paused: false, index: 0, utterance: null };
+        || voices.find(item => item.default && matchesLanguage(item))
+        || voices.find(matchesLanguage);
+      const active = { messageId, paused: false, started: false, index: 0, utterance: null, onCancel, onFailure };
       current = active;
+      active.watchStart = () => {
+        clearTimeout(startTimer);
+        startTimer = setTimeout(() => {
+          if (generation === token && !active.paused && !active.started) fail('The browser did not start playback. Try another installed voice or browser.');
+        }, 15000);
+      };
       function next() {
         if (generation !== token) return;
-        if (active.index === chunks.length) { current = null; generation += 1; idle(); return; }
+        if (active.index === chunks.length) { current = null; generation += 1; idle(); onComplete?.(); return; }
         const utterance = new Utterance(chunks[active.index++]);
         // Retain the utterance until completion (some engines otherwise drop long speech).
         active.utterance = utterance;
+        active.started = false;
         utterance.lang = voice?.lang || language;
         utterance.rate = rate;
         if (voice) utterance.voice = voice;
         utterance.onstart = () => {
           if (generation !== token || active.utterance !== utterance) return;
+          active.started = true;
           clearTimeout(startTimer);
           onState({ messageId, status: active.paused ? 'paused' : 'speaking' });
         };
@@ -100,10 +110,7 @@ export function createSpeechPlayer({ synthesis, Utterance, onState, onError }) {
           fail(errors[event.error] || 'Read aloud was interrupted or could not play. You can try again or read the text.');
         };
         onState({ messageId, status: active.paused ? 'paused' : 'starting' });
-        clearTimeout(startTimer);
-        startTimer = setTimeout(() => {
-          if (generation === token && !active.paused) fail('The browser did not start playback. Try another installed voice or browser.');
-        }, 15000);
+        active.watchStart();
         try {
           synthesis.speak(utterance);
           if (active.paused) synthesis.pause();
@@ -121,6 +128,7 @@ export function createSpeechPlayer({ synthesis, Utterance, onState, onError }) {
     resume() {
       if (!current?.paused) return;
       current.paused = false;
+      if (!current.started) current.watchStart();
       try { synthesis.resume(); onState({ messageId: current.messageId, status: 'speaking' }); }
       catch { fail('Could not resume playback. Please start read aloud again.'); }
     },
