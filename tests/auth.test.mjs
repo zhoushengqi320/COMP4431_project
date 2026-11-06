@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { mkdtemp, rm } from 'node:fs/promises';
 import { createServer, request } from 'node:http';
 import { tmpdir } from 'node:os';
@@ -9,6 +9,20 @@ import test from 'node:test';
 import { createAuthService } from '../server/auth.mjs';
 
 const account = (email = 'student@example.test') => ({ name: 'Test Student', email, password: 'A-long-test-password-42' });
+const demoAccount = { email: 'test@polypath.local', password: 'Test1234!' };
+
+function databaseSnapshot(databasePath) {
+  const db = new DatabaseSync(databasePath, { readOnly: true });
+  try {
+    return {
+      users: db.prepare('SELECT * FROM users ORDER BY id').all(),
+      sessions: db.prepare('SELECT * FROM sessions ORDER BY token_hash').all(),
+      conversations: db.prepare('SELECT * FROM conversations ORDER BY id').all()
+    };
+  } finally {
+    db.close();
+  }
+}
 
 async function fixture(t, options = {}) {
   const { onRequest, ...serviceOptions } = options;
@@ -61,8 +75,84 @@ async function fixture(t, options = {}) {
       cookie: response.headers.get('set-cookie')?.split(';')[0]
     };
   }
-  return { call, databasePath, get base() { return base; }, restart: async () => { await stop(); await start(); } };
+  return {
+    call, databasePath, get base() { return base; },
+    ensureTestAccount: () => auth.ensureTestAccount(),
+    restart: async () => { await stop(); await start(); }
+  };
 }
+
+test('the team test login is seeded once and preserves saved account data across restarts', async t => {
+  const app = await fixture(t);
+  assert.equal(databaseSnapshot(app.databasePath).users.length, 0);
+  assert.equal(await app.ensureTestAccount(), true);
+  assert.equal(await app.ensureTestAccount(), false);
+
+  const login = await app.call('/api/auth/login', { method: 'POST', data: demoAccount });
+  assert.equal(login.status, 200);
+  assert.equal(login.body.user.email, demoAccount.email);
+  assert.ok(login.cookie);
+  assert.deepEqual((await app.call('/api/conversations', { cookie: login.cookie })).body, { conversations: [] });
+  const profile = { programme: 'Computing', interests: 'Preserve the team demo profile' };
+  assert.equal((await app.call('/api/profile', { method: 'PUT', cookie: login.cookie, data: profile })).status, 200);
+  const chat = await app.call(`/api/conversations/${randomUUID()}`, {
+    method: 'PUT', cookie: login.cookie,
+    data: { title: 'Saved demo chat', revision: 0, messages: [{ id: randomUUID(), role: 'user', text: 'What is COMP4431?' }] }
+  });
+  assert.equal(chat.status, 201);
+  const before = databaseSnapshot(app.databasePath);
+  assert.equal(before.users.length, 1);
+  assert.match(before.users[0].password_hash, /^scrypt\$32768\$8\$3\$[a-f0-9]{32}\$[a-f0-9]{128}$/);
+  assert.ok(!before.users[0].password_hash.includes(demoAccount.password));
+
+  assert.equal(await app.ensureTestAccount(), false);
+  await app.restart();
+  assert.equal(await app.ensureTestAccount(), false);
+  assert.deepEqual(databaseSnapshot(app.databasePath), before);
+  const session = await app.call('/api/auth/session', { cookie: login.cookie });
+  assert.equal(session.body.user.id, login.body.user.id);
+  assert.equal(session.body.profile.interests, profile.interests);
+  assert.deepEqual((await app.call('/api/conversations', { cookie: login.cookie })).body.conversations, [chat.body.conversation]);
+  const relogin = await app.call('/api/auth/login', { method: 'POST', data: demoAccount });
+  assert.equal(relogin.status, 200);
+  assert.equal(relogin.body.user.id, login.body.user.id);
+});
+
+test('test-account initialization never resets a pre-existing account with the same email', async t => {
+  const app = await fixture(t);
+  const existing = { ...account(demoAccount.email), name: 'Existing Student' };
+  const registered = await app.call('/api/auth/register', { method: 'POST', data: existing });
+  assert.equal(registered.status, 201);
+  assert.equal((await app.call('/api/profile', {
+    method: 'PUT', cookie: registered.cookie, data: { interests: 'Keep my existing profile' }
+  })).status, 200);
+  const before = databaseSnapshot(app.databasePath);
+  assert.equal(await app.ensureTestAccount(), false);
+  assert.deepEqual(databaseSnapshot(app.databasePath), before);
+  assert.equal((await app.call('/api/auth/login', { method: 'POST', data: demoAccount })).status, 401);
+  const login = await app.call('/api/auth/login', { method: 'POST', data: existing });
+  assert.equal(login.status, 200);
+  assert.equal(login.body.user.id, registered.body.user.id);
+  assert.equal(login.body.user.name, existing.name);
+  assert.equal(login.body.profile.interests, 'Keep my existing profile');
+});
+
+test('two services initializing the same database create only one usable test account', async t => {
+  const app = await fixture(t);
+  const second = createAuthService({ databasePath: app.databasePath });
+  try {
+    const results = await Promise.all([app.ensureTestAccount(), second.ensureTestAccount()]);
+    assert.deepEqual(results.sort(), [false, true]);
+    const snapshot = databaseSnapshot(app.databasePath);
+    assert.equal(snapshot.users.length, 1);
+    assert.equal(snapshot.users[0].email, demoAccount.email);
+    const login = await app.call('/api/auth/login', { method: 'POST', data: demoAccount });
+    assert.equal(login.status, 200);
+    assert.equal(login.body.user.id, snapshot.users[0].id);
+  } finally {
+    second.close();
+  }
+});
 
 test('register, refresh, update profile, logout and sign in again through HTTP', async t => {
   const app = await fixture(t);

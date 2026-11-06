@@ -7,10 +7,11 @@ import { advisorPlugin } from '../vite.config.js';
 import { createAppServer } from '../server/index.mjs';
 import { createAdvisorAccess } from '../server/advisor-access.mjs';
 import { handleAdvisorRequest } from '../server/deepseek-advisor.mjs';
+import { TEST_ACCOUNT } from '../server/test-account.mjs';
 
 async function fixture(t, adapter, extraOptions = {}) {
   let modelCalls = 0;
-  const env = { AUTH_DATABASE_PATH: ':memory:', DEEPSEEK_API_KEY: 'must-never-be-used-by-guests' };
+  const env = { AUTH_DATABASE_PATH: ':memory:', DEEPSEEK_API_KEY: 'must-never-be-used-by-guests', ...extraOptions.env };
   const advisorHandler = (...args) => {
     extraOptions.onAdviceStart?.();
     return handleAdvisorRequest(...args);
@@ -116,7 +117,25 @@ test('guest voice requests preserve the configured speech reply model', async ()
   assert.equal(forwarded.DEEPSEEK_API_KEY, undefined);
 });
 
+test('fresh development server provides the team test login without manual registration', async t => {
+  const app = await fixture(t, 'vite');
+  const login = await app.request('/api/auth/login', { body: TEST_ACCOUNT });
+  assert.equal(login.status, 200);
+  assert.equal(login.data.user.email, TEST_ACCOUNT.email);
+  const headers = { Cookie: login.headers.get('set-cookie').split(';')[0] };
+  const conversations = await app.request('/api/conversations', { headers });
+  assert.deepEqual(conversations.data, { conversations: [] });
+  assert.equal((await app.request('/api/advisor/status', { headers })).data.access, 'member');
+  assert.equal(app.modelCalls, 0);
+});
+
 for (const adapter of ['production', 'vite']) {
+  test(`${adapter}: no test login is seeded outside the enabled development path`, async t => {
+    const app = await fixture(t, adapter, { env: { AUTH_SEED_TEST_ACCOUNT: adapter === 'vite' ? 'false' : 'true' } });
+    assert.equal((await app.request('/api/auth/login', { body: TEST_ACCOUNT })).status, 401);
+    assert.equal(app.modelCalls, 0);
+  });
+
   test(`${adapter}: anonymous and explicitly forced guest requests use knowledge only`, async t => {
     const app = await fixture(t, adapter);
     const status = await app.request('/api/advisor/status');

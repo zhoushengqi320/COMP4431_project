@@ -8,12 +8,18 @@ import { startCourseRefresh } from './server/course-knowledge.mjs';
 export function advisorPlugin(env, { advisorAccessOptions = {} } = {}) {
   startCatalogueRefresh(env);
   startCourseRefresh(env);
-  const mount = server => {
+  const mount = async (server, seedTestAccount = false) => {
     const auth = createAuthService({
       databasePath: env.AUTH_DATABASE_PATH || undefined,
       secureCookies: env.AUTH_SECURE_COOKIES === 'true',
       allowedOrigin: env.AUTH_ORIGIN || undefined
     });
+    try {
+      if (seedTestAccount) await auth.ensureTestAccount();
+    } catch (error) {
+      auth.close();
+      throw error;
+    }
     const advisorAccess = createAdvisorAccess({ ...advisorAccessOptions, auth, env });
     server.httpServer?.once('close', () => auth.close());
     server.middlewares.use(async (req, res, next) => {
@@ -24,8 +30,8 @@ export function advisorPlugin(env, { advisorAccessOptions = {} } = {}) {
   };
   return {
     name: 'polypath-api',
-    configureServer: mount,
-    configurePreviewServer: mount
+    configureServer: server => mount(server, env.AUTH_SEED_TEST_ACCOUNT !== 'false'),
+    configurePreviewServer: server => mount(server)
   };
 }
 

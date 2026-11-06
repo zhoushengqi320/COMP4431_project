@@ -3,6 +3,7 @@ import { chmodSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { promisify } from 'node:util';
+import { TEST_ACCOUNT } from './test-account.mjs';
 
 const deriveKey = promisify(scrypt);
 const COOKIE = 'polypath_session';
@@ -430,6 +431,17 @@ export function createAuthService({
     return `scrypt$32768$8$3$${salt}$${key.toString('hex')}`;
   }
 
+  // Called by the development server only; never reset an existing account.
+  async function ensureTestAccount() {
+    if (queries.email.get(TEST_ACCOUNT.email)) return false;
+    const passwordHash = await hashPassword(TEST_ACCOUNT.password);
+    const inserted = db.prepare(`
+      INSERT INTO users (id, name, email, password_hash, profile_json, created_at)
+      VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(email) DO NOTHING
+    `).run(randomUUID(), TEST_ACCOUNT.name, TEST_ACCOUNT.email, passwordHash, JSON.stringify(EMPTY_PROFILE), now());
+    return inserted.changes === 1;
+  }
+
   async function verifyPassword(password, storedHash) {
     const parts = storedHash?.split('$');
     const validHash = parts?.length === 6 && parts.slice(0, 4).join('$') === 'scrypt$32768$8$3'
@@ -575,5 +587,5 @@ export function createAuthService({
     return true;
   }
 
-  return { handle, getAccount, requireUser, checkSameOrigin, close: () => db.close() };
+  return { handle, getAccount, requireUser, checkSameOrigin, ensureTestAccount, close: () => db.close() };
 }
