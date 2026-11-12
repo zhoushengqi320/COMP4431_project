@@ -1,143 +1,217 @@
 # PolyPath — PolyU Academic Advisor
 
-COMP4431 Artificial Intelligence (2026/27) 的领域聊天机器人项目。应用领域是 **PolyU Computing 学业规划／选课咨询**，支持课程内容、先修条件、学习方向和上传资料问答。
+**COMP4431 Artificial Intelligence (2026/27) Group Project · Thursday Class**
 
-## 小组信息（提交前填写）
+PolyPath is an academic advising chatbot for students at The Hong Kong Polytechnic University. It helps students understand course content, explore learning interests, and review prerequisites and suggested preparation. The application combines a PolyU course knowledge base with Qwen language models and presents advice through course cards and conversational follow-ups. Additional features include speech recognition, answer read-aloud, and Pear, an interactive 2D/3D virtual companion.
 
-班别：`[TO FILL: Thursday / Friday]`。按项目要求由 2–4 名成员组成小组，并如实记录各人的贡献。
+The application provides planning guidance. Official enrolment requirements, course availability, and graduation eligibility must be confirmed against the documents applicable to the student's cohort and with the University.
 
-| English name | Student ID | Actual contribution |
+## 1. Team Members and Contributions
+
+**Class: Thursday**
+
+| Name | Student ID | Main Contribution |
 | --- | --- | --- |
-| [TO FILL] | [TO FILL] | [TO FILL] |
-| [TO FILL] | [TO FILL] | [TO FILL] |
+| Fu Keming (付可铭) | 24108151d | Speech recognition |
+| Zhou Wenqi (周文琪) | 24108678d | 2D/3D virtual companion design and integration |
+| Liu Yucan (刘宇灿) | 24115433d | Model fine-tuning |
+| Zhou Shengqi (周圣淇) | 24101032d | UI design and implementation, API key configuration and integration, database and knowledge base integration |
 
-有 3–4 名成员时增加对应行。不得使用虚构身份。项目改动提交到 `shengqi` 分支，不直接提交到 `main`。按用户要求，本次不准备 PPT、演示稿或演示流程。
+## 2. Basic Features
 
-## 快速运行
+- **Domain-specific question answering:** Answers English and Chinese questions about PolyU courses, including content, credits, learning objectives, and prerequisites.
+- **Interest-based recommendations:** Retrieves courses relevant to the student's question and interests. Each recommendation reply displays up to three courses, with further exploration available when additional relevant records are identified.
+- **Conversational follow-ups:** Uses recent conversation context, offers clickable follow-up questions, and excludes previously displayed courses when continuing a recommendation.
+- **Structured course cards:** Presents course information, learning outcomes, an introduction, and suggested preparation in a consistent layout while retaining original prerequisite conditions for reference.
+- **Uncertainty handling:** Identifies missing course records, unavailable information, and questions for which official eligibility cannot be established.
 
-需要 **Node.js 24 或更新版本**和 npm（数据库使用 Node 内置 SQLite）。
+## 3. Implemented Additional Features
+
+| Additional Feature | Implementation | Requirements and Limitations |
+| --- | --- | --- |
+| **Speech recognition** | Records audio using browser `MediaRecorder` and sends it to `/api/transcribe`, where the backend calls Qwen ASR. English, Mandarin, and Cantonese options are available. Transcriptions are placed in the composer for review before sending. | The UI requires sign-in. Microphone permission, a compatible browser, a valid Qwen key, and network access are required. |
+| **Answer read-aloud** | Uses browser `speechSynthesis` to read answers and course recommendations, with voice selection, playback speed, pause, resume, and stop controls. | The UI requires sign-in. Available voices and languages depend on the device and browser. |
+| **Pear 2D/3D virtual companion** | Uses SVG for 2D and Three.js for a rotatable procedural 3D model. Expressions reflect listening, transcription, response generation, speech playback, pause, and error states. | The companion itself requires no external API. It falls back to 2D when WebGL is unavailable and supports reduced motion. |
+| **Domain model fine-tuning** | Includes completed Qwen3-8B LoRA training and deployment integration. Domain examples teach response structure, while runtime retrieval continues supplying course facts. | Calling the deployment requires an authorised API key. Successful training does not establish independent question-answering accuracy. |
+| **Responsive user interface** | Provides guest access, sign-in and registration, suggested questions, course cards, a conversation sidebar, and mobile navigation. | Full functionality requires both the frontend and Node backend. |
+| **Accounts and conversation history** | Stores academic profiles and conversations by account in SQLite, supporting new conversations, switching between chats, and restoration after signing in again. | Guest history stays in the current browser tab and does not automatically merge into an account. |
+| **Database knowledge base and retrieval augmentation** | Retrieves from Supabase `public.courses` or a local course snapshot, supplies relevant records to the model, and validates course fields before display. | Catalogue records do not establish current timetables or official enrolment eligibility. |
+| **Text attachment support** | Signed-in users can upload TXT, CSV, and Markdown documents as supplementary textual context. | The default advisor handler reads text formats directly. PDF/DOCX uploads currently supply filenames and sizes only. |
+
+### Fine-Tuning Implementation Record
+
+The repository's v8 records document a completed Qwen3-8B LoRA training run on 4 November 2026, followed by cloud deployment and application integration.
+
+| Item | Recorded Value |
+| --- | --- |
+| Base model and method | Qwen3-8B, LoRA, `efficient_sft` |
+| Dataset | 1,151 training examples, 160 validation examples, and 175 held-out test candidates |
+| Training configuration | 1 epoch; batch size 32; maximum length 8,192; learning rate 3e-4 |
+| Training status | Recorded as `SUCCEEDED` |
+| Deployment invocation ID | `qwen3-8b-01fa13690bf1` |
+
+These are saved implementation records; current cloud availability must be confirmed through an actual request. Automated rule checks do not constitute complete human semantic review, and the repository does not yet provide a complete independent comparison between the base and fine-tuned models. Course facts come from retrieval, and the server also enforces presentation rules, so the displayed output should not be attributed entirely to fine-tuning.
+
+See the [fine-tuning documentation](finetuning/README.md), [training record](docs/evaluations/TRAINING_RUN_2026-11-04.md), and [deployment record](docs/evaluations/DEPLOYMENT_V8_2026-11-04.md).
+
+## 4. Technical Architecture and Challenges
+
+```text
+React / Vite UI
+├── Course Q&A, course cards, academic profiles, conversation history
+├── MediaRecorder audio capture / browser speech synthesis
+└── Pear: SVG 2D / Three.js 3D
+          |
+          v
+Node.js API (mounted in Vite during development; standalone in production)
+├── Accounts and sessions -> SQLite
+├── /api/transcribe -> Qwen ASR
+└── /api/advisor
+    ├── Question and context -> search plan
+    ├── Supabase / local snapshot -> relevant course records
+    ├── Prompts + course evidence + text documents -> Qwen / fine-tuned model
+    └── Response validation and normalisation -> course cards and follow-ups
+```
+
+The main technologies are React 19, Vite 7, Node.js 24 with built-in SQLite, Three.js, and the Qwen compatible API. API keys are read by the backend and are not embedded in frontend code.
+
+| Technical Challenge | Approach |
+| --- | --- |
+| Models may invent courses or alter course names and credits. | Retrieve before generation, then validate and fill course fields against retrieved records in `server/course-response.mjs`. Display missing-record notices for unknown courses. |
+| Prerequisites contain AND/OR conditions, exclusions, and co-requisites. | Preserve original conditions and exclude exclusion subjects and co-requisites from advance preparation groups. Level grouping is a reading aid only. |
+| Recommendations may contain too many courses or repeat earlier suggestions. | Enforce a maximum of three displayed courses per recommendation reply, track displayed and reserve courses, and exclude previously shown codes during continuation. |
+| Chinese and English questions may not directly match English catalogue wording. | Generate a search plan with Qwen and provide bilingual keyword expansion and local keyword retrieval as a fallback. |
+| Voice capture, playback, and companion animation must remain synchronised. | Drive the companion from shared interaction states, update it when playback pauses or stops, and prioritise actual activity over expression previews. |
+| 3D rendering must handle compatibility and performance constraints. | Fall back to 2D on WebGL failure, suspend continuous rendering when hidden, and release Three.js resources when components unmount. |
+| Multiple accounts, browser tabs, and concurrent saves can conflict. | Validate the expected account identity, revalidate member identity before returning an answer, and use conversation version checks with visible conflict notices. |
+
+## 5. How to Run
+
+### 5.1 Requirements and Installation
+
+Install **Node.js 24 or later** and npm. The application uses Node's built-in SQLite support and should be run with this version requirement. Live AI responses require network access and a valid Qwen API key.
 
 ```sh
+git clone https://github.com/zhoushengqi320/COMP4431_project.git
+cd COMP4431_project
 npm ci
 cp .env.example .env
+```
+
+If using the source ZIP, extract it and open the directory containing `package.json` before installing dependencies and copying the configuration. In Windows PowerShell, use `Copy-Item .env.example .env` for the copy step.
+
+### 5.2 Model Configuration
+
+Edit `.env` in the project root:
+
+```dotenv
+VITE_ADVISOR_API_URL=/api/advisor
+
+# Use your own server-side key and an endpoint in the matching region.
+QWEN_API_KEY=replace_with_your_server_side_key
+QWEN_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+QWEN_MODEL=qwen-plus
+QWEN_PLANNER_MODEL=qwen-plus
+QWEN_ASR_MODEL=qwen3-asr-flash
+QWEN_ADVISOR_MODE=integrated
+
+AUTH_DATABASE_PATH=./data/polypath.sqlite
+AUTH_SECURE_COOKIES=false
+```
+
+To use the team's fine-tuned model, change `QWEN_MODEL` to `qwen3-8b-01fa13690bf1` and use a key authorised for that deployment in its Beijing workspace. If you do not have access to this deployment, select a Qwen model available to your account.
+
+Matching variables in `.env.local` override `.env`. Restart the service after changing configuration. Changes to frontend `VITE_` variables also require rebuilding the production frontend.
+
+**The current default `/api/advisor` uses Qwen and returns `503` when its API key is missing. It does not automatically switch to local knowledge-only answers.** The repository also contains local retrieval and DeepSeek adapter modules, but these are not the current default advisor route. Confirm key validity through an actual question-answering request.
+
+Do not prefix secret variables with `VITE_`. Do not include real keys, `.env`, or `.env.local` in Git, screenshots, or submission packages.
+
+### 5.3 Course Knowledge Base Configuration
+
+The Git repository includes `data/courses.json`, containing **2,659 course records** with a snapshot timestamp of **26 October 2026**. Without Supabase configuration, the Qwen advisor retrieves courses from this file, so no separate database service is needed for these course records.
+
+To read courses from Supabase, add the following to `.env`:
+
+```dotenv
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_PUBLISHABLE_KEY=replace_with_your_publishable_key
+# SUPABASE_ANON_KEY is also accepted. Do not use a service-role key.
+```
+
+The database must already contain a readable `public.courses` table. See `server/course-knowledge.mjs` for the fields and retrieval implementation. Supabase supplies course data; accounts, academic profiles, and conversations remain in local SQLite.
+
+```sh
+npm run check:supabase
+npm run sync:courses
+```
+
+The first command performs a read-only connection check. The second reads the root `.env` file and synchronises the course table to `data/courses.json`. When Supabase is configured, the default Qwen path prioritises online course retrieval. A failed connection may produce an error; check the configuration before retrying.
+
+### 5.4 Start the Development Service
+
+```sh
 npm run dev
 ```
 
-打开终端显示的地址（通常为 `http://127.0.0.1:5173`；端口占用时 Vite 会选择下一个）。默认直接进入访客工作区，可以先进行文字课程问答，无需注册。右上角 **Sign in** 打开登录页；新用户可选择 **Create account** 注册，也可以选择 **Continue as guest** 返回访客工作区。没有预设账户或通用密码。开发服务同时提供前端、登录、文档解析和顾问 API。
+Open the address printed in the terminal, normally `http://127.0.0.1:5173`. If the port is occupied, use the address actually reported. The service provides the UI, account API, advisor API, and transcription API together.
 
-浏览器有有效登录会话时会恢复会员工作区、账号资料和已保存的聊天记录。右上角 **Account** 可查看账户及学业资料；**Sign out** 退出后返回访客工作区，会员聊天仍保留在该账号中。首页的三个快捷问题会先填入输入框，检查后再发送。**New conversation** 新建聊天，之前的聊天保留在左侧 **Recent chats**，可随时切换。
-
-生产方式：
+### 5.5 Run the Production Build
 
 ```sh
 npm run build
 npm start
 ```
 
-默认运行在 `http://127.0.0.1:3000`，可以配置 `HOST` 和 `PORT`。运行服务会读取根目录 `.env`，已有环境变量优先。请勿直接双击 `dist/index.html` 或使用纯静态托管，这些方式无法提供后端登录和问答功能。
+The default address is `http://127.0.0.1:3000`; `HOST` and `PORT` can be configured. The complete application requires the Node backend. Opening `dist/index.html` directly or using static-only hosting does not provide the full application.
 
-## 访客与登录后的功能
+These steps describe local operation. The current advisor API restricts requests to localhost Host values. External deployment requires adapting origin checks, HTTPS, and reverse proxy configuration.
 
-| 功能 | 访客 | 登录用户 |
-| --- | --- | --- |
-| 文字课程问答、上下文追问 | 知识库回答；同一网络连接来源每 15 分钟最多 20 次请求 | 使用服务端配置的知识库或模型模式 |
-| 学业资料、文件上传与文档问答 | 需登录 | 可用 |
-| 语音输入、朗读及声音设置 | 界面引导登录后使用 | 浏览器支持时可用 |
-| 已配置的大模型 | 不调用模型，即使服务器配置了密钥 | 配置有效时可用 |
-| 聊天记录 | 当前标签页的 `sessionStorage`；刷新可恢复，关闭标签页后不再保留 | SQLite 按账号保存，刷新或重新登录后恢复 |
+## 6. Usage
 
-访客限额由服务端按实际连接对端地址计算，不采用浏览器提供的转发地址；同一代理或共享网络下可能共用额度。超限返回 `429` 和 `Retry-After`，可以等待额度重置或登录。访客提交文件或非空学业资料会被服务端拒绝。语音功能由界面限制，浏览器识别后的文字仍属于普通文字输入。
+1. Open the application to enter the guest workspace and ask a course question. **Guests also call the model when Qwen is configured.** Guest advisor and transcription requests share a limit of 20 requests per 15 minutes per network peer; users behind a shared proxy may share the quota.
+2. Select **Sign in → Create account** to register. Sign in to access academic profiles, files, voice tools, and account-based conversation history. There are no predefined accounts or universal passwords.
+3. Enter your programme, year, and interests under **Profile & documents**. Prefer TXT, CSV, or Markdown for supplementary documents.
+4. Read course cards and use follow-up questions or **Explore more courses** to continue. Homepage suggestions first fill the composer for review before sending.
+5. After signing in, select the microphone and a language. Stop recording, review the transcription, and send it. Select **Read aloud** to hear an answer.
+6. Select Pear in the lower-right corner to open the companion panel and switch between **2D/3D**. Rotate the 3D view by dragging or using arrow keys, adjust motion, and preview expressions.
+7. Use **New conversation** to start another chat. Earlier conversations remain under **Recent chats**.
 
-## Supabase 连接准备
-
-可在本地 `.env` 设置 `SUPABASE_URL` 和 `SUPABASE_PUBLISHABLE_KEY`（也接受 `SUPABASE_ANON_KEY`），运行 `npm run check:supabase` 只读检查连接及邮箱确认设置。连接层位于 `server/supabase-client.mjs`，仅供服务端使用；用户数据请求通过用户 JWT 和 RLS 进行授权，不使用管理员 key 绕过访问策略。
-
-配置上述变量后，服务启动时会用 publishable/anon key **只读拉取 `public.courses`**，映射为检索条目并入顾问知识库。这是检索增强，不是对模型做微调；回答仍只能引用检索到的课程，不会编造课程代码。账户、学业资料和聊天记录继续保存在本地 SQLite，不写入 Supabase，也不修改表结构或 RLS。`scripts/inspect-supabase-schema.sql` 可用于只读检查表字段、约束和访问策略，不读取用户行。实际 URL、key 和用户提供的结构导出文件不进入 Git 或源码包。
-
-## 两种问答模式
-
-### Knowledge assistant：无需密钥
-
-默认 `/api/advisor` 使用 **TF-IDF 特征、余弦相似度、中英文主题扩展和课程代码匹配**组织回答。访客只检索内置课程资料；登录用户还可检索上传文档。它不是随机示例或统一模板回复，也不伪装成大模型。
-
-本地精选库包含 9 门 PolyU Computing 课程与 3 项指导资料，每项保留官方来源、原始版本和核查日期。若已配置 Supabase，启动时还会并入 `public.courses` 只读目录；同一课程代码以精选官方 PDF 条目为准。可询问 `COMP4431 的先修课程是什么？`、`Recommend courses for machine learning`，或围绕上一轮课程继续提问。目录与精选库都没有的课程、以及无法确定的毕业资格，会明确说明证据不足。
-
-### AI advisor：检索支持的大模型
-
-在 `.env` 或 `.env.local` 中设置 Qwen（优先）或 DeepSeek：
-
-```dotenv
-VITE_ADVISOR_API_URL=/api/advisor
-QWEN_API_KEY=replace_with_your_server_side_key
-QWEN_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
-QWEN_MODEL=qwen-plus
-```
-
-重启服务后，配置了 Qwen 就会先检索课程目录，再把问题和检索到的证据发给 Qwen。前端 `VITE_` 配置变化后需重新构建；服务端密钥和模型配置不进入前端。`QWEN_API_KEY` / `DEEPSEEK_API_KEY` **不能加 `VITE_` 前缀**，不得放进截图、提交包或 Git。
-
-该模式先检索相关证据，再将问题、最近对话、学业资料和相关文档节选发送给配置的模型服务。输出经过类型检查；引用 ID 必须来自实际检索结果，已收录课程的名称和学分由资料核对。模型调用失败会明确报错，不会悄悄切换模式。模型配置成功不等于答案完全准确，仍需核对适用入学年级的官方资料。
-
-界面会显示当前模式；登录后应变为 **AI advisor**。模型密钥有效性必须通过实际请求确认。Qwen 接口见 [DashScope compatible-mode](https://help.aliyun.com/zh/model-studio/developer-reference/compatibility-of-openai-with-dashscope)。
-
-## 已实现功能
-
-- **响应式界面**：默认访客入口、独立登录／注册页、课程探索入口、聊天历史与来源面板、账户资料和文件区、移动端导航。
-- **账户系统与历史**：邮箱注册、登录、退出、会话恢复，按用户保存学业资料及聊天；多标签页切换账户时校验当前身份，避免旧页面覆盖新账户。新建聊天不会删除历史。
-- **语音输入**：登录后使用浏览器语音识别，支持英语、普通话和粤语选项；需主动开启麦克风，先检查识别文字再发送。
-- **语音朗读**：登录后读取回答、课程建议和检查项；提供声音／语速设置、暂停、继续和停止。
-- **文档问答**：登录后支持 PDF、DOCX、TXT、CSV、Markdown。真实提取文字、分块检索并标明上传资料来源；示例非个人资料位于 `examples/student-notes.txt`。
-- **来源与边界**：官方资料链接、版本日期、用户文件标记、未知课程提示、缺失证据和解析失败提示。
-- **可复现验证**：认证、课程检索、文件解析、模型接口、生产服务与语音状态测试；独立的领域问答评估。
-
-## 架构与技术实现
+Example questions:
 
 ```text
-React UI / Recent chats / member-only browser speech
-        |
-        | guest marker OR session cookie + expected account ID
-        v
-Node HTTP API (Vite development / standalone production)
-        |
-        +-- Guest: per-peer quota -> text-only corpus retrieval
-        |
-        +-- Member: authenticate and pin account identity
-                |
-                +-- SQLite: account, password/session hashes, profile, chats
-                +-- PDF / DOCX / text extraction with resource limits
-                +-- Revalidate session after uploads/extraction
-                +-- Corpus + document retrieval -> local or configured LLM answer
-
-Browser sessionStorage: guest chats + account-scoped unsynced chat drafts
+What does COMP4431 cover, and what are its prerequisites?
+I want to focus on machine learning. Which courses should I consider?
+Please recommend more related courses without repeating the ones already introduced.
+What are the learning objectives and suggested preparation for COMP2411?
 ```
 
-- `server/auth.mjs`：密码使用随机盐与 scrypt；会话令牌随机生成，数据库仅保存令牌哈希，通过 HttpOnly / SameSite Cookie 传递。默认 7 天，“Keep me signed in”为 30 天。登录／注册限流，同源校验，资料与聊天按账号隔离；聊天保存检查版本，防止其他标签页的新记录被旧状态覆盖。
-- `server/advisor-access.mjs`：Vite 与生产服务共用访客／会员权限规则、访客限流和模式选择；会员上传解析后再次校验登录状态，失效请求不会降级访客或调用模型。
-- `src/useConversations.js`、`src/conversations.js`：聊天列表、切换、新建和保存队列；访客记录保存在当前标签页，会员未同步对话按账号缓存，保存失败或版本冲突会提示处理。
-- `server/knowledge.mjs`：课程代码精确约束、中英文术语扩展、TF-IDF 向量与余弦排序、上下文课程指代。`server/course-catalogue.mjs` 在配置了 Supabase 时只读并入 `public.courses`。资料与算法见 `knowledge/README.md`。
-- `server/documents.mjs`：PDF.js 提取 PDF 文本，Mammoth 提取 DOCX；二进制解析在有时间与内存限制的 worker 中运行，失败文件不影响其他可读文件。
-- `server/deepseek-advisor.mjs` 与 `prompts/advisor-system.txt`：检索增强提示词、模型超时、结构检查、来源白名单与错误处理。
-- `src/voice.js`、`src/speech.js`：浏览器语音状态机，处理取消、晚到事件、分段朗读和权限错误。
-- `server/index.mjs`：构建产物服务、有限访客问答及需认证的账号 API；拒绝越界静态路径。Vite 也显式禁止下载数据库及 WAL/SHM 文件。
+## 7. Project Structure, Prompts, and Knowledge Files
 
-本项目没有宣称微调 LLM、使用向量数据库或实现 2D/3D Avatar。规范将这些列为可选附加功能例子，并不要求全部实现。
+```text
+COMP4431_project/
+├── README.md                  # Members, features, implementation, and run instructions
+├── .env.example               # Environment variable template
+├── package.json / package-lock.json
+├── src/                       # UI, conversations, accounts, and voice interaction
+│   └── avatar/                # Pear SVG / Three.js companion
+├── server/                    # Node APIs, authentication, retrieval, and model integration
+├── data/courses.json          # Main course knowledge snapshot
+├── knowledge/                 # Curated courses, policies, and local retrieval references
+├── prompts/                   # Separately stored advisor prompt
+├── finetuning/                # Examples, versions, and training/deployment records
+├── evaluation/                # Local retrieval evaluation cases
+├── examples/                  # Sample text documents
+├── tests/                     # Automated tests
+├── scripts/                   # Synchronisation, evaluation, packaging, and fine-tuning tools
+└── docs/                      # Technical documentation and evaluation records
+```
 
-## 数据与限制
+**The prompt used by the current default advisor** is `SYSTEM_PROMPT` in `server/qwen-advisor.mjs`. The search planner prompt is in `server/course-search.mjs`. The standalone `prompts/advisor-system.txt` belongs to another retrieval adapter path and should be retained together with the server source.
 
-- 账户、保存的学业资料及会员聊天记录存于 `data/polypath.sqlite`；可设置 `AUTH_DATABASE_PATH`。此目录不会加入源码包。备份前停止服务，再备份整个数据目录。
-- 会员历史按账号隔离，刷新或重新登录后恢复。每个账号最多保存 50 条对话，每条最多 100 条消息（包含用户和助手消息），保存后的单条对话上限 256 KiB。达到限制时界面会提示；新建聊天保留此前历史，不会静默清空旧聊天。
-- 访客历史仅存于当前标签页的 `sessionStorage`，刷新后可恢复，关闭标签页后不再保留；不会自动上传或合并到登录账号。未同步的会员对话草稿也使用当前标签页的 `sessionStorage`，按账号分开保存。保存失败或冲突时应按提示重试／保存副本，关闭标签页可能丢失尚未同步的内容。
-- 文件原件和解析全文不会写入账户数据库；刷新页面后必须重新附加文件，已保存聊天不能自动恢复原文件。已经写入回答或来源说明的文件节选会随会员聊天记录保存。
-- 前端最多选择 8 个文件，总计 24 MiB，每个 10 MiB；后端整个 multipart 请求上限 25 MiB。
-- 每个 PDF 最多处理 40 页，每文件最多 60,000 字符，合计 120,000 字符。超限和截断会提示；扫描图片、加密 PDF 和 XLSX 不支持。OCR 未实现。
-- 已提取文本仍可能受到版式、表格顺序与字符编码影响。上传的成绩单／笔记不会自动证明已通过课程或官方学分。
-- 精选课程库是小型有日期的快照；配置 Supabase 后会只读并入 `public.courses`。目录条目没有精选 PDF 的官方链接与版本日期，不能当作实时课表。COMP4432 精选来源为 2021 年版本，回答会提示核对更新。
-- 可以解释先修依赖，不能自动确认学期供应、名额、正式选课资格或毕业资格。
-- 浏览器语音可用性、实际声音和权限依设备而异；语音服务可能联网。普通文本聊天始终保留。
-- 暂无邮箱验证、密码重置、邮件发送、第三方登录或账户管理后台。
+Knowledge files include `data/courses.json` and `knowledge/`; fine-tuning materials are in `finetuning/`. Models and knowledge are integrated through source code rather than an online chatbot builder's hidden workflow.
 
-通过 HTTPS 对外部署时设置 `AUTH_SECURE_COOKIES=true`，并将 `AUTH_ORIGIN` 设为实际来源，例如 `https://polypath.example.com`（不含尾部斜杠）。反向代理需将页面与 `/api/` 转发至同一服务。默认仅监听本机；需要其他机器访问才设置 `HOST=0.0.0.0`。
-
-## 检查与打包
+## 8. Checks, Evaluation, and Source Packaging
 
 ```sh
 npm test
@@ -146,8 +220,35 @@ npm run build
 npm run package
 ```
 
-评估结果写入 `artifacts/evaluation.json`，解释见 `docs/EVALUATION.md`。评估衡量所列本地检索用例，不能推导在线模型正确率、用户满意度或实际语音识别率。
+| Command | Purpose and Scope |
+| --- | --- |
+| `npm test` | Runs repository tests covering accounts, conversations, retrieval, APIs, document utilities, voice states, and the companion. Some interfaces are tested with mocks. |
+| `npm run evaluate` | Runs 24 local retrieval regression cases and writes `artifacts/evaluation.json`. It evaluates `server/knowledge.mjs` and the curated references, not the accuracy of the current Qwen route or fine-tuned model. |
+| `npm run build` | Checks and builds frontend assets. It does not replace live model, microphone, or browser interaction checks. |
+| `npm run package` | Generates `deliverables/PolyPath-source.zip` with source code, README, the dependency lockfile, prompts, curated knowledge files, tests, and documentation. |
 
-`npm run package` 生成 `deliverables/PolyPath-source.zip`，包含源码、锁文件、提示词、知识库、测试和说明；排除 `.env`、数据库、node_modules、Git 状态和构建产物。打包不执行 Git 提交或远程上传。
+**The existing packaging script excludes `data/` and `finetuning/`.** For a complete submission, use an archive manager after generating the ZIP to add **`data/courses.json` and `finetuning/`** under its `PolyPath/` root, preserving their relative paths. Otherwise, an extracted copy without Supabase configuration will lack the default course data, and the fine-tuning examples and records will be missing.
 
-课程要求逐项对照及尚需用户补充的成员资料，见 `docs/REQUIREMENTS.md`。演示材料由用户另行准备。
+Do not include the entire runtime `data/` directory: SQLite databases and WAL/SHM files may contain accounts and conversations. Also exclude real credentials, personal uploads, `node_modules/`, and `.git/`.
+
+The source ZIP should include the project source, this README, the prompts actually used, and relevant knowledge files. Submit presentation slides separately as a PPTX. Before submission, verify all member details and contributions, and test the advisor, voice features, and companion in the presentation environment.
+
+## 9. Known Limitations
+
+- **Data and eligibility:** Snapshots, curated references, and online catalogue records do not guarantee semester availability, places, or cohort-specific rules. The application does not replace official enrolment or graduation checks.
+- **Model quality:** Successful training, deployment, and format validation do not guarantee factual correctness. Generated learning outcomes and advice should be checked against source records. A complete independent before/after fine-tuning comparison remains outstanding.
+- **Document contents:** The UI accepts PDF/DOCX uploads, but the default Qwen path does not invoke the separate PDF/DOCX extraction module. TXT/CSV/Markdown contents are limited to 6,000 characters per file. OCR and XLSX content-based question answering are not implemented.
+- **File retention:** Uploaded files and full document contents are not persisted with conversations and must be reattached after reloading. Excerpts already included in answers may remain in saved conversations.
+- **Voice and animation:** Speech input depends on microphone access, network connectivity, and Qwen ASR; read-aloud depends on browser voices. Companion mouth movements are stylised playback-state animations, without phoneme-level lip synchronisation.
+- **Course ratings:** Values labelled “Example” are simulated when catalogue ratings are unavailable. They are not actual student reviews.
+- **Conversations and accounts:** Each account supports up to 50 conversations, with up to 100 messages and 256 KiB per saved conversation. Guest history and unsynchronised drafts depend on current-tab storage and may be lost when the tab closes. Email verification, password recovery, and third-party sign-in are not implemented.
+
+## 10. Further Documentation
+
+- [AI integration and course response format](docs/AI_INTEGRATION.md)
+- [Pear 2D/3D companion implementation](docs/AVATAR_FEATURE.md)
+- [Fine-tuning data and training records](finetuning/README.md)
+- [Curated knowledge base and local retrieval algorithm](knowledge/README.md)
+- [Scope of the local retrieval evaluation](docs/EVALUATION.md)
+
+Some supporting documents retain historical implementation details. For the current default execution path and run instructions, refer to this README and the corresponding source code.
